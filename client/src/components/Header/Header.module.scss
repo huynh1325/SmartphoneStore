@@ -1,0 +1,95 @@
+.header {
+    width: 1440px;
+    height: 60px;
+    padding: 8px 24px;
+    margin-right: auto;
+    margin-left: auto;
+    display: flex;
+}
+
+.logo {
+    font-size: 2.6rem;
+    margin-right: 46px;
+    cursor: pointer;
+}
+
+.search {
+    border: 1px solid var(--border-color);
+    display: flex;
+    border-radius: 10px;
+    align-items: center;
+
+    .search-icon {
+        padding: 0 12px;
+    }
+
+    .search-input {
+        border-radius: 10px;
+        min-width: 600px;
+        border: none;
+        height: 3.8rem;
+        font-size: 1.4rem;
+    }
+
+    .search-input:hover {
+        border-color: none;
+    }
+
+    .search-input:focus {
+        outline: none;
+    }
+
+    .search-btn {
+        height: 3.8rem;
+        background-color: #fff;
+        color: rgb(10, 104, 255);;
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+        cursor: pointer;
+        border: none;
+        font-size: 1.4rem;
+        padding: 0 12px;
+        position: relative;
+    }
+
+    .search-btn::after {
+        content: "";
+        display: block;
+        position: absolute;
+        border-left: 1px solid rgb(221, 221, 227);
+        height: 24px;
+        left: 0px;
+        top: 8px;
+    }
+
+    .search-btn:hover {
+        background-color: rgba(10, 104, 255, 0.2);
+    }
+}
+
+.home, .cart , .account {
+    background-color: #fff;
+    width: 120px;
+    font-size: 1.4rem;
+    border: none;
+    cursor: pointer;
+    padding: 0 10px;
+}
+
+.home:hover, .cart:hover , .account:hover {
+    background-color: var(--hover-color);
+    border-radius: 10px;
+}
+
+.home {
+    margin-left: auto;
+}
+
+.home, .cart {
+    margin-right: 24px;
+}
+
+.home-icon, .cart-icon, .account-icon {
+    font-size: 1.8rem;
+    padding-left: 10px;
+}

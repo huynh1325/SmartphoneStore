@@ -3,3 +3,21 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+:root {
+  --primary-color: #0a68ff;
+  --border-color: #dddde3;
+  --text-color: #808089;
+  --white-color: #fff;
+  --hover-color: #efefef;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  font-size: 1.6rem;
+  line-height: 1.5;
+  text-rendering: optimizeSpeed;
+}
