@@ -1,5 +1,6 @@
 import express from "express"
 import homeController from "../controller/homeController";
+import apiController from "../controller/apiController";
  
 const router = express.Router();
 
@@ -9,11 +10,10 @@ const router = express.Router();
  */
 
 const initWebRoutes = (app) => {
-    router.get("/", homeController.handleHelloWorld)
-    // router.get("/", (req,res) => {
-    //     return res.send("hello hi")
-    // })
-
+    router.get("/", homeController.handleHelloWorld);
+    
+    router.post("/register", apiController.handleRegister);
+    
     return app.use("/", router);
 }
 

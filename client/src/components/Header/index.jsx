@@ -3,21 +3,32 @@ import styles from './Header.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faCartShopping, faHouse, faMagnifyingGlass, faArrowDown} from '@fortawesome/free-solid-svg-icons';
 import Login from '../Login';
+import Register from '../Register';
 import { useState } from 'react';
 
 const cx = classNames.bind(styles);
 
 const Header = () => {
 
-    const [modalLogin, setModalLogin] = useState(false);
+    const [modalLogin, setModalLogin] = useState(false);    
+    const [modalRegister, setModalRegister] = useState(false);
 
-    const openModal = () => {
+    const openModalLogin = () => {
         setModalLogin(true);
     };
 
-    const closeModal = () => {
+    const closeModalLogin = () => {
         setModalLogin(false);
     };
+
+    const openModalRegister = () => {
+        setModalRegister(true);
+    };
+
+    const closeModalRegister = () => {
+        setModalRegister(false);
+    };
+
 
     return (
         <div>
@@ -38,18 +49,17 @@ const Header = () => {
                     <FontAwesomeIcon icon={faCartShopping} className={cx('cart-icon')}/>
                     <span>Giỏ hàng</span>
                 </button>
-                <button onClick={openModal}  className={cx('account')}>
+                <button className={cx('account')}>
                     <FontAwesomeIcon icon={faUser} className={cx('account-icon')}/>
                     <span>Tài khoản</span>
                     <FontAwesomeIcon icon={faArrowDown} className={cx('down-icon')}/>
                     <div className={cx('account-option')}>
                         <ul>
-                            <li>Đăng nhập</li>
-                            <li>Đăng ký</li>
+                            <li onClick={openModalLogin}>Đăng nhập</li>
+                            <li onClick={openModalRegister}>Đăng ký</li>
                         </ul>
                     </div>
                 </button>
-                <Login modalLogin={modalLogin} onClose={closeModal} />
             </div>
             <div className={cx('header-list')}>
                 <ul>
@@ -60,6 +70,8 @@ const Header = () => {
                     <li>Vivo</li>
                 </ul>
             </div>
+            <Login modalLogin={modalLogin} onClose={closeModalLogin}/>
+            <Register modalRegister={modalRegister} onClose={closeModalRegister}/>
         </div>
     )
 }
