@@ -9,7 +9,7 @@
 
 .logo {
     font-size: 2.6rem;
-    margin-right: 46px;
+    margin-right: 23px;
     cursor: pointer;
 }
 
@@ -20,7 +20,7 @@
     align-items: center;
 
     .search-icon {
-        padding: 0 12px;
+        padding: 0 16px;
     }
 
     .search-input {
@@ -40,7 +40,7 @@
     }
 
     .search-btn {
-        height: 3.8rem;
+        height: 4.2rem;
         background-color: #fff;
         color: rgb(10, 104, 255);;
         border-top-right-radius: 10px;
@@ -76,6 +76,70 @@
     padding: 0 10px;
 }
 
+.account {
+    position: relative;
+    width: 150px;
+}
+
+.account::after {
+    content: "";
+    display: block;
+    position: absolute;
+    background-color: transparent;
+    width: 150px;
+    height: 20px;
+    left: 0px;
+    bottom: -10px;
+}
+
+.account::before {
+    content: "";
+    width: 0;
+    height: 0;
+    position: absolute;
+    bottom: -4px;
+    left: 20%;
+    border-bottom: 14px solid #d9d9d9;
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-bottom-color: #fff;
+    z-index: 3;
+}
+
+.account:hover {
+
+    .account-option {
+        display: block;
+    }
+}
+
+.account-option {
+    display: none;
+    bottom: -78px;
+    right: 0px;
+    position: absolute;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    background-color: #fff;
+    z-index: 2;
+
+    ul {
+        list-style: none;
+
+        li {
+            width: 150px;
+            padding: 10px 0;
+            padding-left: 35px;
+            text-align: left;
+        }
+
+        li:hover {
+            background-color: var(--hover-color);
+            border-radius: 10px;
+        }
+    }
+}
+
 .home:hover, .cart:hover , .account:hover {
     background-color: var(--hover-color);
     border-radius: 10px;
@@ -85,11 +149,32 @@
     margin-left: auto;
 }
 
-.home, .cart {
-    margin-right: 24px;
-}
-
 .home-icon, .cart-icon, .account-icon {
     font-size: 1.8rem;
+    padding-right: 10px;
+}
+
+.down-icon {
     padding-left: 10px;
+}
+
+
+.header-list {
+    margin-bottom: 12px;
+}
+
+.header-list ul {
+    display: flex;
+
+    li {
+        list-style: none;
+    }
+
+    li:first-child {
+        margin-left: 300px;
+    }
+    
+    li + li {
+        margin-left: 30px;
+    }
 }

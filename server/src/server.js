@@ -2,6 +2,8 @@ require("dotenv").config();
 import express from "express"
 import configViewEngine from "./configs/viewEngine"
 import initWebRoutes from "./routes/web"
+import connection from "./configs/connectDB";
+
 const path = require('path')
 
 const app = express()
@@ -17,6 +19,8 @@ app.set('view engine', 'ejs')
 // app.get('/', (req, res) => {
 //   res.send('hello huynh')
 // })
+
+connection();
 
 initWebRoutes(app);
 

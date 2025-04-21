@@ -5,7 +5,7 @@
 }
 
 :root {
-  --primary-color: #0a68ff;
+  --primary-color: rgb(10, 104, 255);
   --border-color: #dddde3;
   --text-color: #808089;
   --white-color: #fff;
