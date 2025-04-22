@@ -28,6 +28,14 @@
     border-radius: 20px 0px 0px 20px;
 }
 
+.heading {
+    h4 {
+        font-size: 24px;
+        text-align: center;
+        // font-weight: 500;
+    }
+}
+
 .input {
     position: relative;
     z-index: 1;
@@ -62,6 +70,20 @@
     border: none;
     font-size: 20px;
     cursor: pointer;
+}
+
+.login-img {
+    background: linear-gradient(136deg, rgb(240, 248, 255) -1%, rgb(219, 238, 255) 85%);
+    width: 300px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0px 20px 20px 0px;
+
+    img {
+        width: 203px;
+    }
 }
 
 .btn-close {

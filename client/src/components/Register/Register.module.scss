@@ -14,18 +14,27 @@
 .wrapper {
     display: flex;
     position: relative;
-    width: 800px;
-    height: 525px;
+    width: 1000px;
     background: rgb(248, 248, 248);
     border-radius: 20px;
 }
 
 
 .register {
-    width: 500px;
+    width: 700px;
     padding: 40px 45px 24px;
     background: rgb(255, 255, 255);
     border-radius: 20px 0px 0px 20px;
+}
+
+.heading {
+    margin-bottom: 24px;
+
+    h4 {
+        font-size: 24px;
+        text-align: center;
+        font-weight: 500;
+    }
 }
 
 .input {
@@ -33,22 +42,59 @@
     z-index: 1;
 }
 
-.input::before {
-    content: '';
-    position: absolute;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
-    border-bottom: 1px solid #e0e0e0;
+.form-group-radio {
+    display: flex;
+    margin-bottom: 12px;
+    align-items: center;
+    font-size: 1.8rem;
+
+    .genderMale {
+        margin-left: 24px;
+    }
+
+    input {
+        cursor: pointer;
+    }
+
+    label {
+        cursor: pointer;
+        padding: 0 8px;
+    }
+}
+
+.form-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 12px;
+}
+
+.form-group-select {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 12px;
+}
+
+.select-form {
+    font-size: 1.8rem;
+    line-height: 4.4rem;
+}
+
+.select-form-label {
+    margin-right: 4px;
 }
 
 .register-input {
-    width: 100%;
-    padding: 10px 0px;
-    border: none;
-    font-size: 24px;
+    height: 36px;
+    border: 1px solid #ccd0d5;
+    font-size: 1.6rem;
     color: #242424;
     outline: none;
+    width: 48%;
+    border-radius: 5px;
+    padding: 11px;
+    margin: 4px 0;
+    justify-content: space-around;
 }
 
 .register-btn {
@@ -63,6 +109,33 @@
     font-size: 20px;
     cursor: pointer;
 }
+
+.login-redirect {
+
+    a {
+        color: var(--primary-color);
+        cursor: pointer;
+    }
+
+    a:hover {
+        color: rgba(10, 104, 255, 0.8);
+    }
+}
+
+.register-img {
+    background: linear-gradient(136deg, rgb(240, 248, 255) -1%, rgb(219, 238, 255) 85%);
+    width: 300px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0px 20px 20px 0px;
+
+    img {
+        width: 203px;
+    }
+}
+
 
 .btn-close {
     position: absolute;

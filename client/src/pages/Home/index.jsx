@@ -42,7 +42,7 @@ const Home = () => {
                                     <div className={cx('product')}>
                                         <img src='https://cdn.tgdd.vn/Products/Images/42/325799/redmi-13-yellow-thumb-600x600.jpg' alt='Ảnh sản phẩm'/>
                                         <div className={cx('product-name')}>
-                                            Xiaomi Redmi 13 8GB/128GBXiaomi Redmi 13 8GB/128GBXiaomi Redmi 13 8GB/128GB
+                                            Xiaomi Redmi 13 8GB/128GBXiaomi
                                         </div>
                                         <div className={cx('info')}>
                                             <span className={cx('price')}>10.000.000đ</span>
