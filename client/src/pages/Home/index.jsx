@@ -29,79 +29,29 @@ const Home = () => {
                                     <div onClick={handleClick} className={cx('product')}>
                                         <img src='https://cdn.tgdd.vn/Products/Images/42/325799/redmi-13-yellow-thumb-600x600.jpg' alt='Ảnh sản phẩm'/>
                                         <div className={cx('product-name')}>
-                                            Xiaomi Redmi 13 8GB/128GBXiaomi Redmi 13 8GB/128GBXiaomi Redmi 13 8GB/128GB
+                                            Xiaomi Redmi 13 8GB/128GBXiaomi
                                         </div>
                                         <div className={cx('info')}>
-                                            <span className={cx('price')}>10.000.000đ</span>
-                                            <span className={cx('sell-qty')}>Đã bán 4k</span>
+                                            <span className={cx('ram-rom')}>8GB - 512GB</span>
+                                            <span className={cx('inch')}>6.3''</span>
                                         </div>
-                                        <div className={cx('buy')}>
-                                            <button>Mua ngay</button>
+                                        <div className={cx('price')}>
+                                            <span className={cx('origin-price')}>13.000.000đ</span>
+                                            <span className={cx('discount')}>10.000.000đ</span>
                                         </div>
                                     </div>
-                                    <div className={cx('product')}>
+                                    <div onClick={handleClick} className={cx('product')}>
                                         <img src='https://cdn.tgdd.vn/Products/Images/42/325799/redmi-13-yellow-thumb-600x600.jpg' alt='Ảnh sản phẩm'/>
                                         <div className={cx('product-name')}>
                                             Xiaomi Redmi 13 8GB/128GBXiaomi
                                         </div>
                                         <div className={cx('info')}>
-                                            <span className={cx('price')}>10.000.000đ</span>
-                                            <span className={cx('sell-qty')}>Đã bán 4k</span>
+                                            <span className={cx('ram-rom')}>8GB - 512GB</span>
+                                            <span className={cx('inch')}>6.3''</span>
                                         </div>
-                                        <div className={cx('buy')}>
-                                            <button>Mua ngay</button>
-                                        </div>
-                                    </div>
-                                    <div className={cx('product')}>
-                                        <img src='https://cdn.tgdd.vn/Products/Images/42/325799/redmi-13-yellow-thumb-600x600.jpg' alt='Ảnh sản phẩm'/>
-                                        <div className={cx('product-name')}>
-                                            Xiaomi Redmi 13 8GB/128GBXiaomi Redmi 13 8GB/128GBXiaomi Redmi 13 8GB/128GB
-                                        </div>
-                                        <div className={cx('info')}>
-                                            <span className={cx('price')}>10.000.000đ</span>
-                                            <span className={cx('sell-qty')}>Đã bán 4k</span>
-                                        </div>
-                                        <div className={cx('buy')}>
-                                            <button>Mua ngay</button>
-                                        </div>
-                                    </div>
-                                    <div className={cx('product')}>
-                                        <img src='https://cdn.tgdd.vn/Products/Images/42/325799/redmi-13-yellow-thumb-600x600.jpg' alt='Ảnh sản phẩm'/>
-                                        <div className={cx('product-name')}>
-                                            Xiaomi Redmi 13 8GB/128GBXiaomi Redmi 13 8GB/128GBXiaomi Redmi 13 8GB/128GB
-                                        </div>
-                                        <div className={cx('info')}>
-                                            <span className={cx('price')}>10.000.000đ</span>
-                                            <span className={cx('sell-qty')}>Đã bán 4k</span>
-                                        </div>
-                                        <div className={cx('buy')}>
-                                            <button>Mua ngay</button>
-                                        </div>
-                                    </div>
-                                    <div className={cx('product')}>
-                                        <img src='https://cdn.tgdd.vn/Products/Images/42/325799/redmi-13-yellow-thumb-600x600.jpg' alt='Ảnh sản phẩm'/>
-                                        <div className={cx('product-name')}>
-                                            Xiaomi Redmi 13 8GB/128GBXiaomi Redmi 13 8GB/128GBXiaomi Redmi 13 8GB/128GB
-                                        </div>
-                                        <div className={cx('info')}>
-                                            <span className={cx('price')}>10.000.000đ</span>
-                                            <span className={cx('sell-qty')}>Đã bán 4k</span>
-                                        </div>
-                                        <div className={cx('buy')}>
-                                            <button>Mua ngay</button>
-                                        </div>
-                                    </div>
-                                    <div className={cx('product')}>
-                                        <img src='https://cdn.tgdd.vn/Products/Images/42/325799/redmi-13-yellow-thumb-600x600.jpg' alt='Ảnh sản phẩm'/>
-                                        <div className={cx('product-name')}>
-                                            Xiaomi Redmi 13 8GB/128GBXiaomi Redmi 13 8GB/128GBXiaomi Redmi 13 8GB/128GB
-                                        </div>
-                                        <div className={cx('info')}>
-                                            <span className={cx('price')}>10.000.000đ</span>
-                                            <span className={cx('sell-qty')}>Đã bán 4k</span>
-                                        </div>
-                                        <div className={cx('buy')}>
-                                            <button>Mua ngay</button>
+                                        <div className={cx('price')}>
+                                            <span className={cx('origin-price')}>13.000.000đ</span>
+                                            <span className={cx('discount')}>10.000.000đ</span>
                                         </div>
                                     </div>
                                 </div>

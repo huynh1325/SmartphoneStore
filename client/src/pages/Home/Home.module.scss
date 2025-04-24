@@ -95,32 +95,34 @@
         }
 
         .info {
-            display: flex;
-            justify-content: space-between;
 
-            .price {
-                color: red;
-            }
-
-            .sell-qty {
-                margin: 0 6px;
-                font-size: 1.2rem;
-                line-height: 2.4rem;
-                align-items: center;
-                height: 2.4rem;
+            span {
+                display: inline-block;
+                font-size: 12px;
+                line-height: 12px;
+                margin-right: 5px;
+                padding: 4px 5px;
+                white-space: nowrap;
+                background: #f2f4f7;
+                border: none;
+                color: #667085;
             }
         }
 
-        .buy {
-
-            button {
-                background-color: rgba(10, 104, 255, 0.2);
+        .price {
+            display: flex;
+            flex-wrap: wrap;
+            
+            .origin-price {
+                margin-top: 8px;
+                text-decoration: line-through;
+                color: #C9C9C9;
+                font-size: 1.1rem;
                 width: 100%;
-                border: none;
-                padding: 6px 0;
-                margin-top: 4px;
-                color: var(--primary-color);
-                cursor: pointer;
+            }
+
+            .discount {
+                color: red;
             }
         }
     }

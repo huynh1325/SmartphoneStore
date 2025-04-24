@@ -48,17 +48,21 @@
     align-items: center;
     font-size: 1.8rem;
 
-    .genderMale {
-        margin-left: 24px;
+    input:first-child {
+        margin-right: 25px;
     }
 
-    input {
-        cursor: pointer;
+    .register-input {
+        width: 50%;
+    }
+
+    .genderMale {
+        margin-left: 12px;
     }
 
     label {
         cursor: pointer;
-        padding: 0 8px;
+        padding: 0 6px;
     }
 }
 

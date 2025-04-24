@@ -1,19 +1,34 @@
 import styles from './Register.module.scss';
 import classNames from 'classnames/bind';
 import { useState, useEffect } from 'react';
+import { registerNewUser } from '../../util/api';
+import { toast } from "react-toastify";
 
 const cx = classNames.bind(styles);
 
 const Register = (props) => {
 
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("");
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [provinces, setProvinces] = useState([]);
     const [districts, setDistricts] = useState([]);
+    const [street, setStreet] = useState('');
     const [wards, setWards] = useState([]);
     const [gender, setGender] = useState('');
     
     const [selectedProvince, setSelectedProvince] = useState('');
     const [selectedDistrict, setSelectedDistrict] = useState('');
     const [selectedWard, setSelectedWard] = useState('');
+
+    const [modalLogin, setModalLogin] = useState(false);
+
+    const openModalLogin = () => {
+        setModalLogin(true);
+    };
 
     useEffect(() => {
         fetch('https://provinces.open-api.vn/api/p/')
@@ -45,10 +60,28 @@ const Register = (props) => {
           });
     }, [selectedDistrict]);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        alert(`Tỉnh: ${selectedProvince}, Huyện: ${selectedDistrict}, Xã: ${selectedWard}`);
+    const switchToLogin = () => {
+        props.onClose();
+        props.openLogin();
     };
+
+    const handleRegister = async () => {
+        const provinceName = provinces.find(p => p.code === Number(selectedProvince))?.name || '';
+        const districtName = districts.find(d => d.code === Number(selectedDistrict))?.name || '';
+        const wardName = wards.find(w => w.code === Number(selectedWard))?.name || '';
+        // let check = isValidInputs();
+        // let check;
+        
+        // if (check === true) {
+            let serverData = await registerNewUser(name, username, gender, email, phone, provinceName, districtName, wardName ,street, password, confirmPassword);
+            if (+serverData.EC === 0) {
+                toast.success(serverData.EM);
+                props.onClose();
+            } else {
+                toast.error(serverData.EM);
+            }
+        console.log(name, username, gender, email, phone, provinceName, districtName, wardName ,street, password, confirmPassword);
+    }
     
     const handleOverlayClick = (e) => {
         if (e.target === e.currentTarget) {
@@ -67,7 +100,18 @@ const Register = (props) => {
                     </div>
                     <div className={cx('input')}>
                         <div className={cx('form-group-radio')}>
-                            <input placeholder="Họ và tên" type="text" className={cx('register-input')} />
+                            <input
+                                placeholder="Họ và tên"
+                                type="text"
+                                className={cx('register-input')}
+                                value={name} onChange={(e) => {setName(e.target.value)}}
+                            />
+                            <input
+                                placeholder="Username"
+                                type="text"
+                                className={cx('register-input')}
+                                value={username} onChange={(e) => {setUsername(e.target.value)}}
+                            />
                             <input
                                 className={cx('genderMale')}
                                 type="radio"
@@ -88,8 +132,20 @@ const Register = (props) => {
                             <label htmlFor="genderFemale">Nữ</label>
                         </div>
                         <div className={cx('form-group')}>
-                            <input placeholder="Email" type="text" className={cx('register-input')} />
-                            <input placeholder="Số điện thoại" type="text" className={cx('register-input')} />
+                            <input
+                                placeholder="Email"
+                                type="text"
+                                className={cx('register-input')}
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                            <input
+                                placeholder="Số điện thoại"
+                                type="text"
+                                className={cx('register-input')}
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
+                            />
                         </div>
                         <div className={cx('form-group-select')}>
                             <div className={cx('select-form')}>
@@ -121,15 +177,36 @@ const Register = (props) => {
                                     ))}
                                 </select>
                             </div>
-                            <input placeholder="Tên đường" type="text" className={cx('register-input')} />
+                            <input 
+                                placeholder="Tên đường"
+                                type="text"
+                                className={cx('register-input')}
+                                value={street}
+                                onChange={(e) => setStreet(e.target.value)}
+                            />
                         </div>
                         <div className={cx('form-group')}>
-                            <input placeholder="Mật khẩu" type="password" className={cx('register-input')} />
-                            <input placeholder="Xác nhận mật khẩu" type="password" className={cx('register-input')} />
+                            <input
+                                placeholder="Mật khẩu"
+                                type="password"
+                                className={cx('register-input')}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                            <input
+                                placeholder="Xác nhận mật khẩu"
+                                type="password"
+                                className={cx('register-input')}
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                            />
                         </div>
                     </div>
-                    <button type='Submit' className={cx('register-btn')}>Tiếp tục</button>
-                    <span className={cx('login-redirect')}>Bạn đã có tài khoản? <a>Đăng nhập</a> ngay!</span>
+                    <button className={cx('register-btn')} onClick={() => handleRegister()}>Tiếp tục</button>
+                    <span className={cx('login-redirect')}>Bạn đã có tài khoản?
+                        <a onClick={switchToLogin}> Đăng nhập </a>
+                        ngay!
+                    </span>
                 </div>
                 <div className={cx('register-img')}>
                     <img

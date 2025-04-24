@@ -71,7 +71,7 @@ const Header = () => {
                 </ul>
             </div>
             <Login modalLogin={modalLogin} onClose={closeModalLogin}/>
-            <Register modalRegister={modalRegister} onClose={closeModalRegister}/>
+            <Register modalRegister={modalRegister} onClose={closeModalRegister} openLogin={openModalLogin}/>
         </div>
     )
 }
