@@ -6,7 +6,17 @@ const registerNewUser = (name, username, gender, email, phone, provinceName, dis
     })
 }
 
+const fetchAllProduct = () => {
+    return axios.get('/api/v1/getproduct')
+}
+
+const addProduct = (name, os, description, ram, rom, inch, price, country, brand, discount, image) => {
+    return axios.post('/api/v1/addproduct', {
+        name, os, description, ram, rom, inch, price, country, brand, discount, image
+    })
+}
+
 
 export {
-    registerNewUser
+    registerNewUser, addProduct, fetchAllProduct
 }

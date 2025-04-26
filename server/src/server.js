@@ -5,7 +5,6 @@ import initWebRoutes from "./routes/web"
 import connection from "./configs/connectDB";
 import configCors from "./configs/cors"
 import bodyParser from "body-parser";
-const path = require('path')
 
 const app = express()
 const port = process.env.PORT || 8080

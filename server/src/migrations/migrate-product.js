@@ -13,9 +13,12 @@ module.exports = {
         type: Sequelize.STRING
       },
       price: {
-        type: Sequelize.STRING
+        type: Sequelize.DECIMAL(10, 2)
       },
       description: {
+        type: Sequelize.STRING
+      },
+      image: {
         type: Sequelize.STRING
       },
       os: {
@@ -23,6 +26,12 @@ module.exports = {
       },
       cpu: {
         type: Sequelize.STRING
+      },
+      inch: {
+        type: Sequelize.STRING
+      },
+      discount: {
+        type: Sequelize.INTEGER
       },
       brand: {
         type: Sequelize.STRING

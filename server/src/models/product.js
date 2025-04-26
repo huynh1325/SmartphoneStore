@@ -15,17 +15,21 @@ module.exports = (sequelize, DataTypes) => {
   }
   Product.init({
     name: DataTypes.STRING,
-    price: DataTypes.STRING,
+    price: DataTypes.DECIMAL(10, 2),
     description: DataTypes.STRING,
+    image: DataTypes.STRING,
     os: DataTypes.STRING,
     cpu: DataTypes.STRING,
     brand: DataTypes.STRING,
+    inch: DataTypes.STRING,
+    discount: DataTypes.INTEGER,
     countryOfOrigin: DataTypes.STRING,
     ram: DataTypes.STRING,
     rom: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Product',
+    freezeTableName: true
   });
   return Product;
 };
