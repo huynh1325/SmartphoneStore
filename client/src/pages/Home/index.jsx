@@ -4,6 +4,7 @@ import Header from '../../components/Header';
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Product from '../../models/Product';
+import Footer from '../../components/Footer';
 
 const cx = classNames.bind(styles);
 
@@ -22,6 +23,29 @@ const Home = () => {
         setModalProduct(false);
         fetchProducts(); 
     };
+
+    const imagesBanner = [
+        "/image/banner1.jpg",
+        "/image/banner2.jpg",
+        "/image/banner3.jpg",
+        "/image/banner4.jpg",
+        "/image/banner5.png",
+        "/image/banner6.jpg",
+        "/image/banner7.jpg"
+      ];
+    
+    const [currentBanner, setCurrentBanner] = useState(0);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+        setCurrentBanner((prev) => {
+            const next = (prev + 1) % imagesBanner.length;
+            return next;
+        });
+        }, 10000);
+    
+        return () => clearInterval(interval);
+    }, []);
 
     const handleClick = () => {
         navigate("productdetail");
@@ -50,8 +74,45 @@ const Home = () => {
             <Header />
             <div className={cx('main')}>
                 <div className={cx('wrapper')}>
-                    <div className={cx('side-bar')}></div>
+                    <div className={cx('side-bar')}>
+                        <h2>Danh mục</h2>
+                        <div className={cx('list')}>
+                            <a>
+                                <img src='https://cdnv2.tgdd.vn/mwg-static/common/Category/3f/68/3f68e22880dd800e9e34d55245048a0f.png' alt='samsung'/>
+                            </a>
+                            <a>
+                                <img src='https://cdnv2.tgdd.vn/mwg-static/common/Category/57/03/5703d996359650c57421b72f3f7ff5cd.png' alt='iphone'/>
+                            </a>
+                            <a>
+                                <img src='https://cdnv2.tgdd.vn/mwg-static/common/Category/2c/ea/2cea467041fb9effb3a6d3dcc88f38f8.png' alt='oppo'/>
+                            </a>
+                            <a>
+                                <img src='https://cdnv2.tgdd.vn/mwg-static/common/Category/e9/df/e9df3ae9fb60a1460e9030975d0e024a.png' alt='xiaomi'/>
+                            </a>
+                            <a>
+                                <img src='https://cdnv2.tgdd.vn/mwg-static/common/Category/54/2a/542a235b0e366a11fd855108dd9c499c.png' alt='realme'/>
+                            </a>
+                            <a>
+                                <img src='https://cdnv2.tgdd.vn/mwg-static/common/Category/78/38/783870ef310908b123c50cb43b8f6f92.png' alt='vivo'/>
+                            </a>
+                            <a>
+                                <img src='https://cdnv2.tgdd.vn/mwg-static/common/Category/00/e8/00e815b2c60b6f494ec1e19560976fcc.png' alt='honor'/>
+                            </a>
+                        </div>
+                    </div>
                     <div className={cx('container')}>
+                        <div className={cx('container-content')}>
+                            <div className={cx('banner')}>
+                                {imagesBanner.map((img, idx) => (
+                                    <img
+                                        key={idx}
+                                        src={img}
+                                        alt={`Banner ${idx + 1}`}
+                                        className={cx({ active: idx === currentBanner })}
+                                    />
+                                ))}
+                            </div>
+                        </div>
                         <div className={cx('container-content')}>
                             <div className={cx('container-header')}>
                                 <div className={cx('header-title')}>Gợi ý cho bạn</div>
@@ -59,20 +120,6 @@ const Home = () => {
                             </div>
                             <div className={cx('content')}>
                                 <div className={cx('list-product')}>
-                                    {/* <div onClick={handleClick} className={cx('product')}>
-                                        <img src='https://cdn.tgdd.vn/Products/Images/42/325799/redmi-13-yellow-thumb-600x600.jpg' alt='Ảnh sản phẩm'/>
-                                        <div className={cx('product-name')}>
-                                            Xiaomi Redmi 13 8GB/128GBXiaomi
-                                        </div>
-                                        <div className={cx('info')}>
-                                            <span className={cx('ram-rom')}>8GB - 512GB</span>
-                                            <span className={cx('inch')}>6.3''</span>
-                                        </div>
-                                        <div className={cx('price')}>
-                                            <span className={cx('origin-price')}>13.000.000đ</span>
-                                            <span className={cx('discount')}>10.000.000đ</span>
-                                        </div>
-                                    </div> */}
                                     {products.map((product) => {
                                         const originalPrice = parseFloat(product.price);
                                         const discountedPrice = originalPrice * (1 - product.discount / 100);
@@ -107,6 +154,7 @@ const Home = () => {
                     </div>
                 </div>
             </div>
+            <Footer />
             <Product modalProduct={modalProduct} onClose={closeModalProduct}/>
         </>
     )

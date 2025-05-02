@@ -73,14 +73,14 @@ const Register = (props) => {
         // let check;
         
         // if (check === true) {
-            let serverData = await registerNewUser(name, username, gender, email, phone, provinceName, districtName, wardName ,street, password, confirmPassword);
+            let serverData = await registerNewUser(name, gender, email, phone, provinceName, districtName, wardName ,street, password, confirmPassword);
             if (+serverData.EC === 0) {
                 toast.success(serverData.EM);
                 props.onClose();
             } else {
                 toast.error(serverData.EM);
             }
-        console.log(name, username, gender, email, phone, provinceName, districtName, wardName ,street, password, confirmPassword);
+        console.log(name, gender, email, phone, provinceName, districtName, wardName ,street, password, confirmPassword);
     }
     
     const handleOverlayClick = (e) => {

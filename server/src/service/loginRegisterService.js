@@ -3,21 +3,22 @@ import db from '../models/index'
 import bcrypt from 'bcryptjs';
 import { Op } from 'sequelize';
 import nodemailer from 'nodemailer';
+import { v4 as uuidv4 } from 'uuid'
 // import { getGroupWithRoles } from './JWTService'
 // import { createJWT } from '../middleware/JWTAction'
 
 const salt = bcrypt.genSaltSync(10);
 
-// const transporter = nodemailer.createTransport({
-//     host: 'smtp.gmail.com',
-//     port: 465,
-//     secure: true,
-//     auth: {
-//       user: process.env.MAIL_USER,
-//       pass: process.env.MAIL_PASSWORD,
-//     },
-// });
-  
+const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASSWORD,
+    },
+});
+
 
 const hashUserPassword = (userPassword) => {
     let hashPassword = bcrypt.hashSync(userPassword, salt);
@@ -35,7 +36,22 @@ const checkEmailExist = async (userEmail) => {
     return false;
 }
 
+// const mailOptions = {
+//     from: "your_email@gmail.com",
+//     to: "recipient@example.com",
+//     subject: "Xác nhận đăng ký",
+//     text: "Cảm ơn bạn đã đăng ký!",
+//     // html: "<h1>Chào mừng!</h1>" // nếu bạn muốn gửi HTML
+//   };
 
+// Gửi email
+//   transporter.sendMail(mailOptions, function (error, info) {
+//     if (error) {
+//       console.log("Lỗi gửi email: ", error);
+//     } else {
+//       console.log("Email đã được gửi: " + info.response);
+//     }
+//   });
 
 // async function main() {
 //     const info = transporter.sendMail({
@@ -45,7 +61,7 @@ const checkEmailExist = async (userEmail) => {
 //       text: "Hello world?",
 //       html: "<b>Hello world?</b>",
 //     });
-  
+
 //     console.log("Message sent: %s", info.messageId);
 // }
 
@@ -61,6 +77,9 @@ const checkPhoneExist = async (userPhone) => {
 }
 
 const registerNewUser = async (rawUserData) => {
+
+    const codeId = uuidv4();
+
     try {
         let isEmailExist = await checkEmailExist(rawUserData.email);
         if (isEmailExist === true) {
@@ -77,16 +96,14 @@ const registerNewUser = async (rawUserData) => {
             }
         }
     
-        let checkPassword = (password, confirmPassword) => {
-            return password === confirmPassword
-        }
-        console.log(checkPassword)
+        // let checkPassword = (password, confirmPassword) => {
+        //     return password === confirmPassword
+        // }
+        // console.log(checkPassword)
         let hashPassword = hashUserPassword(rawUserData.password);
-    
-        // create new user
+        
         await db.User.create({
             email: rawUserData.email,
-            username: rawUserData.username,
             password: hashPassword,
             phone: rawUserData.phone,
             name: rawUserData.name,
@@ -96,6 +113,20 @@ const registerNewUser = async (rawUserData) => {
             ward: rawUserData.wardName,
             street: rawUserData.street
         })
+    
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: rawUserData.email,
+            subject: "Chào mừng bạn đến với hệ thống!",
+            html: `<h2>Xin chào ${rawUserData.name},</h2><p>Cảm ơn bạn đã đăng ký tài khoản!</p>
+            Code: ${codeId}`,
+        };
+        
+        try {
+            await transporter.sendMail(mailOptions);
+        } catch (error) {
+            console.error("Lỗi gửi email:", error);
+        }
 
         return {
             EM: 'Đăng ký thành công!',

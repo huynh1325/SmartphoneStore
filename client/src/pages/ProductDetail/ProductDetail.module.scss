@@ -1,0 +1,57 @@
+.main {
+    background-color: #f5f5fa;
+    display: block;
+}
+
+.main::after {
+    content: '';
+    display: block;
+    position: absolute;
+    border-top: 1px solid var(--border-color);
+    width: 100%;
+    top: 60px;
+}
+
+.wrapper {
+    display: flex;
+    width: 1440px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    padding-left: 24px;
+    margin-left: auto;
+    margin-right: auto;
+    flex-direction: column;
+    background-color: #f5f5fa;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 57% 40%;
+    gap: 12px;
+    margin-top: 12px;
+    grid-auto-flow: dense;
+    align-items: start;
+}
+
+.container-content {
+    padding: 12px 16px;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 100%;
+
+    .image {
+        
+        img {
+            max-width: 100%;
+        }
+    }
+}
+.container-content:nth-child(1) {
+    grid-column: 1 / 2;
+  }
+  
+
+.container-content:nth-child(n+3) {
+    grid-column: 1 / 2; /* Chỉ chiếm cột bên trái */
+}

@@ -14,7 +14,7 @@
 .wrapper {
     display: flex;
     position: relative;
-    width: 1000px;
+    width: 500px;
     background: rgb(248, 248, 248);
     border-radius: 20px;
     padding: 30px;
@@ -39,4 +39,10 @@
 
 .btn-close img {
     width: 42px;
+}
+
+.add-product-btn {
+    cursor: pointer;
+    margin-top: 8px;
+    padding: 4px;
 }

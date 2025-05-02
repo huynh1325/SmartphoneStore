@@ -38,6 +38,12 @@ const Product = (props) => {
         //     toast.error("Vui lòng điền đầy đủ thông tin sản phẩm!");
         //     return;
         // }
+        
+        if (!name || !os || !ram || !rom || !price || !discount || !inch) {
+            toast.error("Vui lòng điền đầy đủ thông tin sản phẩm!");
+            return;
+        }
+        
     
         const formData = new FormData();
         formData.append("name", name);
@@ -116,13 +122,15 @@ const Product = (props) => {
                                 onChange={(e) => setDescription(e.target.value)}
                             />
                         </div>
-                        <div className={cx('ram-rom')}>
+                        <div className={cx('ram')}>
                             <span>Ram: </span>
                             <input
                                 type='text'
                                 value={ram}
                                 onChange={(e) => setRam(e.target.value)}
                             />
+                        </div>
+                        <div className={cx('rom')}>
                             <span>Rom: </span>
                             <input 
                                 type='text'
@@ -161,6 +169,8 @@ const Product = (props) => {
                                 value={price}
                                 onChange={(e) => setPrice(e.target.value)}
                             />
+                        </div>
+                        <div className={cx('discount')}>
                             <span>Phần trăm giảm: </span>
                             <input
                                 type='text'

@@ -9,14 +9,14 @@
     position: absolute;
     border-top: 1px solid var(--border-color);
     width: 100%;
-    top: 96px;
+    top: 60px;
 }
 
 .wrapper {
     display: flex;
     width: 1440px;
-    height: 500px;
     padding-top: 16px;
+    padding-bottom: 16px;
     padding-left: 24px;
     margin-left: auto;
     margin-right: auto;
@@ -26,10 +26,11 @@
 
 .side-bar {
     width: 230px;
-    max-height: 300px;
     position: sticky;
     overflow-y: scroll;
     scrollbar-width: none;
+    padding: 12px 0;
+    height: 334px;
     top: 16px;
     background-color: #fff;
     display: flex;
@@ -39,6 +40,35 @@
     font-size: 1.4rem;
     line-height: 20px;
     border-radius: 6px;
+
+    h2 {
+        font-size: 1.6rem;
+        padding: 0px 20px 12px 20px;
+    }
+
+    .list {
+        display: flex;
+        flex-direction: column;
+
+        a {
+            height: 40px;
+            line-height: 40px;
+            margin: 0 12px;
+            padding: 8px 0;
+            align-items: center;
+            border-radius: 5px;
+
+            img {
+                padding-left: 24px;
+                height: 25px;
+            }
+        }
+
+        a:hover {
+            cursor: pointer;
+            background-color: var(--border-color);
+        }
+    }
 }
 
 .container {
@@ -56,6 +86,27 @@
     background-color: #fff;
     border-radius: 8px;
     overflow: hidden;
+}
+
+.banner {
+    position: relative;
+    overflow: hidden;
+    height: 345px;
+}
+
+.banner img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 1s ease-in-out;
+    opacity: 0;
+    z-index: 0;
+  }
+  
+.banner img.active {
+    opacity: 1;
+    z-index: 1;
 }
 
 .container-header {

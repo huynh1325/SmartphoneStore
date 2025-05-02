@@ -61,7 +61,7 @@ const Header = () => {
                     </div>
                 </button>
             </div>
-            <div className={cx('header-list')}>
+            {/* <div className={cx('header-list')}>
                 <ul>
                     <li>Samsung</li>
                     <li>Iphone</li>
@@ -69,7 +69,7 @@ const Header = () => {
                     <li>Oppo</li>
                     <li>Vivo</li>
                 </ul>
-            </div>
+            </div> */}
             <Login modalLogin={modalLogin} onClose={closeModalLogin}/>
             <Register modalRegister={modalRegister} onClose={closeModalRegister} openLogin={openModalLogin}/>
         </div>
