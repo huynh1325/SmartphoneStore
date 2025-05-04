@@ -157,24 +157,3 @@
 .down-icon {
     padding-left: 10px;
 }
-
-
-.header-list {
-    margin-bottom: 12px;
-}
-
-.header-list ul {
-    display: flex;
-
-    li {
-        list-style: none;
-    }
-
-    li:first-child {
-        margin-left: 300px;
-    }
-    
-    li + li {
-        margin-left: 30px;
-    }
-}

@@ -2,26 +2,26 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Product', {
-      id: {
+    await queryInterface.createTable('SanPham', {
+      maSanPham: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      name: {
+      tenSanPham: {
         type: Sequelize.STRING
       },
-      price: {
+      gia: {
         type: Sequelize.DECIMAL(10, 2)
       },
-      description: {
+      moTa: {
         type: Sequelize.STRING
       },
-      image: {
+      anh: {
         type: Sequelize.STRING
       },
-      os: {
+      heDieuHanh: {
         type: Sequelize.STRING
       },
       cpu: {
@@ -30,19 +30,19 @@ module.exports = {
       inch: {
         type: Sequelize.STRING
       },
-      discount: {
+      phanTramGiam: {
         type: Sequelize.INTEGER
       },
-      brand: {
+      nhanHieu: {
         type: Sequelize.STRING
       },
-      countryOfOrigin: {
+      nuocSanXuat: {
         type: Sequelize.STRING
       },
       ram: {
         type: Sequelize.STRING
       },
-      rom: {
+      dungLuongLuuTru: {
         type: Sequelize.STRING
       },
       createdAt: {
@@ -56,6 +56,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Product');
+    await queryInterface.dropTable('SanPham');
   }
 };

@@ -3,7 +3,7 @@ import db from '../models/index'
 
 const getAllProducts = async (req, res) => {
     try {
-        const products = await db.Product.findAll();
+        const products = await db.SanPham.findAll();
         return res.status(200).json({
             EM: "Lấy danh sách sản phẩm thành công",
             EC: 0,

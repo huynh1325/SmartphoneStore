@@ -26,7 +26,7 @@ const hashUserPassword = (userPassword) => {
 }
 
 const checkEmailExist = async (userEmail) => {
-    let user = await db.User.findOne({
+    let user = await db.NguoiDung.findOne({
         where: {email: userEmail}
     })
 
@@ -66,7 +66,7 @@ const checkEmailExist = async (userEmail) => {
 // }
 
 const checkPhoneExist = async (userPhone) => {
-    let user = await db.User.findOne({
+    let user = await db.NguoiDung.findOne({
         where: {phone: userPhone}
     })
 
@@ -102,7 +102,7 @@ const registerNewUser = async (rawUserData) => {
         // console.log(checkPassword)
         let hashPassword = hashUserPassword(rawUserData.password);
         
-        await db.User.create({
+        await db.NguoiDung.create({
             email: rawUserData.email,
             password: hashPassword,
             phone: rawUserData.phone,
@@ -147,7 +147,7 @@ const checkPassword = (inputPassword, hashPassword) => {
 
 const handleUserLogin = async (rawData) => {
     try {
-        let user = await db.User.findOne({
+        let user = await db.NguoiDung.findOne({
             where: {
                 [Op.or]: [
                     {email: rawData.valueLogin },
@@ -193,6 +193,15 @@ const handleUserLogin = async (rawData) => {
     }
 }
 
+const handleActive = async (rawData) => {
+    const user = await db.NguoiDung.findOne({
+        id: rawData.id,
+        codeId: rawData.codeId
+    })
+
+    console.log(user)
+}
+
 module.exports = {
-    registerNewUser, handleUserLogin, hashUserPassword, checkEmailExist, checkPhoneExist
+    registerNewUser, handleUserLogin, hashUserPassword, checkEmailExist, checkPhoneExist, handleActive
 }

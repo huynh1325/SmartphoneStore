@@ -3,7 +3,7 @@ import db from '../models/index'
 const newProduct = async (rawData) => {
 
     try {
-        await db.Product.create({
+        await db.SanPham.create({
             name: rawData.name,
             os: rawData.os,
             description: rawData.description,

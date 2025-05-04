@@ -61,15 +61,6 @@ const Header = () => {
                     </div>
                 </button>
             </div>
-            {/* <div className={cx('header-list')}>
-                <ul>
-                    <li>Samsung</li>
-                    <li>Iphone</li>
-                    <li>Xiaomi</li>
-                    <li>Oppo</li>
-                    <li>Vivo</li>
-                </ul>
-            </div> */}
             <Login modalLogin={modalLogin} onClose={closeModalLogin}/>
             <Register modalRegister={modalRegister} onClose={closeModalRegister} openLogin={openModalLogin}/>
         </div>

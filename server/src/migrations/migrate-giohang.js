@@ -2,18 +2,16 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Invoice', {
-      id: {
+    await queryInterface.createTable('GioHang', {
+      maGioHang: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      saleDate: {
-        type: Sequelize.DATE
-      },
-      totalPrice: {
-        type: Sequelize.DECIMAL(10, 2)
+      maNguoiDung: {
+        type: Sequelize.INTEGER,
+        unique: true
       },
       createdAt: {
         allowNull: false,
@@ -26,6 +24,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Invoice');
+    await queryInterface.dropTable('GioHang');
   }
 };

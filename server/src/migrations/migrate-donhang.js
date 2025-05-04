@@ -2,18 +2,27 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('User_Role', {
-      id: {
+    await queryInterface.createTable('DonHang', {
+      maDonHang: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      userId: {
+      maNguoiDung: {
+        type: Sequelize.INTEGER
+      },
+      maKhuyenMai: {
+        type: Sequelize.INTEGER
+      },
+      trangThai: {
         type: Sequelize.STRING
       },
-      roleId: {
-        type: Sequelize.STRING
+      ngayDatHang: {
+        type: Sequelize.DATE
+      },
+      gia: {
+        type: Sequelize.DECIMAL(10, 2)
       },
       createdAt: {
         allowNull: false,
@@ -26,6 +35,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('User_Role');
+    await queryInterface.dropTable('DonHang');
   }
 };

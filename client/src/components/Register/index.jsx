@@ -11,7 +11,6 @@ const Register = (props) => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
-    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [provinces, setProvinces] = useState([]);
@@ -107,12 +106,6 @@ const Register = (props) => {
                                 value={name} onChange={(e) => {setName(e.target.value)}}
                             />
                             <input
-                                placeholder="Username"
-                                type="text"
-                                className={cx('register-input')}
-                                value={username} onChange={(e) => {setUsername(e.target.value)}}
-                            />
-                            <input
                                 className={cx('genderMale')}
                                 type="radio"
                                 name="gender"
@@ -202,7 +195,12 @@ const Register = (props) => {
                             />
                         </div>
                     </div>
-                    <button className={cx('register-btn')} onClick={() => handleRegister()}>Tiếp tục</button>
+                    <button
+                        className={cx('register-btn')}
+                        onClick={() => handleRegister()}
+                    >
+                        Tiếp tục
+                    </button>
                     <span className={cx('login-redirect')}>Bạn đã có tài khoản?
                         <a onClick={switchToLogin}> Đăng nhập </a>
                         ngay!
