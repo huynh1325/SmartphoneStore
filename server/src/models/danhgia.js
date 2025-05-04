@@ -14,6 +14,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   ChiTietDonHang.init({
+    maDanhGia: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      allowNull: false,
+      primaryKey: true,
+    },
     maNguoiDung: DataTypes.INTEGER,
     maSanPham: DataTypes.INTEGER,
     xepHang: DataTypes.INTEGER,

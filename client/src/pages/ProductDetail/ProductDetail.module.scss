@@ -24,6 +24,11 @@
     background-color: #f5f5fa;
 }
 
+.title {
+    font-size: 2rem;
+    font-weight: 600;
+}
+
 .container {
     display: grid;
     grid-template-columns: 57% 40%;
@@ -47,11 +52,123 @@
         }
     }
 }
+
 .container-content:nth-child(1) {
     grid-column: 1 / 2;
-  }
-  
+}
 
 .container-content:nth-child(n+3) {
-    grid-column: 1 / 2; /* Chỉ chiếm cột bên trái */
+    grid-column: 1 / 2;
+}
+
+.banner-discount {
+    width: 100%;
+}
+
+.btn {
+    display: flex;
+    justify-content: space-between;
+
+    .btn-cart {
+        height: 62px;
+        width: 260px;
+        border-radius: 8px;
+        border: none;
+        font-size: 1.8rem;
+        cursor: pointer;
+        background-color: rgb(255, 255, 255);
+        border: 1px solid var(--primary-color);
+        color: var(--primary-color);
+        
+        span {
+            padding-left: 16px;
+        }
+    }
+
+    .btn-cart:hover {
+        background-color: rgba(221, 221, 227, 0.2);
+    }
+    
+    .btn-buy {
+        height: 62px;
+        width: 260px;
+        color: #fff;
+        border: none;
+        font-size: 1.8rem;
+        border-radius: 8px;
+        background-color: var(--primary-color);
+        cursor: pointer;
+    }
+
+    .btn-buy:hover {
+        background-color: rgba(10, 104, 255, 0.9);
+    }
+}
+
+.address {
+    color: var(--primary-color);
+    cursor: pointer;
+    margin: 12px 0;
+
+    .location-icon {
+        margin-right: 6px;
+    }
+}
+
+.price {
+    display: flex;
+    margin-bottom: 12px;
+    
+    .origin-price {
+        text-decoration: line-through;
+        color: #C9C9C9;
+        height: 2rem;
+        width: 100%;
+        font-size: 1.4rem;
+        margin-left: 6px;
+    }
+
+    .discount {
+        color: red;
+        font-size: 2.2rem;
+        font-weight: 600;
+    }
+}
+
+.info {
+    display: flex;
+    height: 50px;
+    font-size: 2rem;
+    padding-left: 12px;
+    background-color: var(--border-color);
+    border-radius: 8px;
+    align-items: center;
+}
+
+.info-row {
+    display: flex;
+    position: relative;
+    font-size: 1.8rem;
+    align-items: center;
+    height: 40px;
+    padding-left: 10px;
+
+    .label {
+        width: 300px;
+    }
+}
+
+.info-row::after {
+    content: '';
+    display: block;
+    position: absolute;
+    border-top: 1px solid var(--border-color);
+    width: 100%;
+    top: 40px;
+    left: 0px;
+}
+
+
+.info-row:last-child::after {
+    content: none;
 }

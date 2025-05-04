@@ -67,7 +67,7 @@ const checkEmailExist = async (userEmail) => {
 
 const checkPhoneExist = async (userPhone) => {
     let user = await db.NguoiDung.findOne({
-        where: {phone: userPhone}
+        where: {soDienThoai: userPhone}
     })
 
     if (user) {
@@ -96,22 +96,15 @@ const registerNewUser = async (rawUserData) => {
             }
         }
     
-        // let checkPassword = (password, confirmPassword) => {
-        //     return password === confirmPassword
-        // }
-        // console.log(checkPassword)
         let hashPassword = hashUserPassword(rawUserData.password);
         
         await db.NguoiDung.create({
             email: rawUserData.email,
-            password: hashPassword,
-            phone: rawUserData.phone,
-            name: rawUserData.name,
-            gender: rawUserData.gender,
-            province: rawUserData.provinceName,
-            district: rawUserData.districtName,
-            ward: rawUserData.wardName,
-            street: rawUserData.street
+            matKhau: hashPassword,
+            soDienThoai: rawUserData.phone,
+            ten: rawUserData.name,
+            gioiTinh: rawUserData.gender,
+            vaiTro: 'KhachHang'
         })
     
         const mailOptions = {

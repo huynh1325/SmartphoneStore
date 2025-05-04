@@ -15,6 +15,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   ChiTietGioHang.init({
+    maChiTietGioHang: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      allowNull: false,
+      primaryKey: true,
+    },
     maGioHang: DataTypes.INTEGER,
     maSanPham: DataTypes.INTEGER,
     soLuong: DataTypes.INTEGER,

@@ -14,14 +14,14 @@
 .wrapper {
     display: flex;
     position: relative;
-    width: 1000px;
+    width: 800px;
     background: rgb(248, 248, 248);
     border-radius: 20px;
 }
 
 
 .register {
-    width: 700px;
+    width: 500px;
     padding: 40px 45px 24px;
     background: rgb(255, 255, 255);
     border-radius: 20px 0px 0px 20px;
@@ -39,21 +39,25 @@
 
 .input {
     position: relative;
+    display: flex;
+    flex-direction: column;
     z-index: 1;
+
+    input {
+        margin-top: 12px;
+    }
 }
 
 .form-group-radio {
     display: flex;
-    margin-bottom: 12px;
+    margin: 12px 0;
     align-items: center;
     font-size: 1.8rem;
 
-    input:first-child {
-        margin-right: 25px;
-    }
-
-    .register-input {
-        width: 50%;
+    input {
+        height: 27px;
+        margin-top: auto;
+        margin-bottom: auto;
     }
 
     .genderMale {
@@ -66,18 +70,6 @@
     }
 }
 
-.form-group {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    margin-bottom: 12px;
-}
-
-.form-group-select {
-    display: flex;
-    gap: 24px;
-    margin-bottom: 12px;
-}
 
 .select-form {
     font-size: 1.8rem;
@@ -94,7 +86,7 @@
     font-size: 1.6rem;
     color: #242424;
     outline: none;
-    width: 48%;
+    width: 100%;
     border-radius: 5px;
     padding: 11px;
     margin: 4px 0;

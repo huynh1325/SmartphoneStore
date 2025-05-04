@@ -15,6 +15,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   GioHang.init({
+    maGioHang: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      allowNull: false,
+      primaryKey: true,
+    },
     maNguoiDung: DataTypes.INTEGER
   }, {
     sequelize,

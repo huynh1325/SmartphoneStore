@@ -14,6 +14,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   KhuyenMai.init({
+    maKhuyenMai: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      allowNull: false,
+      primaryKey: true,
+    },
     tenKhuyenMai: DataTypes.STRING,
     giaTriGiam: DataTypes.INTEGER,
     soLuong: DataTypes.INTEGER,

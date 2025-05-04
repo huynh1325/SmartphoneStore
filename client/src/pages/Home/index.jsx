@@ -121,19 +121,19 @@ const Home = () => {
                             <div className={cx('content')}>
                                 <div className={cx('list-product')}>
                                     {products.map((product) => {
-                                        const originalPrice = parseFloat(product.price);
-                                        const discountedPrice = originalPrice * (1 - product.discount / 100);
+                                        const originalPrice = parseFloat(product.gia);
+                                        const discountedPrice = originalPrice * (1 - product.phanTramGiam / 100);
                                         return (
                                             <div key={product.id} onClick={handleClick} className={cx('product')}>
                                                 <img 
-                                                    src={`http://localhost:8080${product.image}`}
+                                                    src={`http://localhost:8080${product.anh}`}
                                                     alt='Ảnh sản phẩm'
                                                 />
                                                 <div className={cx('product-name')}>
-                                                    {product.name}
+                                                    {product.tenSanPham}
                                                 </div>
                                                 <div className={cx('info')}>
-                                                    <span className={cx('ram-rom')}>{product.ram} - {product.rom}</span>
+                                                    <span className={cx('ram-rom')}>{product.ram} - {product.dungLuongLuuTru}</span>
                                                     <span className={cx('inch')}>{product.inch}"</span>
                                                 </div>
                                                 <div className={cx('price')}>

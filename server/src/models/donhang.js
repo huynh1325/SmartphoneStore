@@ -14,6 +14,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   DonHang.init({
+    maDonHang: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      allowNull: false,
+      primaryKey: true,
+    },
     maNguoiDung: DataTypes.INTEGER,
     maKhuyenMai: DataTypes.INTEGER,
     trangThai: DataTypes.STRING,

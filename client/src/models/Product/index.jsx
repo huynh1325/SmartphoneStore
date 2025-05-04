@@ -10,6 +10,7 @@ const Product = (props) => {
     const [name, setName] = useState('');
     const [os, setOs] = useState('');
     const [description, setDescription] = useState('');
+    const [cpu, setCpu] = useState('');
     const [ram, setRam] = useState('');
     const [rom, setRom] = useState('');
     const [price, setPrice] = useState('');
@@ -120,6 +121,14 @@ const Product = (props) => {
                                 type='text'
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
+                            />
+                        </div>
+                        <div className={cx('cpu')}>
+                            <span>Cpu: </span>
+                            <input
+                                type='text'
+                                value={cpu}
+                                onChange={(e) => setCpu(e.target.value)}
                             />
                         </div>
                         <div className={cx('ram')}>

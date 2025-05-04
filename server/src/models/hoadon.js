@@ -14,6 +14,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   HoaDon.init({
+    maHoaDon: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      allowNull: false,
+      primaryKey: true,
+    },
     maDonHang: DataTypes.INTEGER,
     maNguoiDung: DataTypes.INTEGER,
     hinhThucThanhToan: DataTypes.STRING,

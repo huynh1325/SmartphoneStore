@@ -14,6 +14,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   SanPham.init({
+    maSanPham: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      allowNull: false,
+      primaryKey: true,
+    },
     tenSanPham: DataTypes.STRING,
     gia: DataTypes.DECIMAL(10, 2),
     moTa: DataTypes.STRING,

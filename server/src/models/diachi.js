@@ -13,6 +13,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   DiaChi.init({
+    maDiaChi: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      allowNull: false,
+      primaryKey: true,
+    },
     maNguoiDung: DataTypes.STRING,
     tinhThanh: DataTypes.STRING,
     quanHuyen: DataTypes.STRING,

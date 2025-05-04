@@ -6,7 +6,7 @@
 
 :root {
   --primary-color: rgb(10, 104, 255);
-  --border-color: #dddde3;
+  --border-color: rgb(221, 221, 227);
   --text-color: #808089;
   --white-color: #fff;
   --hover-color: #efefef;

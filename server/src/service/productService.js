@@ -4,17 +4,18 @@ const newProduct = async (rawData) => {
 
     try {
         await db.SanPham.create({
-            name: rawData.name,
-            os: rawData.os,
-            description: rawData.description,
+            tenSanPham: rawData.name,
+            heDieuHanh: rawData.os,
+            moTa: rawData.description,
+            cpu: rawData.cpu,
             ram: rawData.ram,
-            rom: rawData.rom,
-            price: rawData.price,
+            dungLuongLuuTru: rawData.rom,
+            gia: rawData.price,
             inch: rawData.inch,
-            countryOfOrigin: rawData.country,
-            brand: rawData.brand,
-            discount: rawData.discount,
-            image: rawData.image
+            nuocSanXuat: rawData.country,
+            nhanHieu: rawData.brand,
+            phanTramGiam: rawData.discount,
+            anh: rawData.image
         })
 
         return {

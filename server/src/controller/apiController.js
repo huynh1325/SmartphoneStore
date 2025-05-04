@@ -2,7 +2,7 @@ import loginRegisterService from '../service/loginRegisterService'
 
 const handleRegister = async (req, res) => {
     try {
-        if (!req.body.email || !req.body.phone || !req.body.password || !req.body.confirmPassword ) {
+        if (!req.body.email || !req.body.phone || !req.body.password ) {
             return res.status(200).json({
                 EM: 'Missing required parameters',
                 EC: '1',

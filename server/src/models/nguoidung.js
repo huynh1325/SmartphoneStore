@@ -1,6 +1,7 @@
 'use strict';
 const {
-  Model
+  Model,
+  INTEGER
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class NguoiDung extends Model {
@@ -16,6 +17,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   NguoiDung.init({
+    maNguoiDung: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      allowNull: false,
+      primaryKey: true,
+    },
     email: DataTypes.STRING,
     matKhau: DataTypes.STRING,
     ten: DataTypes.STRING,
