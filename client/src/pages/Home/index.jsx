@@ -3,7 +3,6 @@ import styles from './Home.module.scss';
 import Header from '../../components/Header';
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Product from '../../models/Product';
 import Footer from '../../components/Footer';
 
 const cx = classNames.bind(styles);
@@ -12,17 +11,6 @@ const Home = () => {
     const navigate = useNavigate();
     
     const [products, setProducts] = useState([]);
-    
-    const [modalProduct, setModalProduct] = useState(false);
-
-    const openModalProduct = () => {
-        setModalProduct(true);
-    };
-
-    const closeModalProduct = () => {
-        setModalProduct(false);
-        fetchProducts(); 
-    };
 
     const imagesBanner = [
         "/image/banner1.jpg",
@@ -42,7 +30,7 @@ const Home = () => {
             const next = (prev + 1) % imagesBanner.length;
             return next;
         });
-        }, 10000);
+        }, 5000);
     
         return () => clearInterval(interval);
     }, []);
@@ -148,14 +136,12 @@ const Home = () => {
                                         )
                                     })}
                                 </div>
-                                <button onClick={openModalProduct}>Thêm sản phẩm</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <Footer />
-            <Product modalProduct={modalProduct} onClose={closeModalProduct}/>
         </>
     )
 }

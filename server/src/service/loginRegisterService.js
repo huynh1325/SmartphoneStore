@@ -104,7 +104,7 @@ const registerNewUser = async (rawUserData) => {
             soDienThoai: rawUserData.phone,
             ten: rawUserData.name,
             gioiTinh: rawUserData.gender,
-            vaiTro: 'KhachHang'
+            vaiTro: 'User'
         })
     
         const mailOptions = {

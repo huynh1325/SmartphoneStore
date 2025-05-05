@@ -8,8 +8,10 @@ import './index.css'
 import ProductDetail from './pages/ProductDetail/index.jsx';
 import Home from './pages/Home'
 import App from './App.jsx'
-import Admin from './admin/index.jsx';
 import UserAdmin from './admin/pages/UserAdmin/index.jsx';
+import LayoutAdmin from './admin/layout.admin.jsx';
+import DashboardAdmin from './admin/pages/DashboardAdmin/index.jsx';
+import ProductAdmin from './admin/pages/ProductAdmin/index.jsx';
 
 const router = createBrowserRouter([
   {
@@ -26,12 +28,22 @@ const router = createBrowserRouter([
       },
       {
         path: "admin",
-        element: <Admin />
+        element: <LayoutAdmin />,
+        children: [
+          {
+            path: "dashboard",
+            element: <DashboardAdmin />
+          },
+          {
+            path: "user",
+            element: <UserAdmin />
+          },
+          {
+            path: "product",
+            element: <ProductAdmin />
+          },
+        ]
       },
-      {
-        path: "admin/user",
-        element: <UserAdmin />
-      }
     ]
   },
 ]);

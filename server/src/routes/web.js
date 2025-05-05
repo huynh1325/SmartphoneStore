@@ -36,7 +36,7 @@ const initWebRoutes = (app) => {
     
     // router.post('/upload-file', upload.single('image-product'), productController.handleUploadFile);
     router.post("/register", apiController.handleRegister);
-    router.post("/addproduct", upload.single('image-product'), productController.handleAddProduct);
+    router.post("/product", upload.single('anh'), productController.handleAddProduct);
     router.get("/products", productController.getAllProducts);
     
     return app.use("/api/v1/", router);

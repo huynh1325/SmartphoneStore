@@ -2,19 +2,21 @@ import db from '../models/index'
 
 const newProduct = async (rawData) => {
 
+    console.log('req.body:', rawData);
+
     try {
         await db.SanPham.create({
-            tenSanPham: rawData.name,
-            heDieuHanh: rawData.os,
-            moTa: rawData.description,
+            tenSanPham: rawData.tenSanPham,
+            heDieuHanh: rawData.heDieuHanh,
+            moTa: 'none',
             cpu: rawData.cpu,
             ram: rawData.ram,
-            dungLuongLuuTru: rawData.rom,
-            gia: rawData.price,
+            dungLuongLuuTru: rawData.dungLuongLuuTru,
+            gia: rawData.gia,
             inch: rawData.inch,
-            nuocSanXuat: rawData.country,
-            nhanHieu: rawData.brand,
-            phanTramGiam: rawData.discount,
+            nuocSanXuat: rawData.nuocSanXuat,
+            nhanHieu: rawData.nhanHieu,
+            phanTramGiam: rawData.phanTramGiam,
             anh: rawData.image
         })
 

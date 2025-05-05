@@ -19,7 +19,7 @@ const getAllProducts = async (req, res) => {
     }
 }
 const handleAddProduct = async (req, res) => {
-
+    
     if (!req.file) {
         return res.status(400).json({ EC: 1, EM: "Chưa tải ảnh lên" });
     }

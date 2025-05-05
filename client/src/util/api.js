@@ -10,9 +10,9 @@ const fetchAllProduct = () => {
     return axios.get('/api/v1/getproduct')
 }
 
-const addProduct = (tenSanPham, heDieuHanh, moTa, ram, dungLuongLuuTru, inch, gia, nuocSanXuat, nhanHieu, phanTramGiam, anh) => {
-    return axios.post('/api/v1/addproduct', {
-        tenSanPham, heDieuHanh, moTa, ram, dungLuongLuuTru, inch, gia, nuocSanXuat, nhanHieu, phanTramGiam, anh
+const addProduct = (tenSanPham, heDieuHanh, ram, dungLuongLuuTru, inch, gia, nuocSanXuat, nhanHieu, phanTramGiam, anh) => {
+    return axios.post('/api/v1/product', {
+        tenSanPham, heDieuHanh, ram, dungLuongLuuTru, inch, gia, nuocSanXuat, nhanHieu, phanTramGiam, anh
     })
 }
 
