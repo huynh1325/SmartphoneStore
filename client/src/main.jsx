@@ -8,6 +8,8 @@ import './index.css'
 import ProductDetail from './pages/ProductDetail/index.jsx';
 import Home from './pages/Home'
 import App from './App.jsx'
+import Admin from './admin/index.jsx';
+import UserAdmin from './admin/pages/UserAdmin/index.jsx';
 
 const router = createBrowserRouter([
   {
@@ -21,6 +23,14 @@ const router = createBrowserRouter([
       {
         path: "productdetail",
         element: <ProductDetail />
+      },
+      {
+        path: "admin",
+        element: <Admin />
+      },
+      {
+        path: "admin/user",
+        element: <UserAdmin />
       }
     ]
   },

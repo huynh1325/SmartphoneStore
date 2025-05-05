@@ -24,6 +24,7 @@ const Login = (props) => {
                         <input placeholder="Nhập email" type="text" className={cx('login-input')} />
                         <input placeholder="Nhập mật khẩu" type="password" className={cx('login-input')} />
                     </div>
+                    <span>Quên mật khẩu</span>
                     <button className={cx('login-btn')}>Tiếp tục</button>
                     <span>Bạn chưa có tài khoản? <a>Đăng ký</a> ngay!</span>
                 </div>
