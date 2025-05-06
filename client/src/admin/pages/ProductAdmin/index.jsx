@@ -28,7 +28,7 @@ const ProductAdmin = () => {
         fetchProducts();
     }, [fetchProducts]);
 
-    const handleAddProduct = async () => {
+    const handleCreateProduct = async () => {
       try {
           const values = await form.validateFields();
   
@@ -56,10 +56,10 @@ const ProductAdmin = () => {
           const data = await res.json();
   
           if (data.EC === 0) {
-              message.success("Thêm sản phẩm thành công!");
-              setIsModalVisible(false);
-              form.resetFields();
-              fetchProducts();
+            message.success("Thêm sản phẩm thành công!");
+            setIsModalVisible(false);
+            form.resetFields();
+            fetchProducts();
           } else {
               message.error(data.EM || "Có lỗi xảy ra!");
           }
@@ -126,12 +126,11 @@ const ProductAdmin = () => {
           uid: '-1',
           name: product.anh,
           status: 'done',
-          url: `http://localhost:8080/images/${product.anh}`, // hoặc URL tùy theo server bạn lưu ảnh
+          url: `http://localhost:8080${product.anh}`,
         },
       ]
     : [];
 
-  // Set lại toàn bộ form value, bao gồm fileList cho ảnh
   form.setFieldsValue({
     ...product,
     anh: fileList,
@@ -158,6 +157,56 @@ const ProductAdmin = () => {
       });
   };
 
+  const handleUpdateProduct = async () => {
+    try {
+      const values = await form.validateFields();
+  
+      const formData = new FormData();
+      formData.append("tenSanPham", values.tenSanPham);
+      formData.append("heDieuHanh", values.heDieuHanh);
+      formData.append("cpu", values.cpu);
+      formData.append("ram", values.ram);
+      formData.append("dungLuongLuuTru", values.dungLuongLuuTru);
+      formData.append("inch", values.inch);
+      formData.append("gia", values.gia);
+      formData.append("nuocSanXuat", values.nuocSanXuat);
+      formData.append("nhanHieu", values.nhanHieu);
+      formData.append("phanTramGiam", values.phanTramGiam);
+  
+      if (values.anh && values.anh.length > 0) {
+        const file = values.anh[0];
+        if (file.originFileObj) {
+          formData.append("anh", file.originFileObj);
+        } else {
+          formData.append("anh", editingProduct.anh);
+        }
+      }
+
+  
+      const res = await fetch(`http://localhost:8080/api/v1/product/${editingProduct.maSanPham}`, {
+        method: "PUT",
+        body: formData,
+      });
+  
+
+      const data = await res.json();
+  
+      if (data.EC === 0) {
+        message.success("Cập nhật sản phẩm thành công!");
+        setIsModalVisible(false);
+        setIsEdit(false);
+        form.resetFields();
+        fetchProducts();
+      } else {
+        message.error(data.EM || "Cập nhật thất bại!");
+      }
+    } catch (error) {
+      console.error("Lỗi cập nhật:", error);
+      message.error("Cập nhật thất bại!");
+    }
+  };
+  
+
   return (
     <div>
       <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between' }}>
@@ -170,7 +219,7 @@ const ProductAdmin = () => {
       <Modal
         title={isEdit ? "Sửa sản phẩm" : "Thêm sản phẩm"}
         visible={isModalVisible}
-        onOk={isEdit ? handleOk : handleAddProduct}
+        onOk={isEdit ? handleUpdateProduct : handleCreateProduct}
         onCancel={handleCancel}
         okText={isEdit ? "Cập nhật" : "Thêm"}
         cancelText="Hủy"
@@ -237,7 +286,7 @@ const ProductAdmin = () => {
             rules={[{ required: true, message: 'Vui lòng tải lên ảnh sản phẩm!' }]} >
             <Upload
               listType="picture"
-              beforeUpload={() => false} // Không upload tự động
+              beforeUpload={() => false}
               maxCount={1}
             >
               <Button icon={<UploadOutlined />}>Tải ảnh lên</Button>

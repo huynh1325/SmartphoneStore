@@ -10,13 +10,19 @@ const fetchAllProduct = () => {
     return axios.get('/api/v1/getproduct')
 }
 
-const addProduct = (tenSanPham, heDieuHanh, ram, dungLuongLuuTru, inch, gia, nuocSanXuat, nhanHieu, phanTramGiam, anh) => {
+const createProduct = (tenSanPham, heDieuHanh, ram, dungLuongLuuTru, inch, gia, nuocSanXuat, nhanHieu, phanTramGiam, anh) => {
     return axios.post('/api/v1/product', {
+        tenSanPham, heDieuHanh, ram, dungLuongLuuTru, inch, gia, nuocSanXuat, nhanHieu, phanTramGiam, anh
+    })
+}
+
+const updateProduct = (maSanPham ,tenSanPham, heDieuHanh, ram, dungLuongLuuTru, inch, gia, nuocSanXuat, nhanHieu, phanTramGiam, anh) => {
+    return axios.put(`/api/v1/product/${maSanPham}`, {
         tenSanPham, heDieuHanh, ram, dungLuongLuuTru, inch, gia, nuocSanXuat, nhanHieu, phanTramGiam, anh
     })
 }
 
 
 export {
-    registerNewUser, addProduct, fetchAllProduct
+    registerNewUser, createProduct, fetchAllProduct, updateProduct
 }

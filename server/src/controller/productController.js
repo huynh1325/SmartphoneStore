@@ -18,7 +18,7 @@ const getAllProducts = async (req, res) => {
         })
     }
 }
-const handleAddProduct = async (req, res) => {
+const handleCreateProduct = async (req, res) => {
     
     if (!req.file) {
         return res.status(400).json({ EC: 1, EM: "Chưa tải ảnh lên" });
@@ -42,7 +42,6 @@ const handleAddProduct = async (req, res) => {
 
         let data = await productService.newProduct(productData)
 
-        console.log(productData)
         
         return res.status(200).json({
             EM: data.EM,
@@ -59,7 +58,23 @@ const handleAddProduct = async (req, res) => {
     }
 }
 
+const handleUpdateProduct = async (req, res) => {
+
+    let maSanPham = req.params.maSanPham;
+    
+    let productData = {
+        ...req.body,
+        maSanPham
+    }
+    
+    let product = await productService.updateProduct(productData);
+    let newProduct = {};
+    newProduct = product;
+    return newProduct;
+    
+}
+
 
 module.exports = {
-    handleAddProduct, getAllProducts
+    handleCreateProduct, getAllProducts, handleUpdateProduct
 }

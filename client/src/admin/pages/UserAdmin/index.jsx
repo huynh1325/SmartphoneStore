@@ -3,11 +3,10 @@ import { Table, Button, Space, Modal, Form, Input, Select } from 'antd';
 
 const UserAdmin = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isEdit, setIsEdit] = useState(false); // Kiểm tra là thêm hay sửa
-  const [editingUser, setEditingUser] = useState(null); // Dữ liệu người dùng đang sửa
+  const [isEdit, setIsEdit] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
   const [form] = Form.useForm();
 
-  // Dữ liệu mẫu
   const dataSource = [
     {
       key: '1',
@@ -27,7 +26,6 @@ const UserAdmin = () => {
     },
   ];
 
-  // Cấu hình các cột của bảng
   const columns = [
     {
       title: 'Tên',
@@ -66,27 +64,23 @@ const UserAdmin = () => {
     },
   ];
 
-  // Mở Modal
   const showModal = () => {
     setIsModalVisible(true);
   };
 
-  // Đóng Modal
   const handleCancel = () => {
     setIsModalVisible(false);
     setIsEdit(false);
     form.resetFields();
   };
 
-  // Mở modal sửa người dùng
   const editUser = (user) => {
-    setIsEdit(true); // Đánh dấu là sửa
-    setEditingUser(user); // Lưu thông tin người dùng đang sửa
-    form.setFieldsValue(user); // Điền sẵn dữ liệu vào Form
+    setIsEdit(true);
+    setEditingUser(user);
+    form.setFieldsValue(user);
     setIsModalVisible(true);
   };
 
-  // Xử lý khi thêm hoặc sửa người dùng
   const handleOk = () => {
     form
       .validateFields()
@@ -113,7 +107,6 @@ const UserAdmin = () => {
 
       <Table dataSource={dataSource} columns={columns} />
 
-      {/* Modal Thêm hoặc Sửa người dùng */}
       <Modal
         title={isEdit ? "Sửa người dùng" : "Thêm người dùng"}
         visible={isModalVisible}
