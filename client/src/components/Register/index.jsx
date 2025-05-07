@@ -1,6 +1,6 @@
 import styles from './Register.module.scss';
 import classNames from 'classnames/bind';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { registerNewUser } from '../../util/api';
 import { toast } from "react-toastify";
 

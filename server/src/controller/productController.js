@@ -3,7 +3,9 @@ import db from '../models/index'
 
 const getAllProducts = async (req, res) => {
     try {
-        const products = await db.SanPham.findAll();
+        let products = await db.SanPham.findAll({
+            order: [['maSanPham', 'DESC']]
+        });
         return res.status(200).json({
             EM: "Lấy danh sách sản phẩm thành công",
             EC: 0,
@@ -60,21 +62,41 @@ const handleCreateProduct = async (req, res) => {
 
 const handleUpdateProduct = async (req, res) => {
 
-    let maSanPham = req.params.maSanPham;
+    const maSanPham = req.params.maSanPham;
+    const imageFile = req.file;
     
     let productData = {
         ...req.body,
         maSanPham
     }
-    
-    let product = await productService.updateProduct(productData);
-    let newProduct = {};
-    newProduct = product;
-    return newProduct;
+
+    if (imageFile) {
+        productData.image = `/image/${imageFile.filename}`;
+    }
+
+    let data = await productService.updateProduct(productData);
+    return res.status(200).json({
+        EM: data.EM,
+        EC: data.EC,
+        DT: data
+    })
     
 }
 
+const handleDeleteProduct = async (req, res) => {
+
+    const maSanPham = req.params.maSanPham;
+    
+    const data = await productService.deleteProduct(maSanPham);
+    
+    return res.status(200).json({
+        EM: data.EM,
+        EC: data.EC,
+        DT: data.DT
+    });
+    
+}
 
 module.exports = {
-    handleCreateProduct, getAllProducts, handleUpdateProduct
+    handleCreateProduct, getAllProducts, handleUpdateProduct, handleDeleteProduct
 }

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Table, Button, Space, Modal, Form, Input, Upload, InputNumber, message, Row, Col } from 'antd';
+import { toast } from "react-toastify";
 import { UploadOutlined } from '@ant-design/icons';
 import { useCallback, useEffect } from 'react';
 
@@ -9,6 +10,8 @@ const ProductAdmin = () => {
     const [editingProduct, setEditingProduct] = useState(null);
     const [form] = Form.useForm();
     const [products, setProducts] = useState([]);
+    const [deletingProduct, setDeletingProduct] = useState(null);
+    const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
     const fetchProducts = useCallback(async () => {
         try {
@@ -27,6 +30,33 @@ const ProductAdmin = () => {
     useEffect(() => {
         fetchProducts();
     }, [fetchProducts]);
+
+    const confirmDelete = (product) => {
+      setDeletingProduct(product);
+      setIsDeleteModalVisible(true);
+    };
+
+    const handleDeleteProduct = async () => {
+      try {
+        const res = await fetch(`http://localhost:8080/api/v1/product/${deletingProduct.maSanPham}`, {
+          method: "DELETE",
+        });
+        const data = await res.json();
+    
+        if (data.EC === 0) {
+          toast.success("Xóa sản phẩm thành công!");
+          fetchProducts();
+        } else {
+          toast.error(data.EM || "Xóa thất bại!");
+        }
+      } catch (err) {
+        console.error("Lỗi xóa sản phẩm:", err);
+        toast.error("Lỗi khi xóa sản phẩm!");
+      } finally {
+        setIsDeleteModalVisible(false);
+        setDeletingProduct(null);
+      }
+    };
 
     const handleCreateProduct = async () => {
       try {
@@ -56,16 +86,16 @@ const ProductAdmin = () => {
           const data = await res.json();
   
           if (data.EC === 0) {
-            message.success("Thêm sản phẩm thành công!");
+            toast.success("Thêm sản phẩm thành công!");
             setIsModalVisible(false);
             form.resetFields();
             fetchProducts();
           } else {
-              message.error(data.EM || "Có lỗi xảy ra!");
+            toast.error(data.EM || "Có lỗi xảy ra!");
           }
       } catch (err) {
           console.error("Lỗi thêm sản phẩm:", err);
-          message.error("Lỗi thêm sản phẩm!");
+          toast.error("Lỗi thêm sản phẩm!");
       }
   };
 
@@ -101,7 +131,7 @@ const ProductAdmin = () => {
       render: (_, record) => (
         <Space>
           <Button type="link" onClick={() => editProduct(record)}>Sửa</Button>
-          <Button type="link" danger>Xóa</Button>
+          <Button type="link" danger onClick={() => confirmDelete(record)}>Xóa</Button>
         </Space>
       ),
     },
@@ -139,24 +169,6 @@ const ProductAdmin = () => {
   setIsModalVisible(true);
   };
 
-  const handleOk = () => {
-    form
-      .validateFields()
-      .then((values) => {
-        if (isEdit) {
-          console.log('Sửa sản phẩm: ', values);
-        } else {
-          console.log('Thêm sản phẩm: ', values);
-        }
-        form.resetFields();
-        setIsModalVisible(false);
-        message.success('Sản phẩm đã được ' + (isEdit ? 'cập nhật' : 'thêm') + ' thành công!');
-      })
-      .catch((info) => {
-        console.log('Validate failed:', info);
-      });
-  };
-
   const handleUpdateProduct = async () => {
     try {
       const values = await form.validateFields();
@@ -172,16 +184,10 @@ const ProductAdmin = () => {
       formData.append("nuocSanXuat", values.nuocSanXuat);
       formData.append("nhanHieu", values.nhanHieu);
       formData.append("phanTramGiam", values.phanTramGiam);
-  
-      if (values.anh && values.anh.length > 0) {
-        const file = values.anh[0];
-        if (file.originFileObj) {
-          formData.append("anh", file.originFileObj);
-        } else {
-          formData.append("anh", editingProduct.anh);
-        }
-      }
 
+      if (values.anh && values.anh.length > 0 && values.anh[0].originFileObj) {
+        formData.append("anh", values.anh[0].originFileObj);
+      }
   
       const res = await fetch(`http://localhost:8080/api/v1/product/${editingProduct.maSanPham}`, {
         method: "PUT",
@@ -190,19 +196,21 @@ const ProductAdmin = () => {
   
 
       const data = await res.json();
+
+      console.log(data)
   
       if (data.EC === 0) {
-        message.success("Cập nhật sản phẩm thành công!");
+        toast.success(data.EM);
         setIsModalVisible(false);
         setIsEdit(false);
         form.resetFields();
         fetchProducts();
       } else {
-        message.error(data.EM || "Cập nhật thất bại!");
+        toast.error(data.EM || "Cập nhật thất bại!");
       }
     } catch (error) {
       console.error("Lỗi cập nhật:", error);
-      message.error("Cập nhật thất bại!");
+      toast.error("Cập nhật thất bại!");
     }
   };
   
@@ -214,15 +222,30 @@ const ProductAdmin = () => {
         <Button type="primary" onClick={showModal}>Thêm sản phẩm</Button>
       </div>
 
-      <Table dataSource={products} columns={columns} />
+      <Table dataSource={products} columns={columns} rowKey='maSanPham'/>
+
+      <Modal
+        title="Xác nhận xóa"
+        open={isDeleteModalVisible}
+        onOk={handleDeleteProduct}
+        onCancel={() => {
+          setIsDeleteModalVisible(false);
+          setDeletingProduct(null);
+        }}
+        okText="Xác nhận"
+        cancelText="Hủy"
+      >
+        <p>Bạn có chắc chắn muốn xóa sản phẩm <strong>{deletingProduct?.tenSanPham}</strong> không?</p>
+      </Modal>
 
       <Modal
         title={isEdit ? "Sửa sản phẩm" : "Thêm sản phẩm"}
-        visible={isModalVisible}
+        open={isModalVisible}
         onOk={isEdit ? handleUpdateProduct : handleCreateProduct}
         onCancel={handleCancel}
         okText={isEdit ? "Cập nhật" : "Thêm"}
         cancelText="Hủy"
+        width={1000}
       >
         <Form form={form} layout="vertical">
           <Row gutter={16}>

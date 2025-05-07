@@ -1,4 +1,5 @@
 import db from '../models/index'
+const deleteImage = require('../utils/deleteImage'); 
 
 const newProduct = async (rawData) => {
 
@@ -33,7 +34,6 @@ const newProduct = async (rawData) => {
 
 const updateProduct = async (data) => {
 
-
     try {
         if (!data) {
             return {
@@ -46,6 +46,12 @@ const updateProduct = async (data) => {
         let sanPham = await db.SanPham.findOne({
             where: { maSanPham: data.maSanPham }
         })
+
+        let anhCapNhat = sanPham.anh;
+
+        if (data.image) {
+            anhCapNhat = data.image;
+        }
 
         if (sanPham) {
             await db.SanPham.update({
@@ -60,15 +66,15 @@ const updateProduct = async (data) => {
                 nuocSanXuat: data.nuocSanXuat,
                 nhanHieu: data.nhanHieu,
                 phanTramGiam: data.phanTramGiam,
-                anh: data.image
+                anh: anhCapNhat
             },
-                {
-                    where: { maSanPham: data.maSanPham }
-                }
+            {
+                where: { maSanPham: data.maSanPham }
+            }
             )
 
             return {
-                EM: 'Cập nhật sản phẩm thành công',
+                EM: 'Cập nhật sản phẩm thành công!',
                 EC: 0
             }
 
@@ -88,6 +94,44 @@ const updateProduct = async (data) => {
     }
 }
 
+const deleteProduct = async (maSanPham) => {
+
+    try {
+
+        const sanPham = await db.SanPham.findOne({
+            where: { maSanPham }
+        })
+
+        if (!sanPham) {
+            return {
+                EM: 'Không tìm thấy sản phẩm để xóa',
+                EC: 2,
+                DT: ''
+            };
+        }
+
+        if (sanPham.anh) {
+            deleteImage(sanPham.anh);
+        }
+
+        await db.SanPham.destroy({
+            where: { maSanPham }
+        });
+
+        return {
+            EM: 'Xóa sản phẩm thành công!',
+            EC: 0,
+            DT: ''
+        }
+    } catch (e) {
+        console.log(e)
+        return {
+            EM: 'Something wrongs in service...',
+            EC: -2
+        }
+    }
+}
+
 module.exports = {
-    newProduct, updateProduct
+    newProduct, updateProduct, deleteProduct
 }
