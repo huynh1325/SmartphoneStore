@@ -20,11 +20,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       primaryKey: true,
     },
-    maDonHang: DataTypes.INTEGER,
+    maHoaDon: DataTypes.INTEGER,
     maSanPham: DataTypes.INTEGER,
     soLuong: DataTypes.INTEGER,
-    donGia: DataTypes.DECIMAL(10, 2), 
-    ngayThanhToan: DataTypes.INTEGER,
+    gia: DataTypes.DECIMAL(10, 2)
   }, {
     sequelize,
     modelName: 'ChiTietHoaDon'

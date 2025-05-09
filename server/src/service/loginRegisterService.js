@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid'
 import path from 'path';
 import fs from 'fs';
 import handlebars from 'handlebars';
+import { console } from 'inspector';
 // import { getGroupWithRoles } from './JWTService'
 // import { createJWT } from '../middleware/JWTAction'
 
@@ -97,7 +98,7 @@ const registerNewUser = async (rawUserData) => {
             matKhau: hashPassword,
             soDienThoai: rawUserData.phone,
             xacThuc: false,
-            ten: rawUserData.name,
+            tenNguoiDung: rawUserData.name,
             gioiTinh: rawUserData.gender,
             vaiTro: 'Khách hàng'
         })
@@ -169,13 +170,13 @@ const handleUserLogin = async (rawData) => {
     }
 }
 
-const handleActive = async (rawData) => {
+const verifyUser = async (rawData) => {
     try {
 
         const user = await db.NguoiDung.findOne({
             where: {
-                maSanPham: rawData.maSanPham,
-                codeId: rawData.codeId
+                email: rawData.email,
+                code: rawData.code
             }
         })
         
@@ -191,7 +192,7 @@ const handleActive = async (rawData) => {
                 xacThuc: true,
             },
             {
-                where: { maSanPham: data.maSanPham }
+                where: { email: data.email }
             }
         )
         
@@ -212,5 +213,5 @@ const handleActive = async (rawData) => {
 }
 
 module.exports = {
-    registerNewUser, handleUserLogin, hashUserPassword, checkEmailExist, checkPhoneExist, handleActive
+    registerNewUser, handleUserLogin, hashUserPassword, checkEmailExist, checkPhoneExist, verifyUser
 }

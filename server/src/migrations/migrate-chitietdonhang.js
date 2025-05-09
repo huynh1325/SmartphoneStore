@@ -18,7 +18,7 @@ module.exports = {
       soLuong: {
         type: Sequelize.INTEGER
       },
-      donGia: {
+      gia: {
         type: Sequelize.DECIMAL(10, 2)
       },
       createdAt: {

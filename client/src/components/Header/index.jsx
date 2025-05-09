@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faCartShopping, faHouse, faMagnifyingGlass, faArrowDown} from '@fortawesome/free-solid-svg-icons';
 import Login from '../Login';
 import Register from '../Register';
+import VerifyUser from '../VerifyUser'
 import { useState } from 'react';
 
 const cx = classNames.bind(styles);
@@ -12,6 +13,7 @@ const Header = () => {
 
     const [modalLogin, setModalLogin] = useState(false);    
     const [modalRegister, setModalRegister] = useState(false);
+    const [modalVerifyUser, setModalVerifyUser] = useState(false);
 
     const openModalLogin = () => {
         setModalLogin(true);
@@ -29,6 +31,13 @@ const Header = () => {
         setModalRegister(false);
     };
 
+    const openModalVerifyUser = () => {
+        setModalVerifyUser(true);
+    };
+
+    const closeModalVerifyUser = () => {
+        setModalVerifyUser(false);
+    };
 
     return (
         <div>
@@ -62,7 +71,8 @@ const Header = () => {
                 </button>
             </div>
             <Login modalLogin={modalLogin} onClose={closeModalLogin}/>
-            <Register modalRegister={modalRegister} onClose={closeModalRegister} openLogin={openModalLogin}/>
+            <Register modalRegister={modalRegister} onClose={closeModalRegister} openLogin={openModalLogin} openVerifyUser={openModalVerifyUser}/>
+            <VerifyUser modalVerifyUser={modalVerifyUser} onClose={closeModalVerifyUser}/>
         </div>
     )
 }

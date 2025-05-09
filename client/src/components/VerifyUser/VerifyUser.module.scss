@@ -1,0 +1,117 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 999;
+}
+
+.wrapper {
+    display: flex;
+    position: relative;
+    width: 800px;
+    background: rgb(248, 248, 248);
+    border-radius: 20px;
+}
+
+.verifyuser {
+    width: 500px;
+    padding: 40px 45px 24px;
+    height: 350px;
+    background: rgb(255, 255, 255);
+    border-radius: 20px 0px 0px 20px;
+}
+
+.verifyuser-input {
+    height: 36px;
+    border: 1px solid #ccd0d5;
+    font-size: 1.6rem;
+    color: #242424;
+    outline: none;
+    width: 100%;
+    border-radius: 5px;
+    padding: 11px;
+    margin: 4px 0;
+    justify-content: space-around;
+}
+
+.heading {
+    margin-bottom: 24px;
+
+    h4 {
+        font-size: 24px;
+        text-align: center;
+    }
+}
+
+.input {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    z-index: 1;
+
+    input {
+        margin-top: 42px;
+    }
+}
+
+.verifyuser-img {
+    background: linear-gradient(136deg, rgb(240, 248, 255) -1%, rgb(219, 238, 255) 85%);
+    width: 300px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0px 20px 20px 0px;
+
+    img {
+        width: 203px;
+    }
+}
+
+.verify-btn {
+    margin: 30px 0px 10px;
+    outline: none;
+    border-radius: 4px;
+    background: #ff424e;
+    padding: 13px 0px;
+    width: 100%;
+    color: #fff;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+
+.login-redirect {
+    margin-top: 12px;
+
+    a {
+        color: var(--primary-color);
+        cursor: pointer;
+    }
+
+    a:hover {
+        color: rgba(10, 104, 255, 0.8);
+    }
+}
+
+.btn-close {
+    position: absolute;
+    right: -20px;
+    top: -20px;
+    width: 42px;
+    height: 42px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-close img {
+    width: 42px;
+}

@@ -10,9 +10,10 @@ const newProduct = async (rawData) => {
             cpu: rawData.cpu,
             ram: rawData.ram,
             dungLuongLuuTru: rawData.dungLuongLuuTru,
+            chipDoHoa: rawData.chipDoHoa,
+            theNho: rawData.theNho,
             gia: rawData.gia,
             inch: rawData.inch,
-            nuocSanXuat: rawData.nuocSanXuat,
             nhanHieu: rawData.nhanHieu,
             phanTramGiam: rawData.phanTramGiam,
             anh: rawData.image
@@ -56,13 +57,13 @@ const updateProduct = async (data) => {
             await db.SanPham.update({
                 tenSanPham: data.tenSanPham,
                 heDieuHanh: data.heDieuHanh,
-                moTa: 'none',
                 cpu: data.cpu,
                 ram: data.ram,
                 dungLuongLuuTru: data.dungLuongLuuTru,
                 gia: data.gia,
                 inch: data.inch,
-                nuocSanXuat: data.nuocSanXuat,
+                chipDoHoa: data.chipDoHoa,
+                theNho: data.theNho,
                 nhanHieu: data.nhanHieu,
                 phanTramGiam: data.phanTramGiam,
                 anh: anhCapNhat

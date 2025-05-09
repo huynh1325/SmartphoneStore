@@ -13,6 +13,10 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       maKhuyenMai: {
+        type: Sequelize.INTEGER,
+        allowNull: true
+      },
+      soLuong: {
         type: Sequelize.INTEGER
       },
       trangThai: {
@@ -21,7 +25,7 @@ module.exports = {
       ngayDatHang: {
         type: Sequelize.DATE
       },
-      gia: {
+      tongTien: {
         type: Sequelize.DECIMAL(10, 2)
       },
       createdAt: {

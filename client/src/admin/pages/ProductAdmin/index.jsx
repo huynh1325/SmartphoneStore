@@ -38,7 +38,7 @@ const ProductAdmin = () => {
 
     const handleDeleteProduct = async () => {
       try {
-        const res = await fetch(`http://localhost:8080/api/v1/product/${deletingProduct.maSanPham}`, {
+        const res = await fetch(`http://localhost:8080/api/v1/products/${deletingProduct.maSanPham}`, {
           method: "DELETE",
         });
         const data = await res.json();
@@ -70,8 +70,9 @@ const ProductAdmin = () => {
           formData.append("dungLuongLuuTru", values.dungLuongLuuTru);
           formData.append("inch", values.inch);
           formData.append("gia", values.gia);
-          formData.append("nuocSanXuat", values.nuocSanXuat);
+          formData.append("chipDoHoa", values.chipDoHoa);
           formData.append("nhanHieu", values.nhanHieu);
+          formData.append("theNho", values.theNho);
           formData.append("phanTramGiam", values.phanTramGiam);
         
           if (values.anh && values.anh.length > 0) {
@@ -181,7 +182,8 @@ const ProductAdmin = () => {
       formData.append("dungLuongLuuTru", values.dungLuongLuuTru);
       formData.append("inch", values.inch);
       formData.append("gia", values.gia);
-      formData.append("nuocSanXuat", values.nuocSanXuat);
+      formData.append("theNho", values.theNho);
+      formData.append("chipDoHoa", values.chipDoHoa);
       formData.append("nhanHieu", values.nhanHieu);
       formData.append("phanTramGiam", values.phanTramGiam);
 
@@ -189,7 +191,7 @@ const ProductAdmin = () => {
         formData.append("anh", values.anh[0].originFileObj);
       }
   
-      const res = await fetch(`http://localhost:8080/api/v1/product/${editingProduct.maSanPham}`, {
+      const res = await fetch(`http://localhost:8080/api/v1/products/${editingProduct.maSanPham}`, {
         method: "PUT",
         body: formData,
       });
@@ -280,6 +282,16 @@ const ProductAdmin = () => {
             </Col>
 
             <Col span={12}>
+              <Form.Item
+                label="Chip đồ họa"
+                name="chipDoHoa"
+                rules={[{ required: true, message: 'Vui lòng nhập thông tin chip đồ họa!' }]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+
+            <Col span={12}>
             <Form.Item
                     label="Nhãn hiệu"
                     name="nhanHieu"
@@ -298,23 +310,6 @@ const ProductAdmin = () => {
               >
                 <InputNumber style={{ width: '100%' }} />
               </Form.Item>
-            </Col>
-
-            <Col span={12}>
-            <Form.Item
-            label="Ảnh sản phẩm"
-            name="anh"
-            valuePropName="fileList"
-            getValueFromEvent={e => e && e.fileList}
-            rules={[{ required: true, message: 'Vui lòng tải lên ảnh sản phẩm!' }]} >
-            <Upload
-              listType="picture"
-              beforeUpload={() => false}
-              maxCount={1}
-            >
-              <Button icon={<UploadOutlined />}>Tải ảnh lên</Button>
-            </Upload>
-          </Form.Item>
             </Col>
 
             <Col span={12}>
@@ -359,11 +354,28 @@ const ProductAdmin = () => {
 
             <Col span={12}>
               <Form.Item
-                label="Nước sản xuất"
-                name="nuocSanXuat"
-                rules={[{ required: true, message: 'Vui lòng nhập nước sản xuất!' }]}
+                label="Thẻ nhớ"
+                name="theNho"
+                rules={[{ required: true, message: 'Vui lòng nhập thẻ nhớ!' }]}
               >
                 <Input />
+              </Form.Item>
+            </Col>
+
+            <Col span={12}>
+              <Form.Item
+              label="Ảnh sản phẩm"
+              name="anh"
+              valuePropName="fileList"
+              getValueFromEvent={e => e && e.fileList}
+              rules={[{ required: true, message: 'Vui lòng tải lên ảnh sản phẩm!' }]} >
+              <Upload
+                listType="picture"
+                beforeUpload={() => false}
+                maxCount={1}
+              >
+                <Button icon={<UploadOutlined />}>Tải ảnh lên</Button>
+              </Upload>
               </Form.Item>
             </Col>
           </Row>

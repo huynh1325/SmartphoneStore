@@ -15,11 +15,11 @@ module.exports = {
       maNguoiDung: {
         type: Sequelize.INTEGER
       },
-      ngayBan: {
-        type: Sequelize.DATE
-      },
       hinhThucThanhToan: {
         type: Sequelize.STRING
+      },
+      ngayThanhToan: {
+        type: Sequelize.DATE
       },
       tongTien: {
         type: Sequelize.DECIMAL(10, 2)

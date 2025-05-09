@@ -35,14 +35,28 @@ const handleRegister = async (req, res) => {
     }
 }
 
-const handleCheckCode = async (req, res) => {
+const handleVerifyUser = async (req, res) => {
+
+    const data = { ...req.body };
+    console.log(data)
     try {
 
-    } catch {
-
+        await loginRegisterService.handleVerifyUser(data);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: ''
+        })
+        
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server',
+            EC: '-1',
+            DT: ''
+        })
     }
 }
 
 module.exports = {
-    handleRegister, handleCheckCode
+    handleRegister, handleVerifyUser
 }

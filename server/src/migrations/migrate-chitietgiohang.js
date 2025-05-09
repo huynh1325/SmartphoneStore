@@ -20,7 +20,7 @@ module.exports = {
       soLuong: {
         type: Sequelize.INTEGER,
       },
-      tongTien: {
+      gia: {
         type: Sequelize.DECIMAL(10, 2),
       },
       createdAt: {

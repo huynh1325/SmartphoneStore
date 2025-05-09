@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
     maGioHang: DataTypes.INTEGER,
     maSanPham: DataTypes.INTEGER,
     soLuong: DataTypes.INTEGER,
-    tongTien: DataTypes.DECIMAL(10, 2),
+    gia: DataTypes.DECIMAL(10, 2),
   }, {
     sequelize,
     modelName: 'ChiTietGioHang'

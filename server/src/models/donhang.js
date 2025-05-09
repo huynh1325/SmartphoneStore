@@ -22,9 +22,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     maNguoiDung: DataTypes.INTEGER,
     maKhuyenMai: DataTypes.INTEGER,
+    soLuong: DataTypes.INTEGER,
     trangThai: DataTypes.STRING,
     ngayDatHang: DataTypes.DATE,
-    gia: DataTypes.DECIMAL(10, 2)
+    tongTien: DataTypes.DECIMAL(10, 2)
   }, {
     sequelize,
     modelName: 'DonHang'

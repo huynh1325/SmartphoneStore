@@ -3,6 +3,7 @@ import classNames from 'classnames/bind';
 import { useState } from 'react';
 import { registerNewUser } from '../../util/api';
 import { toast } from "react-toastify";
+import VerifyUser from '../VerifyUser';
 
 const cx = classNames.bind(styles);
 
@@ -20,17 +21,18 @@ const Register = (props) => {
     };
 
     const handleRegister = async () => {
-        // let check = isValidInputs();
-        // let check;
-        
-        // if (check === true) {
+        try {
             let serverData = await registerNewUser(name, gender, email, phone, password);
             if (+serverData.EC === 0) {
                 toast.success(serverData.EM);
                 props.onClose();
+                props.openVerifyUser();
             } else {
                 toast.error(serverData.EM);
             }
+        } catch (e) {
+            console.error(e);
+        }
     }
     
     const handleOverlayClick = (e) => {
@@ -104,10 +106,10 @@ const Register = (props) => {
                     >
                         Tiếp tục
                     </button>
-                    <span className={cx('login-redirect')}>Bạn đã có tài khoản?
+                    <p className={cx('login-redirect')}>Bạn đã có tài khoản?
                         <a onClick={switchToLogin}> Đăng nhập </a>
                         ngay!
-                    </span>
+                    </p>
                 </div>
                 <div className={cx('register-img')}>
                     <img
@@ -122,7 +124,8 @@ const Register = (props) => {
                     />
                 </button>
             </div>
-        </div>
+            <VerifyUser email={email}/>
+        </div> 
     )
 }
 

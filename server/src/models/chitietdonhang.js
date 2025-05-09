@@ -21,7 +21,9 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
     },
     maDonHang: DataTypes.INTEGER,
-    maSanPham: DataTypes.INTEGER
+    maSanPham: DataTypes.INTEGER,
+    soLuong: DataTypes.INTEGER,
+    gia: DataTypes.DECIMAL(10, 2)
   }, {
     sequelize,
     modelName: 'ChiTietDonHang'

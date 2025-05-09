@@ -22,7 +22,10 @@ const updateProduct = (maSanPham ,tenSanPham, heDieuHanh, ram, dungLuongLuuTru, 
     })
 }
 
+const verifyUserCode = (email, code) => {
+    return axios.post(`/api/v1/verify-user`, {email, code})
+}
 
 export {
-    registerNewUser, createProduct, updateProduct
+    registerNewUser, createProduct, updateProduct, verifyUserCode
 }
