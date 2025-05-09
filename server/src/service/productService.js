@@ -7,7 +7,6 @@ const newProduct = async (rawData) => {
         await db.SanPham.create({
             tenSanPham: rawData.tenSanPham,
             heDieuHanh: rawData.heDieuHanh,
-            moTa: 'none',
             cpu: rawData.cpu,
             ram: rawData.ram,
             dungLuongLuuTru: rawData.dungLuongLuuTru,

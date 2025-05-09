@@ -4,21 +4,44 @@ import bcrypt from 'bcryptjs';
 import { Op } from 'sequelize';
 import nodemailer from 'nodemailer';
 import { v4 as uuidv4 } from 'uuid'
+import path from 'path';
+import fs from 'fs';
+import handlebars from 'handlebars';
 // import { getGroupWithRoles } from './JWTService'
 // import { createJWT } from '../middleware/JWTAction'
 
 const salt = bcrypt.genSaltSync(10);
 
-const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
-    auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASSWORD,
-    },
-});
+const sendEmailWithTemplate = async (email, name, codeId) => {
+    const templatePath = path.join(__dirname, '..', 'mail', 'templates', 'register.hbs');
+    const source = fs.readFileSync(templatePath, 'utf8');
+    const template = handlebars.compile(source);
+    const htmlContent = template({ name, codeId });
+    
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.MAIL_USER,
+          pass: process.env.MAIL_PASSWORD
+        }
+      });
+    
+      const mailOptions = {
+        from: process.env.MAIL_USER,
+        to: email,
+        subject: 'Xác thực tài khoản',
+        html: htmlContent
+      };
+    
+      await transporter.sendMail(mailOptions);
+};
 
+const generate6DigitCode = () => {
+    const uuid = uuidv4();
+    const numbersOnly = uuid.replace(/\D/g, '');
+    const sixDigits = numbersOnly.slice(0, 6);
+    return sixDigits;
+};
 
 const hashUserPassword = (userPassword) => {
     let hashPassword = bcrypt.hashSync(userPassword, salt);
@@ -36,35 +59,6 @@ const checkEmailExist = async (userEmail) => {
     return false;
 }
 
-// const mailOptions = {
-//     from: "your_email@gmail.com",
-//     to: "recipient@example.com",
-//     subject: "Xác nhận đăng ký",
-//     text: "Cảm ơn bạn đã đăng ký!",
-//     // html: "<h1>Chào mừng!</h1>" // nếu bạn muốn gửi HTML
-//   };
-
-// Gửi email
-//   transporter.sendMail(mailOptions, function (error, info) {
-//     if (error) {
-//       console.log("Lỗi gửi email: ", error);
-//     } else {
-//       console.log("Email đã được gửi: " + info.response);
-//     }
-//   });
-
-// async function main() {
-//     const info = transporter.sendMail({
-//       from: '"Maddison Foo Koch " <maddison53@ethereal.email>',
-//       to: "bar@example.com, baz@example.com",
-//       subject: "Hello ✔",
-//       text: "Hello world?",
-//       html: "<b>Hello world?</b>",
-//     });
-
-//     console.log("Message sent: %s", info.messageId);
-// }
-
 const checkPhoneExist = async (userPhone) => {
     let user = await db.NguoiDung.findOne({
         where: {soDienThoai: userPhone}
@@ -78,7 +72,7 @@ const checkPhoneExist = async (userPhone) => {
 
 const registerNewUser = async (rawUserData) => {
 
-    const codeId = uuidv4();
+    const codeId = generate6DigitCode();
 
     try {
         let isEmailExist = await checkEmailExist(rawUserData.email);
@@ -102,24 +96,13 @@ const registerNewUser = async (rawUserData) => {
             email: rawUserData.email,
             matKhau: hashPassword,
             soDienThoai: rawUserData.phone,
+            xacThuc: false,
             ten: rawUserData.name,
             gioiTinh: rawUserData.gender,
-            vaiTro: 'User'
+            vaiTro: 'Khách hàng'
         })
-    
-        const mailOptions = {
-            from: process.env.EMAIL_USER,
-            to: rawUserData.email,
-            subject: "Chào mừng bạn đến với hệ thống!",
-            html: `<h2>Xin chào ${rawUserData.name},</h2><p>Cảm ơn bạn đã đăng ký tài khoản!</p>
-            Code: ${codeId}`,
-        };
-        
-        try {
-            await transporter.sendMail(mailOptions);
-        } catch (error) {
-            console.error("Lỗi gửi email:", error);
-        }
+
+        await sendEmailWithTemplate(rawUserData.email, rawUserData.name, codeId);
 
         return {
             EM: 'Đăng ký thành công!',
@@ -187,12 +170,45 @@ const handleUserLogin = async (rawData) => {
 }
 
 const handleActive = async (rawData) => {
-    const user = await db.NguoiDung.findOne({
-        id: rawData.id,
-        codeId: rawData.codeId
-    })
+    try {
 
-    console.log(user)
+        const user = await db.NguoiDung.findOne({
+            where: {
+                maSanPham: rawData.maSanPham,
+                codeId: rawData.codeId
+            }
+        })
+        
+        if (!user) {
+            return {
+                EM: 'Mã xác thực không đúng hoặc người dùng không tồn tại',
+                EC: 1
+            }
+        }
+
+        await db.NguoiDung.update (
+            {
+                xacThuc: true,
+            },
+            {
+                where: { maSanPham: data.maSanPham }
+            }
+        )
+        
+        return {
+            EM: 'Xác thực tài khoản thành công',
+            EC: 0
+        }
+        
+    }
+
+    catch (e) {
+        console.log(e);
+        return {
+            EM: 'Có lỗi xảy ra khi xác thực tài khoản',
+            EC: -2
+        }
+    }
 }
 
 module.exports = {

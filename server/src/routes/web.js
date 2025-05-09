@@ -36,9 +36,11 @@ const initWebRoutes = (app) => {
     
     // router.post('/upload-file', upload.single('image-product'), productController.handleUploadFile);
     router.post("/register", apiController.handleRegister);
-    router.post("/product", upload.single('anh'), productController.handleCreateProduct);
-    router.put("/product/:maSanPham", upload.single('anh'), productController.handleUpdateProduct);
-    router.delete("/product/:maSanPham", upload.single('anh'), productController.handleDeleteProduct);
+    router.post("/check-code", apiController.handleCheckCode);
+    router.put("/products/:maSanPham", upload.single('anh'), productController.handleUpdateProduct);
+    router.post("/products", upload.single('anh'), productController.handleCreateProduct);
+    router.put("/products/:maSanPham", upload.single('anh'), productController.handleUpdateProduct);
+    router.delete("/products/:maSanPham", upload.single('anh'), productController.handleDeleteProduct);
     router.get("/products", productController.getAllProducts);
     
     return app.use("/api/v1/", router);

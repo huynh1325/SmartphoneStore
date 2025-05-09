@@ -22,14 +22,14 @@ module.exports = (sequelize, DataTypes) => {
     },
     tenSanPham: DataTypes.STRING,
     gia: DataTypes.DECIMAL(10, 2),
-    moTa: DataTypes.STRING,
     anh: DataTypes.STRING,
     heDieuHanh: DataTypes.STRING,
     cpu: DataTypes.STRING,
     nhanHieu: DataTypes.STRING,
     inch: DataTypes.STRING,
     phanTramGiam: DataTypes.INTEGER,
-    nuocSanXuat: DataTypes.STRING,
+    theNho: DataTypes.STRING,
+    chipDoHoa: DataTypes.STRING,
     ram: DataTypes.STRING,
     dungLuongLuuTru: DataTypes.STRING
   }, {

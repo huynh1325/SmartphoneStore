@@ -20,8 +20,6 @@ const handleRegister = async (req, res) => {
 
         let data = await loginRegisterService.registerNewUser(req.body)
 
-        console.log(req.body)
-        
         return res.status(200).json({
             EM: data.EM,
             EC: data.EC,
@@ -37,6 +35,14 @@ const handleRegister = async (req, res) => {
     }
 }
 
+const handleCheckCode = async (req, res) => {
+    try {
+
+    } catch {
+
+    }
+}
+
 module.exports = {
-    handleRegister
+    handleRegister, handleCheckCode
 }

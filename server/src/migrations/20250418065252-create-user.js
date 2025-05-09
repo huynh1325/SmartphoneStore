@@ -15,7 +15,7 @@ module.exports = {
       matKhau: {
         type: Sequelize.STRING
       },
-      ten: {
+      tenNguoiDung: {
         type: Sequelize.STRING
       },
       gioiTinh: {
@@ -23,6 +23,9 @@ module.exports = {
       },
       soDienThoai: {
         type: Sequelize.STRING
+      },
+      xacThuc: {
+        type: Sequelize.BOOLEAN
       },
       vaiTro: {
         type: Sequelize.STRING

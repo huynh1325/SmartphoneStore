@@ -14,12 +14,6 @@ const Register = (props) => {
     const [password, setPassword] = useState("");
     const [gender, setGender] = useState('');
 
-    const [modalLogin, setModalLogin] = useState(false);
-
-    const openModalLogin = () => {
-        setModalLogin(true);
-    };
-
     const switchToLogin = () => {
         props.onClose();
         props.openLogin();

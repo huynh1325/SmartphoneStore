@@ -13,6 +13,9 @@ module.exports = {
         type: Sequelize.INTEGER,
         unique: true
       },
+      tenDiaChi: {
+        type: Sequelize.STRING,
+      },
       tinhThanh: {
         type: Sequelize.STRING,
       },

@@ -16,7 +16,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       xepHang: {
-        type: Sequelize.INTEGER
+        type: Sequelize.DECIMAL(2, 1)
       },
       noiDung: {
         type: Sequelize.STRING

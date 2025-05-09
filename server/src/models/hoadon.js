@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
     maNguoiDung: DataTypes.INTEGER,
     hinhThucThanhToan: DataTypes.STRING,
     ngayBan: DataTypes.DATE,
-    tongGia: DataTypes.DECIMAL(10, 2)
+    tongTien: DataTypes.DECIMAL(10, 2)
   }, {
     sequelize,
     modelName: 'HoaDon',

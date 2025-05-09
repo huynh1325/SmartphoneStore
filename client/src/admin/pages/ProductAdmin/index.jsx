@@ -78,7 +78,7 @@ const ProductAdmin = () => {
             formData.append("anh", values.anh[0].originFileObj);
           }
   
-          const res = await fetch("http://localhost:8080/api/v1/product", {
+          const res = await fetch("http://localhost:8080/api/v1/products", {
               method: "POST",
               body: formData,
           });

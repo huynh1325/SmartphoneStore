@@ -20,7 +20,17 @@ const Home = () => {
         "/image/banner5.png",
         "/image/banner6.jpg",
         "/image/banner7.jpg"
-      ];
+    ];
+
+    const categories = [
+        { name: 'samsung', img: 'https://cdnv2.tgdd.vn/mwg-static/common/Category/3f/68/3f68e22880dd800e9e34d55245048a0f.png' },
+        { name: 'iphone', img: 'https://cdnv2.tgdd.vn/mwg-static/common/Category/57/03/5703d996359650c57421b72f3f7ff5cd.png' },
+        { name: 'oppo', img: 'https://cdnv2.tgdd.vn/mwg-static/common/Category/2c/ea/2cea467041fb9effb3a6d3dcc88f38f8.png' },
+        { name: 'xiaomi', img: 'https://cdnv2.tgdd.vn/mwg-static/common/Category/e9/df/e9df3ae9fb60a1460e9030975d0e024a.png' },
+        { name: 'realme', img: 'https://cdnv2.tgdd.vn/mwg-static/common/Category/54/2a/542a235b0e366a11fd855108dd9c499c.png' },
+        { name: 'vivo', img: 'https://cdnv2.tgdd.vn/mwg-static/common/Category/78/38/783870ef310908b123c50cb43b8f6f92.png' },
+        { name: 'honor', img: 'https://cdnv2.tgdd.vn/mwg-static/common/Category/00/e8/00e815b2c60b6f494ec1e19560976fcc.png' }
+    ];
     
     const [currentBanner, setCurrentBanner] = useState(0);
 
@@ -65,27 +75,11 @@ const Home = () => {
                     <div className={cx('side-bar')}>
                         <h2>Danh mục</h2>
                         <div className={cx('list')}>
-                            <a>
-                                <img src='https://cdnv2.tgdd.vn/mwg-static/common/Category/3f/68/3f68e22880dd800e9e34d55245048a0f.png' alt='samsung'/>
-                            </a>
-                            <a>
-                                <img src='https://cdnv2.tgdd.vn/mwg-static/common/Category/57/03/5703d996359650c57421b72f3f7ff5cd.png' alt='iphone'/>
-                            </a>
-                            <a>
-                                <img src='https://cdnv2.tgdd.vn/mwg-static/common/Category/2c/ea/2cea467041fb9effb3a6d3dcc88f38f8.png' alt='oppo'/>
-                            </a>
-                            <a>
-                                <img src='https://cdnv2.tgdd.vn/mwg-static/common/Category/e9/df/e9df3ae9fb60a1460e9030975d0e024a.png' alt='xiaomi'/>
-                            </a>
-                            <a>
-                                <img src='https://cdnv2.tgdd.vn/mwg-static/common/Category/54/2a/542a235b0e366a11fd855108dd9c499c.png' alt='realme'/>
-                            </a>
-                            <a>
-                                <img src='https://cdnv2.tgdd.vn/mwg-static/common/Category/78/38/783870ef310908b123c50cb43b8f6f92.png' alt='vivo'/>
-                            </a>
-                            <a>
-                                <img src='https://cdnv2.tgdd.vn/mwg-static/common/Category/00/e8/00e815b2c60b6f494ec1e19560976fcc.png' alt='honor'/>
-                            </a>
+                            {categories.map((category) => (
+                                <a key={category.name}>
+                                    <img src={category.img} alt={category.name} />
+                                </a>
+                            ))}
                         </div>
                     </div>
                     <div className={cx('container')}>
@@ -112,7 +106,7 @@ const Home = () => {
                                         const originalPrice = parseFloat(product.gia);
                                         const discountedPrice = originalPrice * (1 - product.phanTramGiam / 100);
                                         return (
-                                            <div key={product.id} onClick={handleClick} className={cx('product')}>
+                                            <div key={product.maSanPham} onClick={handleClick} className={cx('product')}>
                                                 <img 
                                                     src={`http://localhost:8080${product.anh}`}
                                                     alt='Ảnh sản phẩm'

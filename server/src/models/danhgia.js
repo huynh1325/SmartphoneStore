@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     maNguoiDung: DataTypes.INTEGER,
     maSanPham: DataTypes.INTEGER,
-    xepHang: DataTypes.INTEGER,
+    xepHang: DataTypes.DECIMAL(2, 1),
     noiDung: DataTypes.STRING,
     ngayDanhGia: DataTypes.DATE
   }, {

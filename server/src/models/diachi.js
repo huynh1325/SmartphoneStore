@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
     },
     maNguoiDung: DataTypes.STRING,
+    tenDiaChi: DataTypes.STRING,
     tinhThanh: DataTypes.STRING,
     quanHuyen: DataTypes.STRING,
     phuongXa: DataTypes.STRING,

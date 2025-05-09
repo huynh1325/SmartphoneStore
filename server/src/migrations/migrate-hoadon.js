@@ -21,7 +21,7 @@ module.exports = {
       hinhThucThanhToan: {
         type: Sequelize.STRING
       },
-      tongGia: {
+      tongTien: {
         type: Sequelize.DECIMAL(10, 2)
       },
       createdAt: {

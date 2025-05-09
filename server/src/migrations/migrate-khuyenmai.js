@@ -18,7 +18,7 @@ module.exports = {
       soLuong: {
         type: Sequelize.INTEGER
       },
-      soLuongConLai: {
+      soLuongSuDung: {
         type: Sequelize.INTEGER
       },
       ngayBatDau: {

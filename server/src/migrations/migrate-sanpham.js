@@ -15,9 +15,6 @@ module.exports = {
       gia: {
         type: Sequelize.DECIMAL(10, 2)
       },
-      moTa: {
-        type: Sequelize.STRING
-      },
       anh: {
         type: Sequelize.STRING
       },
@@ -36,7 +33,10 @@ module.exports = {
       nhanHieu: {
         type: Sequelize.STRING
       },
-      nuocSanXuat: {
+      chipDoHoa: {
+        type: Sequelize.STRING
+      },
+      theNho: {
         type: Sequelize.STRING
       },
       ram: {
