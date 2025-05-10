@@ -22,7 +22,6 @@
 .verifyuser {
     width: 500px;
     padding: 40px 45px 24px;
-    height: 350px;
     background: rgb(255, 255, 255);
     border-radius: 20px 0px 0px 20px;
 }
@@ -58,6 +57,17 @@
     input {
         margin-top: 42px;
     }
+}
+
+.register-back {
+    text-align: right;
+    color: var(--primary-color);
+    margin-top: 12px;
+}
+
+.register-back:hover {
+    cursor: pointer;
+    color: rgba(10, 104, 255, 0.8);
 }
 
 .verifyuser-img {

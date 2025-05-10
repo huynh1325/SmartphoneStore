@@ -6,6 +6,12 @@ const registerNewUser = (name, gender, email, phone, password) => {
     })
 }
 
+const userLogin = (email, password) => {
+    return axios.post('/api/v1/login', {
+        email, password
+    })
+}
+
 // const fetchAllProduct = () => {
 //     return axios.get('/api/v1/getproduct')
 // }
@@ -27,5 +33,5 @@ const verifyUserCode = (email, code) => {
 }
 
 export {
-    registerNewUser, createProduct, updateProduct, verifyUserCode
+    registerNewUser, createProduct, updateProduct, verifyUserCode, userLogin
 }

@@ -10,6 +10,11 @@ const VerifyUser = (props) => {
     
     const [code, setCode] = useState("");
 
+    const switchToRegister = () => {
+        props.onClose();
+        props.openRegister();
+    };
+
     const handleVerify = async () => {
         if (!code) {
             toast.warning("Vui lòng nhập mã xác thực");
@@ -17,11 +22,12 @@ const VerifyUser = (props) => {
         }
     
         try {
-            console.log({email: props.email, code})
             const res = await verifyUserCode({email: props.email, code});
+            console.log(res)
             if (+res.EC === 0) {
                 toast.success(res.EM);
                 props.onClose();
+                props.openLogin();
             } else {
                 toast.error(res.EM);
             }
@@ -47,6 +53,12 @@ const VerifyUser = (props) => {
                             value={code} onChange={(e) => {setCode(e.target.value)}}
                         />
                     </div>
+                    <p
+                        className={cx("register-back")} 
+                        onClick={switchToRegister}
+                    >
+                        Quay lại đăng ký
+                    </p>
                     <button
                         className={cx('verify-btn')}
                         onClick={() => handleVerify()}
@@ -55,7 +67,6 @@ const VerifyUser = (props) => {
                     </button>
                     <p className={cx('login-redirect')}>Bạn đã có tài khoản?
                         <a
-                            // onClick={switchToLogin}
                         > Đăng nhập </a>
                         ngay!
                     </p>

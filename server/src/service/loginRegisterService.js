@@ -1,40 +1,48 @@
 require('dotenv').config();
 import db from '../models/index'
 import bcrypt from 'bcryptjs';
-import { Op } from 'sequelize';
 import nodemailer from 'nodemailer';
 import { v4 as uuidv4 } from 'uuid'
 import path from 'path';
 import fs from 'fs';
 import handlebars from 'handlebars';
-import { console } from 'inspector';
+import jwt from 'jsonwebtoken'
 // import { getGroupWithRoles } from './JWTService'
 // import { createJWT } from '../middleware/JWTAction'
 
 const salt = bcrypt.genSaltSync(10);
 
 const sendEmailWithTemplate = async (email, name, codeId) => {
-    const templatePath = path.join(__dirname, '..', 'mail', 'templates', 'register.hbs');
-    const source = fs.readFileSync(templatePath, 'utf8');
-    const template = handlebars.compile(source);
-    const htmlContent = template({ name, codeId });
-    
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: process.env.MAIL_USER,
-          pass: process.env.MAIL_PASSWORD
-        }
-      });
-    
-      const mailOptions = {
-        from: process.env.MAIL_USER,
-        to: email,
-        subject: 'Xác thực tài khoản',
-        html: htmlContent
-      };
-    
-      await transporter.sendMail(mailOptions);
+    try {
+        const templatePath = path.join(__dirname, '..', 'mail', 'templates', 'register.hbs');
+        const source = fs.readFileSync(templatePath, 'utf8');
+        const template = handlebars.compile(source);
+        const htmlContent = template({ name, codeId });
+        
+        const transporter = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
+            auth: {
+                user: process.env.MAIL_USER,
+                pass: process.env.MAIL_PASSWORD
+            }
+        });
+        
+        const mailOptions = {
+            from: process.env.MAIL_USER,
+            to: email,
+            subject: 'Xác thực tài khoản',
+            html: htmlContent
+        };
+        
+        await transporter.sendMail(mailOptions);
+
+
+    } catch (err) {
+        console.error("Gửi email thất bại:", err.message);
+        throw err;
+    }
 };
 
 const generate6DigitCode = () => {
@@ -76,20 +84,8 @@ const registerNewUser = async (rawUserData) => {
     const codeId = generate6DigitCode();
 
     try {
-        let isEmailExist = await checkEmailExist(rawUserData.email);
-        if (isEmailExist === true) {
-            return {
-                EM: 'Email đã tồn tại',
-                EC: 1
-            }
-        }
-        let isPhoneExist = await checkPhoneExist(rawUserData.phone);
-        if (isPhoneExist === true) {
-            return {
-                EM: 'Số điện thoại đã tồn tại',
-                EC: 1
-            }
-        }
+
+        console.log(rawUserData.email, rawUserData.name, codeId);
     
         let hashPassword = hashUserPassword(rawUserData.password);
         
@@ -100,17 +96,18 @@ const registerNewUser = async (rawUserData) => {
             xacThuc: false,
             tenNguoiDung: rawUserData.name,
             gioiTinh: rawUserData.gender,
+            maXacThuc: codeId,
             vaiTro: 'Khách hàng'
         })
 
-        await sendEmailWithTemplate(rawUserData.email, rawUserData.name, codeId);
+        sendEmailWithTemplate(rawUserData.email, rawUserData.name, codeId);
 
         return {
             EM: 'Đăng ký thành công!',
             EC: 0
         }
     } catch (e) {
-        console.log(e)
+        console.log(e.message)
         return {
             EM: 'Something wrongs in service...',
             EC: -2
@@ -122,47 +119,54 @@ const checkPassword = (inputPassword, hashPassword) => {
     return bcrypt.compareSync(inputPassword, hashPassword);
 }
 
-const handleUserLogin = async (rawData) => {
+const loginService = async (email, password) => {
     try {
-        let user = await db.NguoiDung.findOne({
-            where: {
-                [Op.or]: [
-                    {email: rawData.valueLogin },
-                    {phone: rawData.valueLogin }
-                ]
-            }
-        })
-
+        console.log(email, password)
+        const user = await db.NguoiDung.findOne({
+            where: { email: email }
+        });
+        if (!user.xacThuc) {
+            return {
+                EC: 3,
+                EM: "Tài khoản chưa được xác thực. Vui lòng kiểm tra email để xác minh tài khoản."
+            };
+        }
         if (user) {
-            let isCorrectPassword = checkPassword(rawData.password, user.password)
-            if (isCorrectPassword === true) {
-
-                let groupWithRoles = await getGroupWithRoles(user);
-                let payload = {
-                    email: user.email,
-                    groupWithRoles,
-                    username: user.username
-                }
-                let token = createJWT(payload);
+            const isMatchPassword = await checkPassword(password, user.matKhau);
+            if (!isMatchPassword) {
                 return {
-                    EM: 'ok!',
+                    EC: 2,
+                    EM: "Email/Password không hợp lệ"
+                }
+            } else {
+                const payload = {
+                    email: user.email,
+                    name: user.tenNguoiDung
+                }
+                const access_token = jwt.sign(
+                    payload,
+                    process.env.JWT_SECRET,
+                    {
+                        expiresIn: process.env.JWT_EXPIRE
+                    }
+                );
+                return {
                     EC: 0,
-                    DT: {
-                        access_token: token,
-                        groupWithRoles,
+                    access_token,
+                    user: {
                         email: user.email,
-                        username: user.username
+                        name: user.tenNguoiDung
                     }
                 }
             }
-        }
-        return {
-            EM: 'Your email/phone number or password is incorrect!',
-            EC: 1,
-            DT: ''
+        } else {
+            return {
+                EC: 1,
+                EM: "Email/Password không hợp lệ"
+            }
         }
     } catch (error) {
-        console.log(error)
+        console.log(error);
         return {
             EM: 'Something wrongs in service...',
             EC: -2
@@ -176,13 +180,13 @@ const verifyUser = async (rawData) => {
         const user = await db.NguoiDung.findOne({
             where: {
                 email: rawData.email,
-                code: rawData.code
+                maXacThuc: rawData.code
             }
         })
         
         if (!user) {
             return {
-                EM: 'Mã xác thực không đúng hoặc người dùng không tồn tại',
+                EM: 'Người dùng không tồn tại',
                 EC: 1
             }
         }
@@ -192,7 +196,7 @@ const verifyUser = async (rawData) => {
                 xacThuc: true,
             },
             {
-                where: { email: data.email }
+                where: { email: rawData.email }
             }
         )
         
@@ -213,5 +217,5 @@ const verifyUser = async (rawData) => {
 }
 
 module.exports = {
-    registerNewUser, handleUserLogin, hashUserPassword, checkEmailExist, checkPhoneExist, verifyUser
+    registerNewUser, loginService, hashUserPassword, checkEmailExist, checkPhoneExist, verifyUser
 }

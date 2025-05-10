@@ -5,15 +5,27 @@ import { faUser, faCartShopping, faHouse, faMagnifyingGlass, faArrowDown} from '
 import Login from '../Login';
 import Register from '../Register';
 import VerifyUser from '../VerifyUser'
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { AuthContext } from '../Context/auth.context';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const cx = classNames.bind(styles);
 
 const Header = () => {
 
+    const navigate = useNavigate();
     const [modalLogin, setModalLogin] = useState(false);    
     const [modalRegister, setModalRegister] = useState(false);
     const [modalVerifyUser, setModalVerifyUser] = useState(false);
+    const [email, setEmail] = useState("");
+    const { auth, setAuth } = useContext(AuthContext)
+
+    const lastName = (name) => {
+        const nameParts = name.split(" ");
+        const lastName = nameParts[nameParts.length - 1];
+        return lastName;
+    }
 
     const openModalLogin = () => {
         setModalLogin(true);
@@ -39,6 +51,19 @@ const Header = () => {
         setModalVerifyUser(false);
     };
 
+    const handleLogout = () => {
+        localStorage.clear("access_token");
+        setAuth({
+            isAuthenticated: false,
+            user: {
+                email: "",
+                name: ""
+            }
+        })
+        toast.success("Đăng xuất thành công")
+        navigate("/");
+    }
+
     return (
         <div>
             <div className={cx('header')}>
@@ -60,19 +85,50 @@ const Header = () => {
                 </button>
                 <button className={cx('account')}>
                     <FontAwesomeIcon icon={faUser} className={cx('account-icon')}/>
-                    <span>Tài khoản</span>
+                    {auth.isAuthenticated ? (
+                        <span>
+                        Chào, {lastName(auth.user.name)}
+                        </span>
+                    ) : (
+                        <span>
+                        Tài khoản
+                        </span>
+                    )}
                     <FontAwesomeIcon icon={faArrowDown} className={cx('down-icon')}/>
                     <div className={cx('account-option')}>
-                        <ul>
-                            <li onClick={openModalLogin}>Đăng nhập</li>
-                            <li onClick={openModalRegister}>Đăng ký</li>
-                        </ul>
+                        {auth.isAuthenticated ? (
+                            <ul>
+                                <li onClick={handleLogout}>Đăng xuất</li>
+                                <li>Đăng xuất</li>
+                            </ul>
+                        ) : (
+                            <ul>
+                                <li onClick={openModalLogin}>Đăng nhập</li>
+                                <li onClick={openModalRegister}>Đăng ký</li>
+                            </ul>
+                        )}
                     </div>
                 </button>
             </div>
-            <Login modalLogin={modalLogin} onClose={closeModalLogin}/>
-            <Register modalRegister={modalRegister} onClose={closeModalRegister} openLogin={openModalLogin} openVerifyUser={openModalVerifyUser}/>
-            <VerifyUser modalVerifyUser={modalVerifyUser} onClose={closeModalVerifyUser}/>
+            <Login
+                modalLogin={modalLogin}
+                onClose={closeModalLogin}
+                openRegister={openModalRegister}
+            />
+            <Register
+                modalRegister={modalRegister}
+                onClose={closeModalRegister}
+                openLogin={openModalLogin}
+                openVerifyUser={openModalVerifyUser}
+                setEmail={setEmail} 
+            />
+            <VerifyUser
+                modalVerifyUser={modalVerifyUser}
+                onClose={closeModalVerifyUser}
+                openLogin={openModalLogin}
+                openRegister={openModalRegister}
+                email={email}
+            />
         </div>
     )
 }

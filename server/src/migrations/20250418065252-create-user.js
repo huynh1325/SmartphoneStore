@@ -27,6 +27,12 @@ module.exports = {
       xacThuc: {
         type: Sequelize.BOOLEAN
       },
+      maXacThuc: {
+        type: Sequelize.STRING
+      },
+      thoiGianXacThuc: {
+        type: Sequelize.DATE
+      },
       vaiTro: {
         type: Sequelize.STRING
       },

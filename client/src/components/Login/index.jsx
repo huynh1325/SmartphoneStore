@@ -1,32 +1,73 @@
+import { useState, useContext } from 'react';
 import styles from './Login.module.scss';
 import classNames from 'classnames/bind';
+import { userLogin } from '../../util/api';
+import { AuthContext } from '../Context/auth.context';
+import { toast } from 'react-toastify';
 
 const cx = classNames.bind(styles);
 
 const Login = (props) => {
-    
-    const handleOverlayClick = (e) => {
-        if (e.target === e.currentTarget) {
-            props.onClose();
-        }
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const { auth, setAuth } = useContext(AuthContext);
+
+    // console.log("auth", auth)
+    const switchToRegister = () => {
+        props.onClose();
+        props.openRegister();
     };
+
+    const handleLogin = async () => {
+        try {
+            let res = await userLogin(email, password);
+            if (+res.EC === 0) {
+                localStorage.setItem("access_token", res.access_token);
+                localStorage.setItem("user", JSON.stringify(res.user)); 
+                toast.success("Đăng nhập thành công");
+                props.onClose();
+                setAuth({
+                    isAuthenticated: true,
+                    user: {
+                        email: res?.user?.email ?? "",
+                        name: res?.user?.name ?? ""
+                    }
+            })
+            } else {
+                toast.error(res.EM);
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
 
     if (!props.modalLogin) return null;
 
     return (
-        <div className={cx('overlay')} onClick={handleOverlayClick}>
+        <div className={cx('overlay')}>
             <div className={cx('wrapper')}>
                 <div className={cx('login')}>
                     <div className={cx('heading')}>
                         <h4>Đăng nhập</h4>
                     </div>
                     <div className={cx('input')}>
-                        <input placeholder="Nhập email" type="text" className={cx('login-input')} />
-                        <input placeholder="Nhập mật khẩu" type="password" className={cx('login-input')} />
+                        <input
+                            placeholder="Nhập email"
+                            type="text" 
+                            value={email} onChange={(e) => {setEmail(e.target.value)}}
+                            className={cx('login-input')} />
+                        <input
+                            placeholder="Nhập mật khẩu"
+                            type="password"
+                            value={password} onChange={(e) => {setPassword(e.target.value)}}
+                            className={cx('login-input')}
+                        />
                     </div>
-                    <span>Quên mật khẩu</span>
-                    <button className={cx('login-btn')}>Tiếp tục</button>
-                    <span>Bạn chưa có tài khoản? <a>Đăng ký</a> ngay!</span>
+                    <p className={cx("forgot-password")}>Quên mật khẩu</p>
+                    <button className={cx('login-btn')} onClick={handleLogin}>Đăng nhập</button>
+                    <p className={cx('register-redirect')}>Bạn chưa có tài khoản?
+                        <a onClick={switchToRegister}> Đăng ký</a> ngay!</p>
                 </div>
                 <div className={cx('login-img')}>
                     <img

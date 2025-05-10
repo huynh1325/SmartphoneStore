@@ -15,7 +15,6 @@
     display: flex;
     position: relative;
     width: 800px;
-    height: 500px;
     background: rgb(248, 248, 248);
     border-radius: 20px;
 }
@@ -40,15 +39,36 @@
 .input {
     position: relative;
     z-index: 1;
+    flex-direction: column;
+    z-index: 1;
+
+    input {
+        margin-top: 12px;
+    }
 }
 
 .login-input {
-    width: 100%;
-    padding: 10px 0px;
-    border: none;
-    font-size: 24px;
+    height: 36px;
+    border: 1px solid #ccd0d5;
+    font-size: 1.6rem;
     color: #242424;
     outline: none;
+    width: 100%;
+    border-radius: 5px;
+    padding: 11px;
+    margin-top: 4px 0;
+    justify-content: space-around;
+}
+
+.forgot-password {
+    text-align: right;
+    margin-top: 12px;
+    color: var(--primary-color);
+}
+
+.forgot-password:hover {
+    color: rgba(10, 104, 255, 0.8);
+    cursor: pointer;
 }
 
 .login-btn {
@@ -75,6 +95,19 @@
 
     img {
         width: 203px;
+    }
+}
+
+.register-redirect {
+    margin-top: 12px;
+
+    a {
+        color: var(--primary-color);
+        cursor: pointer;
+    }
+
+    a:hover {
+        color: rgba(10, 104, 255, 0.8);
     }
 }
 
