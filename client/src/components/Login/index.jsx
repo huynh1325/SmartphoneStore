@@ -31,7 +31,8 @@ const Login = (props) => {
                     isAuthenticated: true,
                     user: {
                         email: res?.user?.email ?? "",
-                        name: res?.user?.name ?? ""
+                        name: res?.user?.name ?? "",
+                        role: res?.user?.role ?? ""
                     }
             })
             } else {

@@ -22,8 +22,6 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
     },
     maNguoiDung: DataTypes.INTEGER,
-    soLuong: DataTypes.INTEGER,
-    tongTien: DataTypes.DECIMAL(10, 2)
   }, {
     sequelize,
     modelName: 'GioHang',

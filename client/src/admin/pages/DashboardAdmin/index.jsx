@@ -2,7 +2,7 @@ const DashboardAdmin = () => {
 
     return (
         <>
-            <div>DashboardAdmin Page</div>
+            <div>Dashboard Page</div>
         </>
     )
 }

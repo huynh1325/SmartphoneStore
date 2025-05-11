@@ -1,7 +1,8 @@
 import express from "express"
 import homeController from "../controller/homeController";
 import apiController from "../controller/apiController";
-import productController from "../controller/productController"
+import productController from "../controller/productController";
+import userController from "../controller/userController";
 import multer from "multer";
 import path from 'path';
 var appRoot = require('app-root-path');
@@ -34,15 +35,17 @@ app.use('/image', express.static(appRoot + '/src/public/image'));
 const initWebRoutes = (app) => {
     router.get("/", homeController.handleHelloWorld);
     
-    // router.post('/upload-file', upload.single('image-product'), productController.handleUploadFile);
     router.post("/register", apiController.handleRegister);
     router.post("/verify-user", apiController.handleVerifyUser);
     router.post("/login", apiController.handleLogin);
+    router.get("/users", userController.getAllUser);
+    
+    router.get("/products/:maSanPham", productController.getProduct)
     router.put("/products/:maSanPham", upload.single('anh'), productController.handleUpdateProduct);
     router.post("/products", upload.single('anh'), productController.handleCreateProduct);
     router.put("/products/:maSanPham", upload.single('anh'), productController.handleUpdateProduct);
     router.delete("/products/:maSanPham", upload.single('anh'), productController.handleDeleteProduct);
-    router.get("/products", productController.getAllProducts);
+    router.get("/products", productController.getAllProduct);
     
     return app.use("/api/v1/", router);
 }

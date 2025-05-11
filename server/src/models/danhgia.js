@@ -23,8 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     maNguoiDung: DataTypes.INTEGER,
     maSanPham: DataTypes.INTEGER,
     xepHang: DataTypes.DECIMAL(2, 1),
-    noiDung: DataTypes.STRING,
-    ngayDanhGia: DataTypes.DATE
+    noiDung: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'ChiTietDonHang'

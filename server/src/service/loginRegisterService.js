@@ -85,7 +85,20 @@ const registerNewUser = async (rawUserData) => {
 
     try {
 
-        console.log(rawUserData.email, rawUserData.name, codeId);
+        let isEmailExist = await checkEmailExist(rawUserData.email);
+        if (isEmailExist === true) {
+            return {
+                EM: 'Email đã tồn tại',
+                EC: 1
+            }
+        }
+        let isPhoneExist = await checkPhoneExist(rawUserData.phone);
+        if (isPhoneExist === true) {
+            return {
+                EM: 'Số điện thoại đã tồn tại',
+                EC: 1
+            }
+        }
     
         let hashPassword = hashUserPassword(rawUserData.password);
         
@@ -141,7 +154,8 @@ const loginService = async (email, password) => {
             } else {
                 const payload = {
                     email: user.email,
-                    name: user.tenNguoiDung
+                    name: user.tenNguoiDung,
+                    role: user.vaiTro
                 }
                 const access_token = jwt.sign(
                     payload,
@@ -155,7 +169,8 @@ const loginService = async (email, password) => {
                     access_token,
                     user: {
                         email: user.email,
-                        name: user.tenNguoiDung
+                        name: user.tenNguoiDung,
+                        role: user.vaiTro
                     }
                 }
             }

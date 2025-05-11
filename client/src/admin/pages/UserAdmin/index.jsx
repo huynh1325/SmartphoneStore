@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Table, Button, Space, Modal, Form, Input, Select } from 'antd';
 
 const UserAdmin = () => {
@@ -6,31 +6,32 @@ const UserAdmin = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [form] = Form.useForm();
+  const [users, setUsers] = useState([]);
 
-  const dataSource = [
-    {
-      key: '1',
-      name: 'Nguyễn Văn A',
-      email: 'a@example.com',
-      phone: '0123456789',
-      gender: 'Nam',
-      role: 'Admin',
-    },
-    {
-      key: '2',
-      name: 'Trần Thị B',
-      email: 'b@example.com',
-      phone: '0987654321',
-      gender: 'Nữ',
-      role: 'User',
-    },
-  ];
+  const fetchUsers = useCallback(async () => {
+      try {
+          const response = await fetch('http://localhost:8080/api/v1/users');
+          const result = await response.json();
+          if (result.EC === 0) {
+              setUsers(result.DT);
+          } else {
+              console.error('Lỗi API:', result.EM);
+          }
+      } catch (error) {
+          console.error('Lỗi fetch:', error);
+      }
+  }, []);
+
+  
+  useEffect(() => {
+      fetchUsers();
+  }, [fetchUsers]);
 
   const columns = [
     {
       title: 'Tên',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'tenNguoiDung',
+      key: 'tenNguoiDung',
     },
     {
       title: 'Email',
@@ -39,18 +40,18 @@ const UserAdmin = () => {
     },
     {
       title: 'Số điện thoại',
-      dataIndex: 'phone',
-      key: 'phone',
+      dataIndex: 'soDienThoai',
+      key: 'soDienThoai',
     },
     {
       title: 'Giới tính',
-      dataIndex: 'gender',
-      key: 'gender',
+      dataIndex: 'gioiTinh',
+      key: 'gioiTinh',
     },
     {
       title: 'Vai trò',
-      dataIndex: 'role',
-      key: 'role',
+      dataIndex: 'vaiTro',
+      key: 'vaiTro',
     },
     {
       title: 'Thao tác',
@@ -105,7 +106,7 @@ const UserAdmin = () => {
         <Button type="primary" onClick={showModal}>Thêm người dùng</Button>
       </div>
 
-      <Table dataSource={dataSource} columns={columns} />
+      <Table dataSource={users} columns={columns} rowKey='maNguoiDung' />
 
       <Modal
         title={isEdit ? "Sửa người dùng" : "Thêm người dùng"}
@@ -151,7 +152,6 @@ const UserAdmin = () => {
             <Select>
               <Select.Option value="Nam">Nam</Select.Option>
               <Select.Option value="Nữ">Nữ</Select.Option>
-              <Select.Option value="Khác">Khác</Select.Option>
             </Select>
           </Form.Item>
 
@@ -161,8 +161,8 @@ const UserAdmin = () => {
             rules={[{ required: true, message: 'Vui lòng chọn vai trò!' }]}
           >
             <Select>
-              <Select.Option value="Admin">Admin</Select.Option>
-              <Select.Option value="User">User</Select.Option>
+              <Select.Option value="Admin">Khách Hàng</Select.Option>
+              <Select.Option value="User">Admin</Select.Option>
             </Select>
           </Form.Item>
         </Form>

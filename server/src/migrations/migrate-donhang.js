@@ -19,11 +19,20 @@ module.exports = {
       soLuong: {
         type: Sequelize.INTEGER
       },
+      diaChiGiaoHang: {
+        type: Sequelize.STRING
+      },
+      ghiChu: {
+        type: Sequelize.STRING
+      },
       trangThai: {
         type: Sequelize.STRING
       },
-      ngayDatHang: {
-        type: Sequelize.DATE
+      phuongThucThanhToan: {
+        type: Sequelize.STRING
+      },
+      tongGiam: {
+        type: Sequelize.DECIMAL(10, 2)
       },
       tongTien: {
         type: Sequelize.DECIMAL(10, 2)

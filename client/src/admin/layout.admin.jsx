@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Layout, Menu, Avatar, Dropdown, Button, Space } from 'antd';
 import {
   UserOutlined,
   MenuUnfoldOutlined,
   MenuFoldOutlined,
   DashboardOutlined,
-  AppstoreOutlined
+  AppstoreOutlined,
+  TagOutlined
 } from '@ant-design/icons';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 
@@ -31,6 +32,11 @@ const LayoutAdmin = () => {
       key: '/admin/product',
       icon: <AppstoreOutlined />,
       label: <Link to="/admin/product">Products</Link>,
+    },
+    {
+      key: '/admin/voucher',
+      icon: <TagOutlined />,
+      label: <Link to="/admin/voucher">Vouchers</Link>,
     },
   ];
 

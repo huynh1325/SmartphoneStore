@@ -2,13 +2,12 @@ import classNames from 'classnames/bind';
 import styles from './Home.module.scss';
 import Header from '../../components/Header';
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Footer from '../../components/Footer';
+import { Link } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
 const Home = () => {
-    const navigate = useNavigate();
     
     const [products, setProducts] = useState([]);
 
@@ -44,10 +43,6 @@ const Home = () => {
     
         return () => clearInterval(interval);
     }, []);
-
-    const handleClick = () => {
-        navigate("productdetail");
-    };
 
     const fetchProducts = useCallback(async () => {
         try {
@@ -106,26 +101,28 @@ const Home = () => {
                                         const originalPrice = parseFloat(product.gia);
                                         const discountedPrice = originalPrice * (1 - product.phanTramGiam / 100);
                                         return (
-                                            <div key={product.maSanPham} onClick={handleClick} className={cx('product')}>
-                                                <img 
-                                                    src={`http://localhost:8080${product.anh}`}
-                                                    alt='Ảnh sản phẩm'
-                                                />
-                                                <div className={cx('product-name')}>
-                                                    {product.tenSanPham}
-                                                </div>
-                                                <div className={cx('info')}>
-                                                    <span className={cx('ram-rom')}>{product.ram} - {product.dungLuongLuuTru}</span>
-                                                    <span className={cx('inch')}>{product.inch}"</span>
-                                                </div>
-                                                <div className={cx('price')}>
-                                                    <span className={cx('origin-price')}>
-                                                        {originalPrice.toLocaleString('vi-VN')}đ
-                                                    </span>
-                                                    <span className={cx('discount')}>
-                                                        {Math.round(discountedPrice).toLocaleString('vi-VN')}đ
-                                                    </span>
-                                                </div>
+                                            <div key={product.maSanPham} className={cx('product')}>
+                                                <Link to={`/products/${product.maSanPham}`}>
+                                                    <img 
+                                                        src={`http://localhost:8080${product.anh}`}
+                                                        alt='Ảnh sản phẩm'
+                                                    />
+                                                    <div className={cx('product-name')}>
+                                                        {product.tenSanPham}
+                                                    </div>
+                                                    <div className={cx('info')}>
+                                                        <span className={cx('ram-rom')}>{product.ram} - {product.dungLuongLuuTru}</span>
+                                                        <span className={cx('inch')}>{product.inch}"</span>
+                                                    </div>
+                                                    <div className={cx('price')}>
+                                                        <span className={cx('origin-price')}>
+                                                            {originalPrice.toLocaleString('vi-VN')}đ
+                                                        </span>
+                                                        <span className={cx('discount')}>
+                                                            {Math.round(discountedPrice).toLocaleString('vi-VN')}đ
+                                                        </span>
+                                                    </div>
+                                                </Link>
                                             </div>
                                         )
                                     })}

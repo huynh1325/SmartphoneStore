@@ -1,7 +1,29 @@
 import productService from '../service/productService'
 import db from '../models/index'
 
-const getAllProducts = async (req, res) => {
+const getProduct = async (req, res) => {
+    try {
+        const { maSanPham } = req.params;
+        
+        let products = await db.SanPham.findOne({
+            where: {maSanPham: maSanPham},
+        });
+        return res.status(200).json({
+            EM: "Lấy sản phẩm thành công",
+            EC: 0,
+            DT: products
+        })
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({
+            EM: 'error from server',
+            EC: -1,
+            DT: []
+        })
+    }
+}
+
+const getAllProduct = async (req, res) => {
     try {
         let products = await db.SanPham.findAll({
             order: [['maSanPham', 'DESC']]
@@ -20,6 +42,7 @@ const getAllProducts = async (req, res) => {
         })
     }
 }
+
 const handleCreateProduct = async (req, res) => {
     
     if (!req.file) {
@@ -98,5 +121,5 @@ const handleDeleteProduct = async (req, res) => {
 }
 
 module.exports = {
-    handleCreateProduct, getAllProducts, handleUpdateProduct, handleDeleteProduct
+    handleCreateProduct, getAllProduct, handleUpdateProduct, handleDeleteProduct, getProduct
 }

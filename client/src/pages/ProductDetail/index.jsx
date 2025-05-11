@@ -2,21 +2,45 @@ import Header from "../../components/Header"
 import classNames from 'classnames/bind';
 import styles from './ProductDetail.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useParams } from 'react-router-dom';
 import { faCartShopping, faLocationDot } from '@fortawesome/free-solid-svg-icons';
+import { useState, useEffect } from "react";
 
 const cx = classNames.bind(styles);
 
 const ProductDetail = () => {
+    const { id } = useParams();
+    const [product, setProduct] = useState(null);
+
+    useEffect(() => {
+        const fetchProduct = async () => {
+        try {
+            const res = await fetch(`http://localhost:8080/api/v1/products/${id}`);
+            const data = await res.json();
+            if (data.EC === 0) {
+            setProduct(data.DT);
+            } else {
+            console.error('Không tìm thấy sản phẩm:', data.EM);
+            }
+        } catch (error) {
+            console.error('Lỗi fetch:', error);
+        }
+        };
+
+        fetchProduct();
+    }, [id]);
+
     return (
         <>
             <Header />
             <div className={cx('main')}>
+                {product ? (
                 <div className={cx('wrapper')}>
-                    <div className={cx('title')}>Điện thoại Realme51</div>
+                    <div className={cx('title')}>{product.tenSanPham}</div>
                     <div className={cx("container")}>
                         <div className={cx("container-content")}>
                             <div className={cx("image")}>
-                                <img src="https://cdn.tgdd.vn/Products/Images/42/332236/Slider/realme-c75-8gb-512gb638708891479476030.jpg"/>
+                                <img src={`http://localhost:8080${product.anh}`}/>
                                 <p></p>
                             </div>
                         </div>
@@ -28,8 +52,10 @@ const ProductDetail = () => {
                                 <span>36 Cao Thắng, Thanh Bình, Hải Châu, Đà Nẵng</span>
                             </div>
                             <div className={cx('price')}>
-                                <div className={cx('discount')}>3.000.000₫</div>
-                                <div className={cx('origin-price')}>3.200.000₫</div>
+                                <div className={cx('discount')}>
+                                    {(parseFloat(product.gia) * (1 - (product.phanTramGiam || 0) / 100)).toLocaleString('vi-VN')}₫
+                                </div>
+                                <div className={cx('origin-price')}>{parseFloat(product.gia).toLocaleString('vi-VN')}₫</div>
                             </div>
                             <div className={cx("btn")}>
                                 <button className={cx("btn-cart")}>
@@ -43,27 +69,27 @@ const ProductDetail = () => {
                             <div className={cx("info")}>Thông tin</div>
                             <div className={cx("info-row")}>
                                 <span className={cx("label")}>Tên sản phẩm:</span>
-                                <span>Điện thoại OPPO A5 Pro</span>
+                                <span>{product.tenSanPham}</span>
                             </div>
                             <div className={cx("info-row")}>
                                 <span className={cx("label")}>Hệ điều hành:</span>
-                                <span>Android 15</span>
+                                <span>{product.heDieuHanh}</span>
                             </div>
                             <div className={cx("info-row")}>
                                 <span className={cx("label")}>Chip xử lý (CPU):</span>
-                                <span>Snapdragon 6s Gen 1 8 nhân</span>
+                                <span>{product.cpu}</span>
                             </div>
                             <div className={cx("info-row")}>
                                 <span className={cx("label")}>Màn hình rộng:</span>
-                                <span>6.67"</span>
+                                <span>{product.inch}</span>
                             </div>
                             <div className={cx("info-row")}>
                                 <span className={cx("label")}>Ram:</span>
-                                <span>8 GB</span>
+                                <span>{product.ram}</span>
                             </div>
                             <div className={cx("info-row")}>
                                 <span className={cx("label")}>Dung lượng lưu trữ:</span>
-                                <span>256 GB</span>
+                                <span>{product.dungLuongLuuTru}</span>
                             </div>
                         </div>
                         {/* <div className={cx("container-content")}>
@@ -71,6 +97,9 @@ const ProductDetail = () => {
                         </div> */}
                     </div>
                 </div>
+                ) : (
+                    <div>hello</div>
+                )}
             </div>
         </>
     )

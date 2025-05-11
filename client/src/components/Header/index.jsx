@@ -57,17 +57,27 @@ const Header = () => {
             isAuthenticated: false,
             user: {
                 email: "",
-                name: ""
+                name: "",
+                role: ""
             }
         })
         toast.success("Đăng xuất thành công")
         navigate("/");
     }
 
+    const homeRedirect = () => {
+        navigate("/");
+    }
+
+    const cartRedirect = () => {
+        navigate("/cart");
+    }
+
+
     return (
         <div>
             <div className={cx('header')}>
-                <div className={cx('logo')}>SmartphoneStore</div>
+                <div className={cx('logo')} onClick={homeRedirect}>SmartphoneStore</div>
                 <div className={cx('search')}>
                     <FontAwesomeIcon icon={faMagnifyingGlass} className={cx('search-icon')} />
                     <input type='text' placeholder='Tìm kiếm' className={cx('search-input')}/>
@@ -79,27 +89,28 @@ const Header = () => {
                     <FontAwesomeIcon icon={faHouse} className={cx('home-icon')}/>
                     <span>Trang chủ</span>
                 </button>
-                <button className={cx('cart')}>
+                <button className={cx('cart')} onClick={cartRedirect}>
                     <FontAwesomeIcon icon={faCartShopping} className={cx('cart-icon')}/>
                     <span>Giỏ hàng</span>
+                    <span className={cx('cart-number-badge')}>0</span>
                 </button>
                 <button className={cx('account')}>
                     <FontAwesomeIcon icon={faUser} className={cx('account-icon')}/>
                     {auth.isAuthenticated ? (
                         <span>
-                        Chào, {lastName(auth.user.name)}
+                            {lastName(auth.user.name)}
                         </span>
                     ) : (
                         <span>
-                        Tài khoản
+                            Tài khoản
                         </span>
                     )}
                     <FontAwesomeIcon icon={faArrowDown} className={cx('down-icon')}/>
                     <div className={cx('account-option')}>
                         {auth.isAuthenticated ? (
                             <ul>
+                                <li>Trang cá nhân</li>
                                 <li onClick={handleLogout}>Đăng xuất</li>
-                                <li>Đăng xuất</li>
                             </ul>
                         ) : (
                             <ul>

@@ -9,7 +9,13 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      maNhap: {
+        type: Sequelize.STRING
+      },
       tenKhuyenMai: {
+        type: Sequelize.STRING
+      },
+      moTa: {
         type: Sequelize.STRING
       },
       giaTriGiam: {

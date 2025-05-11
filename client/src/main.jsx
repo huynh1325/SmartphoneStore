@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import './index.css'
 import ProductDetail from './pages/ProductDetail/index.jsx';
+import Cart from './pages/Cart/index.jsx'
 import Home from './pages/Home'
 import App from './App.jsx'
 import UserAdmin from './admin/pages/UserAdmin/index.jsx';
@@ -13,6 +14,8 @@ import LayoutAdmin from './admin/layout.admin.jsx';
 import DashboardAdmin from './admin/pages/DashboardAdmin/index.jsx';
 import ProductAdmin from './admin/pages/ProductAdmin/index.jsx';
 import { AuthWrapper } from './components/Context/auth.context.jsx';
+import NotFoundPage from './pages/NotFoundPage'
+import VoucherAdmin from './admin/pages/VoucherAdmin/index.jsx';
 
 const router = createBrowserRouter([
   {
@@ -24,8 +27,12 @@ const router = createBrowserRouter([
         element: <Home />
       },
       {
-        path: "productdetail",
+        path: "products/:id",
         element: <ProductDetail />
+      },
+      {
+        path: "cart",
+        element: <Cart />
       },
       {
         path: "admin",
@@ -43,10 +50,18 @@ const router = createBrowserRouter([
             path: "product",
             element: <ProductAdmin />
           },
+          {
+            path: "voucher",
+            element: <VoucherAdmin />
+          },
         ]
       },
     ]
   },
+  {
+    path: "*",
+    element: <NotFoundPage />
+  }
 ]);
 
 createRoot(document.getElementById('root')).render(

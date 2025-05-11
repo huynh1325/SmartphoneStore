@@ -21,9 +21,6 @@ module.exports = {
       noiDung: {
         type: Sequelize.STRING
       },
-      ngayDanhGia: {
-        type: Sequelize.DATE
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
