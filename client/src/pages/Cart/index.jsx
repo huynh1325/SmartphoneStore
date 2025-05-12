@@ -3,13 +3,15 @@ import classNames from 'classnames/bind';
 import styles from './Cart.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { getAllCart } from "../../util/api";
 
 const cx = classNames.bind(styles);
 
 const Cart = () => {
     const [quantity, setQuantity] = useState(1);
     const pricePerItem = 24000;
+    const [cartItems, setCartItems] = useState([]);
 
     const handleIncrease = () => {
         setQuantity(prev => prev + 1);
@@ -27,6 +29,23 @@ const Cart = () => {
             setQuantity(parseInt(value));
         }
     };
+
+    const fetchCarts = useCallback(async () => {
+            try {
+                const response = await getAllCart();
+                if (response.EC === 0) {
+                    setCartItems(response.DT);
+                } else {
+                    console.error('Lỗi API:', response.EM);
+                }
+            } catch (error) {
+                console.error('Lỗi fetch:', error);
+            }
+        }, []);
+    
+        useEffect(() => {
+            fetchCarts();
+    }, [fetchCarts]);
 
     const totalPrice = quantity * pricePerItem;
 
@@ -50,35 +69,37 @@ const Cart = () => {
                                 <div className={cx("element")}>Thao tác</div>
                             </div>
                         </div>
-                        <div className={cx("container-content")}>
-                            <div className={cx("cart-product")}>
-                                <div className={cx("checkbox")}>
-                                    <label>
-                                        <input type="checkbox"></input>
-                                    </label>
+                        {cartItems.map(item => (
+                            <div className={cx("container-content")}  key={item.maChiTietGioHang}>
+                                <div className={cx("cart-product")}>
+                                    <div className={cx("checkbox")}>
+                                        <label>
+                                            <input type="checkbox"></input>
+                                        </label>
+                                    </div>
+                                    <div className={cx("element", "first-element")}>
+                                        <img alt="Ảnh" src={item.sanPham?.anh || ""}/>
+                                        <div>{item.sanPham?.tenSanPham}</div>
+                                    </div>
+                                    <div className={cx("element")}>{item.gia.toLocaleString()}đ</div>
+                                    <div className={cx("element", "input-quantity")}>
+                                        <button onClick={handleDecrease}>
+                                            <FontAwesomeIcon icon={faMinus} />
+                                        </button>
+                                        <input
+                                            value={quantity}
+                                            type="text"
+                                            onChange={handleQuantityChange}
+                                        />
+                                        <button onClick={handleIncrease}>
+                                            <FontAwesomeIcon icon={faPlus} />
+                                        </button>
+                                    </div>
+                                    <div className={cx("element", "color-red")}> {(item.soLuong * item.gia).toLocaleString()}đ</div>
+                                    <div className={cx("element")}>Xóa</div>
                                 </div>
-                                <div className={cx("element", "first-element")}>
-                                    <img alt="Ảnh" src="https://cdn.tgdd.vn/Products/Images/42/327258/TimerThumb/honor-x6b-6gb-128gb-(36).jpg"/>
-                                    <div>Điện thoại HONOR X6b 6GB/128GB Tím</div>
-                                </div>
-                                <div className={cx("element")}>{pricePerItem}</div>
-                                <div className={cx("element", "input-quantity")}>
-                                    <button onClick={handleDecrease}>
-                                        <FontAwesomeIcon icon={faMinus} />
-                                    </button>
-                                    <input 
-                                        value={quantity}
-                                        type="text"
-                                        onChange={handleQuantityChange}
-                                    />
-                                    <button onClick={handleIncrease}>
-                                        <FontAwesomeIcon icon={faPlus} />
-                                    </button>
-                                </div>
-                                <div className={cx("element", "color-red")}>{totalPrice}</div>
-                                <div className={cx("element")}>Xóa</div>
                             </div>
-                        </div>
+                        ))}
                         <div className={cx("container-content")}>
                             <div className={cx("cart-payment")}>
                                 <div className={cx("checkbox")}>

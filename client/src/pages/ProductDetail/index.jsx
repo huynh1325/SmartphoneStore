@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import { faCartShopping, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { useState, useEffect } from "react";
 import { addToCart } from "../../util/api";
+import { toast } from "react-toastify";
 
 const cx = classNames.bind(styles);
 
@@ -31,32 +32,15 @@ const ProductDetail = () => {
         fetchProduct();
     }, [id]);
 
-      const handleAddToCart = async () => {
-        const data = {
-            maSanPham: product.maSanPham,
-            gia: product.gia,
-            soLuong: 1,
-        };
-        console.log(data)
-        if (!data) {
-            toast.error("Sản phẩm không tồn tại");
-            return;
-        }
-
-        const token = localStorage.getItem("token"); 
-
-        console.log("token: ", token)
+    const handleAddToCart = async () => {
 
         try {
-            
-            const response = await addToCart(product, {
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                }
-            } )
-            
-            if (response.status === 200) {
-                toast.success("Sản phẩm đã được thêm vào giỏ hàng!");
+            const res = await addToCart(product)
+            if (res.EC === 1) {
+                toast.error(res.EM);
+            }
+            if (res.EC === 0) {
+                toast.success(res.EM);
             }
         } catch (error) {
             toast.error("Lỗi thêm sản phẩm")

@@ -49,6 +49,7 @@ const initWebRoutes = (app) => {
     router.delete("/products/:maSanPham", upload.single('anh'), productController.handleDeleteProduct);
     
     router.post("/carts/add", auth, cartController.handleAddToCart);
+    router.get("/carts", auth, cartController.getAllCart);
     
     return app.use("/api/v1/", router);
 }
