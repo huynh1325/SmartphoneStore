@@ -23,7 +23,7 @@ const Register = (props) => {
         try {
             let serverData = await registerNewUser(name, gender, email, phone, password);
             if (+serverData.EC === 0) {
-                toast.info("Nhập mã xác thực");
+                toast.info("Mã xác thực đã được gửi qua email của bạn!");
                 props.setEmail(email);
                 props.onClose();
                 props.openVerifyUser();

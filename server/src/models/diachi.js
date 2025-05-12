@@ -27,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
     diaChiChiTiet: DataTypes.STRING
   }, {
     sequelize,
+    tableName: 'DiaChi',
     modelName: 'DiaChi'
   });
   return DiaChi;

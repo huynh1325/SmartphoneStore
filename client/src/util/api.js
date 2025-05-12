@@ -32,6 +32,12 @@ const verifyUserCode = (email, code) => {
     return axios.post(`/api/v1/verify-user`, {email, code})
 }
 
+
+const addToCart = (product, token) => {
+    return axios.post(`/api/v1/carts/add`, product, token)
+}
+
+
 export {
-    registerNewUser, createProduct, updateProduct, verifyUserCode, userLogin
+    registerNewUser, createProduct, updateProduct, verifyUserCode, userLogin, addToCart
 }

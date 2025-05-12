@@ -10,8 +10,8 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      ChiTietGioHang.belongsTo( models.GioHang, { foreignKey: 'maGioHang' });
-      ChiTietGioHang.belongsTo( models.SanPham, { foreignKey: 'maSanPham' });
+      ChiTietGioHang.belongsTo( models.GioHang, { foreignKey: 'maGioHang', as: 'gioHang' });
+      ChiTietGioHang.belongsTo( models.SanPham, { foreignKey: 'maSanPham', as: 'sanPham' });
     }
   }
   ChiTietGioHang.init({
@@ -27,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
     gia: DataTypes.DECIMAL(10, 2),
   }, {
     sequelize,
+    tableName: 'ChiTietGioHang',
     modelName: 'ChiTietGioHang'
   });
   return ChiTietGioHang;

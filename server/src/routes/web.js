@@ -3,8 +3,10 @@ import homeController from "../controller/homeController";
 import apiController from "../controller/apiController";
 import productController from "../controller/productController";
 import userController from "../controller/userController";
+import cartController from "../controller/cartController";
 import multer from "multer";
 import path from 'path';
+import auth from '../middleware/auth'
 var appRoot = require('app-root-path');
  
 const router = express.Router();
@@ -41,11 +43,12 @@ const initWebRoutes = (app) => {
     router.get("/users", userController.getAllUser);
     
     router.get("/products/:maSanPham", productController.getProduct)
-    router.put("/products/:maSanPham", upload.single('anh'), productController.handleUpdateProduct);
+    router.get("/products", productController.getAllProduct);
     router.post("/products", upload.single('anh'), productController.handleCreateProduct);
     router.put("/products/:maSanPham", upload.single('anh'), productController.handleUpdateProduct);
     router.delete("/products/:maSanPham", upload.single('anh'), productController.handleDeleteProduct);
-    router.get("/products", productController.getAllProduct);
+    
+    router.post("/carts/add", auth, cartController.handleAddToCart);
     
     return app.use("/api/v1/", router);
 }

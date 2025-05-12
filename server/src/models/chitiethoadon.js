@@ -26,6 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     gia: DataTypes.DECIMAL(10, 2)
   }, {
     sequelize,
+    tableName: 'ChiTietHoaDon',
     modelName: 'ChiTietHoaDon'
   });
   return ChiTietHoaDon;

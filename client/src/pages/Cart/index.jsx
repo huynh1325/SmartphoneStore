@@ -3,10 +3,33 @@ import classNames from 'classnames/bind';
 import styles from './Cart.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { useState } from "react";
 
 const cx = classNames.bind(styles);
 
 const Cart = () => {
+    const [quantity, setQuantity] = useState(1);
+    const pricePerItem = 24000;
+
+    const handleIncrease = () => {
+        setQuantity(prev => prev + 1);
+    };
+
+    const handleDecrease = () => {
+        if (quantity > 1) {
+            setQuantity(prev => prev - 1);
+        }
+    };
+
+    const handleQuantityChange = (e) => {
+        const value = e.target.value;
+        if (!isNaN(value) && value >= 0) {
+            setQuantity(parseInt(value));
+        }
+    };
+
+    const totalPrice = quantity * pricePerItem;
+
     return (
         <>
             <Header />
@@ -38,17 +61,21 @@ const Cart = () => {
                                     <img alt="Ảnh" src="https://cdn.tgdd.vn/Products/Images/42/327258/TimerThumb/honor-x6b-6gb-128gb-(36).jpg"/>
                                     <div>Điện thoại HONOR X6b 6GB/128GB Tím</div>
                                 </div>
-                                <div className={cx("element")}>24.000</div>
+                                <div className={cx("element")}>{pricePerItem}</div>
                                 <div className={cx("element", "input-quantity")}>
-                                    <button>
+                                    <button onClick={handleDecrease}>
                                         <FontAwesomeIcon icon={faMinus} />
                                     </button>
-                                    <input value={1} type="text"/>
-                                    <button>
+                                    <input 
+                                        value={quantity}
+                                        type="text"
+                                        onChange={handleQuantityChange}
+                                    />
+                                    <button onClick={handleIncrease}>
                                         <FontAwesomeIcon icon={faPlus} />
                                     </button>
                                 </div>
-                                <div className={cx("element", "color-red")}>24.000</div>
+                                <div className={cx("element", "color-red")}>{totalPrice}</div>
                                 <div className={cx("element")}>Xóa</div>
                             </div>
                         </div>

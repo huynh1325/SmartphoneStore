@@ -25,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     tongTien: DataTypes.DECIMAL(10, 2)
   }, {
     sequelize,
+    tableName: 'HoaDon',
     modelName: 'HoaDon',
   });
   return HoaDon;

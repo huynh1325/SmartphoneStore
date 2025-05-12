@@ -10,12 +10,10 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       maGioHang: {
-        type: Sequelize.INTEGER,
-        unique: true
+        type: Sequelize.INTEGER
       },
       maSanPham: {
-        type: Sequelize.INTEGER,
-        unique: true,
+        type: Sequelize.INTEGER
       },
       soLuong: {
         type: Sequelize.INTEGER,

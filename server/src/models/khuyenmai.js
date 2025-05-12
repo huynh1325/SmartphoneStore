@@ -30,6 +30,7 @@ module.exports = (sequelize, DataTypes) => {
     ngayKetThuc: DataTypes.DATE
   }, {
     sequelize,
+    tableName: 'KhuyenMai',
     modelName: 'KhuyenMai'
   });
   return KhuyenMai;

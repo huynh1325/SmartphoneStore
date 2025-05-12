@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useParams } from 'react-router-dom';
 import { faCartShopping, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { useState, useEffect } from "react";
+import { addToCart } from "../../util/api";
 
 const cx = classNames.bind(styles);
 
@@ -29,6 +30,38 @@ const ProductDetail = () => {
 
         fetchProduct();
     }, [id]);
+
+      const handleAddToCart = async () => {
+        const data = {
+            maSanPham: product.maSanPham,
+            gia: product.gia,
+            soLuong: 1,
+        };
+        console.log(data)
+        if (!data) {
+            toast.error("Sản phẩm không tồn tại");
+            return;
+        }
+
+        const token = localStorage.getItem("token"); 
+
+        console.log("token: ", token)
+
+        try {
+            
+            const response = await addToCart(product, {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            } )
+            
+            if (response.status === 200) {
+                toast.success("Sản phẩm đã được thêm vào giỏ hàng!");
+            }
+        } catch (error) {
+            toast.error("Lỗi thêm sản phẩm")
+        }
+    }
 
     return (
         <>
@@ -58,7 +91,7 @@ const ProductDetail = () => {
                                 <div className={cx('origin-price')}>{parseFloat(product.gia).toLocaleString('vi-VN')}₫</div>
                             </div>
                             <div className={cx("btn")}>
-                                <button className={cx("btn-cart")}>
+                                <button className={cx("btn-cart")} onClick={handleAddToCart}>
                                     <FontAwesomeIcon icon={faCartShopping} className={cx('cart-icon')}/>
                                     <span>Thêm vào giỏ hàng</span>
                                 </button>

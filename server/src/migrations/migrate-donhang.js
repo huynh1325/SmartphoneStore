@@ -13,8 +13,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       maKhuyenMai: {
-        type: Sequelize.INTEGER,
-        allowNull: true
+        type: Sequelize.INTEGER
       },
       soLuong: {
         type: Sequelize.INTEGER

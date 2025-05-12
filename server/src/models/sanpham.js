@@ -10,7 +10,12 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      SanPham.belongsToMany(models.GioHang, { through: 'ChiTietGioHang'})
+      SanPham.belongsToMany(models.GioHang, {
+        through: models.ChiTietGioHang,
+        foreignKey: 'maSanPham',
+        otherKey: 'maGioHang',
+        as: 'danhSachGioHang'
+      });
     }
   }
   SanPham.init({
@@ -34,6 +39,7 @@ module.exports = (sequelize, DataTypes) => {
     dungLuongLuuTru: DataTypes.STRING
   }, {
     sequelize,
+    tableName: 'SanPham',
     modelName: 'SanPham',
     freezeTableName: true
   });

@@ -11,9 +11,9 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      NguoiDung.hasOne(models.HoaDon)
+      NguoiDung.hasOne(models.HoaDon);
       NguoiDung.hasMany(models.DonHang);
-      NguoiDung.hasOne(models.GioHang);
+      NguoiDung.hasOne(models.GioHang, {foreignKey: 'maNguoiDung'});
     }
   }
   NguoiDung.init({
@@ -34,8 +34,8 @@ module.exports = (sequelize, DataTypes) => {
     vaiTro: DataTypes.STRING,
   }, {
     sequelize,
-    modelName: 'NguoiDung',
-    tableName: 'NguoiDung'
+    tableName: 'NguoiDung',
+    modelName: 'NguoiDung'
   });
   return NguoiDung;
 };

@@ -10,8 +10,14 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      GioHang.belongsTo(models.NguoiDung),
-      GioHang.belongsToMany(models.SanPham, { through: 'ChiTietGioHang'})
+      GioHang.belongsTo(models.NguoiDung, { foreignKey: 'maNguoiDung', as: 'nguoiDung' });
+      GioHang.hasMany(models.ChiTietGioHang, { foreignKey: 'maGioHang', as: 'chiTietGioHang'});
+      GioHang.belongsToMany(models.SanPham, {
+        through: models.ChiTietGioHang,
+        foreignKey: 'maGioHang',
+        otherKey: 'maSanPham',
+        as: 'danhSachSanPham'
+      });
     }
   }
   GioHang.init({
@@ -24,6 +30,7 @@ module.exports = (sequelize, DataTypes) => {
     maNguoiDung: DataTypes.INTEGER,
   }, {
     sequelize,
+    tableName: 'GioHang',
     modelName: 'GioHang',
   });
   return GioHang;

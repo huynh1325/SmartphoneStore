@@ -10,8 +10,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       maNguoiDung: {
-        type: Sequelize.INTEGER,
-        unique: true
+        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,
