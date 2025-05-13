@@ -34,6 +34,11 @@ const LayoutAdmin = () => {
       label: <Link to="/admin/product">Products</Link>,
     },
     {
+      key: '/admin/stockin',
+      icon: <TagOutlined />,
+      label: <Link to="/admin/stockin">Stock In</Link>,
+    },
+    {
       key: '/admin/voucher',
       icon: <TagOutlined />,
       label: <Link to="/admin/voucher">Vouchers</Link>,

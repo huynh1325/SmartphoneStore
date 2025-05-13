@@ -70,7 +70,7 @@ const Cart = () => {
                             </div>
                         </div>
                         {cartItems.map(item => (
-                            <div className={cx("container-content")}  key={item.maChiTietGioHang}>
+                            <div className={cx("container-content")}  key={item.maChiTietDonHang}>
                                 <div className={cx("cart-product")}>
                                     <div className={cx("checkbox")}>
                                         <label>

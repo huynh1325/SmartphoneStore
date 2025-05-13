@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       NguoiDung.hasOne(models.HoaDon);
       NguoiDung.hasMany(models.DonHang);
-      NguoiDung.hasOne(models.GioHang, {foreignKey: 'maNguoiDung'});
+      NguoiDung.hasOne(models.DonHang, {foreignKey: 'maNguoiDung'});
     }
   }
   NguoiDung.init({

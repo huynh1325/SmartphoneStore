@@ -10,11 +10,11 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      SanPham.belongsToMany(models.GioHang, {
-        through: models.ChiTietGioHang,
+      SanPham.belongsToMany(models.DonHang, {
+        through: models.ChiTietDonHang,
         foreignKey: 'maSanPham',
-        otherKey: 'maGioHang',
-        as: 'danhSachGioHang'
+        otherKey: 'maDonHang',
+        as: 'danhSachDonHang'
       });
     }
   }
@@ -26,7 +26,9 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
     },
     tenSanPham: DataTypes.STRING,
+    maNhaCungCap: DataTypes.INTEGER,
     gia: DataTypes.DECIMAL(10, 2),
+    soLuong: DataTypes.INTEGER,
     anh: DataTypes.STRING,
     heDieuHanh: DataTypes.STRING,
     cpu: DataTypes.STRING,
@@ -35,6 +37,7 @@ module.exports = (sequelize, DataTypes) => {
     phanTramGiam: DataTypes.INTEGER,
     theNho: DataTypes.STRING,
     chipDoHoa: DataTypes.STRING,
+    soLuong: DataTypes.INTEGER,
     ram: DataTypes.STRING,
     dungLuongLuuTru: DataTypes.STRING
   }, {

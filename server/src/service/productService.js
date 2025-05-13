@@ -9,6 +9,7 @@ const newProduct = async (rawData) => {
             heDieuHanh: rawData.heDieuHanh,
             cpu: rawData.cpu,
             ram: rawData.ram,
+            soLuong: 0,
             dungLuongLuuTru: rawData.dungLuongLuuTru,
             chipDoHoa: rawData.chipDoHoa,
             theNho: rawData.theNho,

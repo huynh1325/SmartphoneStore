@@ -10,15 +10,15 @@ const handleAddToCart = async (req, res) => {
             return res.status(404).json({ message: 'Không tìm thấy sản phẩm' });
         }
 
-        let gioHang = await db.GioHang.findOne({ where: { maNguoiDung } });
+        let donHang = await db.DonHang.findOne({ where: { maNguoiDung } });
 
-        if (!gioHang) {
-            gioHang = await db.GioHang.create({ maNguoiDung });
+        if (!donHang) {
+            donHang = await db.DonHang.create({ maNguoiDung });
         }
 
-        const cartItem = await db.ChiTietGioHang.findOne({
+        const cartItem = await db.ChiTietDonHang.findOne({
             where: {
-                maGioHang: gioHang.maGioHang,
+                maDonHang: donHang.maDonHang,
                 maSanPham,
             },
         });
@@ -30,8 +30,8 @@ const handleAddToCart = async (req, res) => {
             })
         }
 
-        const newItem = await db.ChiTietGioHang.create({
-            maGioHang: gioHang.maGioHang,
+        const newItem = await db.ChiTietDonHang.create({
+            maDonHang: donHang.maDonHang,
             maSanPham,
             gia: product.gia,
             soLuong: 1,
@@ -52,14 +52,14 @@ const handleAddToCart = async (req, res) => {
 };
 
 const getAllCart = async (req, res) => {
-try {
+    try {
         const maNguoiDung = req.user.id;
 
-        const gioHang = await db.GioHang.findOne({
+        const donHang = await db.DonHang.findOne({
             where: { maNguoiDung }
         });
 
-        if (!gioHang) {
+        if (!donHang) {
             return res.status(200).json({
                 EM: 'Giỏ hàng rỗng',
                 EC: 0,
@@ -67,9 +67,9 @@ try {
             });
         }
 
-        const cartItems = await db.ChiTietGioHang.findAll({
+        const cartItems = await db.ChiTietDonHang.findAll({
             where: {
-                maGioHang: gioHang.maGioHang
+                maDonHang: donHang.maDonHang
             },
             include: [
                 {
