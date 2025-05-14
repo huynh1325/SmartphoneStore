@@ -19,7 +19,7 @@ const ProductAdmin = () => {
           if (result.EC === 0) {
               setProducts(result.DT);
           } else {
-              console.error('Lỗi API:', result.EM);
+              toast.error("không lấy được danh sách sản phẩm");
           }
       } catch (error) {
           console.error('Lỗi fetch:', error);
@@ -49,7 +49,7 @@ const ProductAdmin = () => {
           toast.error(data.EM || "Xóa thất bại!");
         }
       } catch (err) {
-        console.error("Lỗi xóa sản phẩm:", err);
+        console.log(err);
         toast.error("Lỗi khi xóa sản phẩm!");
       } finally {
         setIsDeleteModalVisible(false);
@@ -126,7 +126,8 @@ const ProductAdmin = () => {
       render: (_, record) => {
         const ncc = record.nhaCungCap;
         if (Array.isArray(ncc) && ncc.length > 0) {
-          return ncc.join(', ');
+          const uniqueNCC = [...new Set(ncc)]; // <-- lọc trùng
+          return uniqueNCC.join(', ');
         }
         return 'Chưa có';
       },
