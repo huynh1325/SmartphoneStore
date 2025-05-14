@@ -7,6 +7,7 @@ import {
   DashboardOutlined,
   AppstoreOutlined,
   TagOutlined,
+  ShopOutlined,
   ShoppingCartOutlined
 } from '@ant-design/icons';
 import { Link, Outlet, useLocation } from 'react-router-dom';
@@ -33,6 +34,11 @@ const LayoutAdmin = () => {
       key: '/admin/product',
       icon: <AppstoreOutlined />,
       label: <Link to="/admin/product">Sản phẩm</Link>,
+    },
+    {
+      key: '/admin/supplier',
+      icon: <ShopOutlined /> ,
+      label: <Link to="/admin/supplier">Nhà cung cấp</Link>,
     },
     {
       key: '/admin/stockin',

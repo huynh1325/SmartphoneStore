@@ -45,20 +45,20 @@ const handleCreateStockIn = async (req, res) => {
 }
 
 const getAllStockIn = async (req, res) => {
-     try {
-    const receipts = await db.PhieuNhap.findAll({
-      order: [['maPhieuNhap', 'DESC']],
-      include: [
-        {
-          model: db.SanPham,
-          attributes: ['tenSanPham'],
-        },
-        {
-          model: db.NhaCungCap,
-          attributes: ['tenNhaCungCap'],
-        },
-      ],
-    });
+    try {
+      const receipts = await db.PhieuNhap.findAll({
+        order: [['maPhieuNhap', 'DESC']],
+        include: [
+          {
+            model: db.SanPham,
+            attributes: ['tenSanPham'],
+          },
+          {
+            model: db.NhaCungCap,
+            attributes: ['tenNhaCungCap'],
+          },
+        ],
+      });
 
     const data = receipts.map((receipt) => ({
       maPhieuNhap: receipt.maPhieuNhap,
@@ -68,7 +68,7 @@ const getAllStockIn = async (req, res) => {
       tenNhaCungCap: receipt.NhaCungCap?.tenNhaCungCap || 'Không rõ',
       soLuong: receipt.soLuong,
       donGia: receipt.donGia,
-      ngayNhap: receipt.createdAt, // hoặc updatedAt nếu cần
+      ngayNhap: receipt.createdAt,
     }));
 
     return res.status(200).json({
@@ -85,7 +85,6 @@ const getAllStockIn = async (req, res) => {
     });
   }
 }
-
 
 module.exports = {
     handleCreateStockIn, getAllStockIn

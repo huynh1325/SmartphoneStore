@@ -1,11 +1,11 @@
 import express from "express"
+import stockInController from "../controller/stockInController";
 import homeController from "../controller/homeController";
 import apiController from "../controller/apiController";
 import productController from "../controller/productController";
 import userController from "../controller/userController";
 import cartController from "../controller/cartController";
 import supplierController from "../controller/supplierController";
-import stockInController from "../controller/stockInController";
 import multer from "multer";
 import path from 'path';
 import auth from '../middleware/auth'
@@ -38,6 +38,9 @@ app.use('/image', express.static(appRoot + '/src/public/image'));
 
 const initWebRoutes = (app) => {
     router.get("/", homeController.handleHelloWorld);
+
+    router.get("/stock", stockInController.getAllStockIn);
+    router.post("/stockin", stockInController.handleCreateStockIn);
     
     router.post("/register", apiController.handleRegister);
     router.post("/verify-user", apiController.handleVerifyUser);
@@ -53,10 +56,8 @@ const initWebRoutes = (app) => {
     router.post("/carts/add", auth, cartController.handleAddToCart);
     router.get("/carts", auth, cartController.getAllCart);
     
+    
     router.get("/suppliers", supplierController.getAllSupplier);
-
-    router.get("/stockin", stockInController.getAllStockIn);
-    router.post("/stockin", stockInController.handleCreateStockIn);
     
     return app.use("/api/v1/", router);
 }
