@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Table, Button, Space, Modal, Form, Input, Upload, InputNumber, Row, Col } from 'antd';
 import { toast } from "react-toastify";
 import { UploadOutlined } from '@ant-design/icons';
-import { useCallback, useEffect } from 'react';
 
 const ProductAdmin = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -14,17 +13,17 @@ const ProductAdmin = () => {
     const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
     const fetchProducts = useCallback(async () => {
-        try {
-            const response = await fetch('http://localhost:8080/api/v1/products');
-            const result = await response.json();
-            if (result.EC === 0) {
-                setProducts(result.DT);
-            } else {
-                console.error('Lỗi API:', result.EM);
-            }
-        } catch (error) {
-            console.error('Lỗi fetch:', error);
-        }
+      try {
+          const response = await fetch('http://localhost:8080/api/v1/products');
+          const result = await response.json();
+          if (result.EC === 0) {
+              setProducts(result.DT);
+          } else {
+              console.error('Lỗi API:', result.EM);
+          }
+      } catch (error) {
+          console.error('Lỗi fetch:', error);
+      }
     }, []);
 
     useEffect(() => {
@@ -102,29 +101,35 @@ const ProductAdmin = () => {
 
   const columns = [
     {
+      title: 'Mã sản phẩm',
+      dataIndex: 'maSanPham',
+      key: 'maSanPham',
+    },
+    {
       title: 'Tên sản phẩm',
       dataIndex: 'tenSanPham',
       key: 'tenSanPham',
     },
     {
-      title: 'Hệ điều hành',
-      dataIndex: 'heDieuHanh',
-      key: 'heDieuHanh',
-    },
-    {
-      title: 'CPU',
-      dataIndex: 'cpu',
-      key: 'cpu',
-    },
-    {
-      title: 'Nhãn hiệu',
-      dataIndex: 'nhanHieu',
-      key: 'brand',
+      title: 'Số lượng',
+      dataIndex: 'soLuong',
+      key: 'soLuong',
     },
     {
       title: 'Giá',
       dataIndex: 'gia',
       key: 'price',
+    },
+    {
+      title: 'Nhà cung cấp',
+      key: 'nhaCungCap',
+      render: (_, record) => {
+        const ncc = record.nhaCungCap;
+        if (Array.isArray(ncc) && ncc.length > 0) {
+          return ncc.join(', ');
+        }
+        return 'Chưa có';
+      },
     },
     {
       title: 'Thao tác',

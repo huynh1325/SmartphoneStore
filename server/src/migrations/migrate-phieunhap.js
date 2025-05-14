@@ -12,6 +12,15 @@ module.exports = {
       maNhaCungCap: {
         type: Sequelize.INTEGER
       },
+      maSanPham: {
+        type: Sequelize.INTEGER
+      },
+      soLuong: {
+        type: Sequelize.INTEGER
+      },
+      donGia: {
+        type: Sequelize.DECIMAL(10, 2)
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

@@ -5,6 +5,7 @@ import productController from "../controller/productController";
 import userController from "../controller/userController";
 import cartController from "../controller/cartController";
 import supplierController from "../controller/supplierController";
+import stockInController from "../controller/stockInController";
 import multer from "multer";
 import path from 'path';
 import auth from '../middleware/auth'
@@ -53,6 +54,9 @@ const initWebRoutes = (app) => {
     router.get("/carts", auth, cartController.getAllCart);
     
     router.get("/suppliers", supplierController.getAllSupplier);
+
+    router.get("/stockin", stockInController.getAllStockIn);
+    router.post("/stockin", stockInController.handleCreateStockIn);
     
     return app.use("/api/v1/", router);
 }

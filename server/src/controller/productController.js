@@ -24,22 +24,45 @@ const getProduct = async (req, res) => {
 }
 
 const getAllProduct = async (req, res) => {
-    try {
+     try {
         let products = await db.SanPham.findAll({
             order: [['maSanPham', 'DESC']]
         });
+
+        const productWithSuppliers = await Promise.all(products.map(async (product) => {
+            const receipts = await db.PhieuNhap.findAll({
+                where: {
+                    maSanPham: product.maSanPham
+                },
+                attributes: ['maNhaCungCap'],
+                include: {
+                    model: db.NhaCungCap,
+                    attributes: ['tenNhaCungCap']
+                }
+            });
+
+            const suppliers = receipts
+                .filter(receipt => receipt.NhaCungCap !== null)
+                .map(receipt => receipt.NhaCungCap ? receipt.NhaCungCap.tenNhaCungCap : 'Không có nhà cung cấp');
+
+            return {
+                ...product.toJSON(),
+                nhaCungCap: suppliers
+            };
+        }));
+
         return res.status(200).json({
             EM: "Lấy danh sách sản phẩm thành công",
             EC: 0,
-            DT: products
-        })
+            DT: productWithSuppliers
+        });
     } catch (e) {
         console.log(e);
         return res.status(500).json({
-            EM: 'error from server',
+            EM: 'Lỗi từ server',
             EC: -1,
             DT: []
-        })
+        });
     }
 }
 

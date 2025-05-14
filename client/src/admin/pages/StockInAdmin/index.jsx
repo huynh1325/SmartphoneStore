@@ -1,47 +1,90 @@
-import React, { useState } from 'react';
-import { Table, Button, Space, Modal, Form, Input, InputNumber, Row, Col, Select } from 'antd';
-import { toast } from "react-toastify";
+import { useState, useEffect } from 'react';
+import { Table, Button, Modal, Form, InputNumber, Row, Col, Select, Space } from 'antd';
+import { toast } from 'react-toastify';
 
 const StockInAdmin = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
-  const [stockInData, setStockInData] = useState([
-    {
-      id: 1,
-      maPhieuNhap: 'PN001',
-      maNhaCungCap: 'NCC001',
-      products: [
-        { maSanPham: 'SP001', soLuong: 10, gia: 100000 },
-        { maSanPham: 'SP002', soLuong: 5, gia: 150000 },
-      ]
-    },
-    {
-      id: 2,
-      maPhieuNhap: 'PN002',
-      maNhaCungCap: 'NCC002',
-      products: [
-        { maSanPham: 'SP003', soLuong: 20, gia: 200000 },
-      ]
-    },
-  ]);
+  const [stockInData, setStockInData] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
 
-  const [availableProducts, setAvailableProducts] = useState([
-    { maSanPham: 'SP001', tenSanPham: 'Sản phẩm 1' },
-    { maSanPham: 'SP002', tenSanPham: 'Sản phẩm 2' },
-    { maSanPham: 'SP003', tenSanPham: 'Sản phẩm 3' },
-    { maSanPham: 'SP004', tenSanPham: 'Sản phẩm 4' },
-  ]);
+  const fetchStockInData = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/api/v1/stockin');
+      const result = await response.json();
+      if (result.EC === 0) {
+        setStockInData(result.DT);
+      } else {
+        console.error(result.EM);
+        toast.error(result.EM);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Không thể lấy dữ liệu phiếu nhập!');
+    }
+  };
 
-  const [availableSuppliers, setAvailableSuppliers] = useState([
-    { maNhaCungCap: 'NCC001', tenNhaCungCap: 'Nhà cung cấp 1' },
-    { maNhaCungCap: 'NCC002', tenNhaCungCap: 'Nhà cung cấp 2' },
-  ]);
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/api/v1/products');
+      const result = await response.json();
+      if (result.EC === 0) {
+        setProducts(result.DT);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-  const [productsInModal, setProductsInModal] = useState([]);
+  const fetchSuppliers = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/api/v1/suppliers');
+      const result = await response.json();
+      if (result.EC === 0) {
+        setSuppliers(result.DT);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-  const generateMaPhieuNhap = () => {
-    const newId = stockInData.length + 1;
-    return `PN${String(newId).padStart(3, '0')}`;
+  useEffect(() => {
+    fetchStockInData();
+    fetchProducts();
+    fetchSuppliers();
+  }, []);
+
+  const showModal = () => {
+    form.resetFields();
+    setIsModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleAddStockIn = async () => {
+    try {
+      const values = await form.validateFields();
+
+      const response = await fetch('http://localhost:8080/api/v1/stockin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values),
+      });
+
+      const result = await response.json();
+      if (result.EC === 0) {
+        toast.success(result.EM || 'Nhập hàng thành công!');
+        fetchStockInData();
+        setIsModalVisible(false);
+      } else {
+        toast.error(result.EM || 'Đã có lỗi xảy ra!');
+      }
+    } catch (error) {
+      toast.error('Vui lòng nhập đầy đủ thông tin!');
+    }
   };
 
   const columns = [
@@ -51,74 +94,26 @@ const StockInAdmin = () => {
       key: 'maPhieuNhap',
     },
     {
-      title: 'Mã nhà cung cấp',
-      dataIndex: 'maNhaCungCap',
-      key: 'maNhaCungCap',
+      title: 'Tên nhà cung cấp',
+      dataIndex: 'tenNhaCungCap',
+      key: 'tenNhaCungCap',
     },
     {
-      title: 'Sản phẩm nhập',
-      key: 'products',
-      render: (text, record) => (
-        <Table
-          columns={[
-            { title: 'Mã sản phẩm', dataIndex: 'maSanPham', key: 'maSanPham' },
-            { title: 'Số lượng', dataIndex: 'soLuong', key: 'soLuong' },
-            { title: 'Giá', dataIndex: 'gia', key: 'gia' },
-          ]}
-          dataSource={record.products}
-          pagination={false}
-          rowKey={(product) => product.maSanPham}
-        />
-      ),
+      title: 'Tên sản phẩm',
+      dataIndex: 'tenSanPham',
+      key: 'tenSanPham',
+    },
+    {
+      title: 'Số lượng',
+      dataIndex: 'soLuong',
+      key: 'soLuong',
+    },
+    {
+      title: 'Đơn giá',
+      dataIndex: 'donGia',
+      key: 'donGia',
     },
   ];
-
-  const showModal = () => {
-    form.resetFields();
-    setProductsInModal([]);
-    setIsModalVisible(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
-
-  const handleAddProduct = () => {
-    // Nếu chưa có sản phẩm nào thì kiểm tra validate
-    if (productsInModal.length === 0) {
-      form.validateFields(['maSanPham', 'soLuong', 'gia']).then((values) => {
-        setProductsInModal([...productsInModal, values]);
-        form.resetFields(['maSanPham', 'soLuong', 'gia']);
-      }).catch(() => {
-        toast.error('Vui lòng nhập đầy đủ thông tin sản phẩm!');
-      });
-    } else {
-      // Nếu đã có sản phẩm, thêm luôn vào danh sách mà không cần validate
-      const values = form.getFieldsValue();
-      setProductsInModal([...productsInModal, values]);
-      form.resetFields(['maSanPham', 'soLuong', 'gia']);
-    }
-  };
-
-  const handleAddStockIn = async () => {
-    // Kiểm tra nếu chưa có sản phẩm nào thì yêu cầu thêm ít nhất 1 sản phẩm
-    if (productsInModal.length === 0) {
-      toast.error("Vui lòng thêm ít nhất một sản phẩm vào phiếu nhập!");
-      return;
-    }
-
-    // Validate các trường trước khi thêm phiếu nhập mới
-    const values = await form.validateFields();
-    const newStockIn = {
-      id: stockInData.length + 1,
-      maPhieuNhap: generateMaPhieuNhap(),
-      maNhaCungCap: values.maNhaCungCap,
-      products: productsInModal,
-    };
-    setStockInData([...stockInData, newStockIn]);
-    toast.success("Thêm phiếu nhập thành công!");
-    setIsModalVisible(false);
-  };
 
   return (
     <div>
@@ -127,29 +122,27 @@ const StockInAdmin = () => {
         <Button type="primary" onClick={showModal}>Nhập hàng</Button>
       </div>
 
-      <Table dataSource={stockInData} columns={columns} rowKey="id" />
+      <Table dataSource={stockInData} columns={columns} rowKey="maPhieuNhap" />
 
       <Modal
         title="Nhập hàng"
         open={isModalVisible}
-        onOk={handleAddStockIn}
         onCancel={handleCancel}
-        okText="Thêm"
-        cancelText="Hủy"
+        footer={null}
         width={800}
       >
-        <Form form={form} layout="vertical">
+        <Form form={form} layout="vertical" onFinish={handleAddStockIn}>
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
-                label="Mã nhà cung cấp"
+                label="Nhà cung cấp"
                 name="maNhaCungCap"
-                rules={[{ required: true, message: 'Vui lòng chọn mã nhà cung cấp!' }]}
+                rules={[{ required: true, message: 'Vui lòng chọn nhà cung cấp!' }]}
               >
                 <Select>
-                  {availableSuppliers.map(supplier => (
-                    <Select.Option key={supplier.maNhaCungCap} value={supplier.maNhaCungCap}>
-                      {supplier.tenNhaCungCap}
+                  {suppliers.map((s) => (
+                    <Select.Option key={s.maNhaCungCap} value={s.maNhaCungCap}>
+                      {s.tenNhaCungCap}
                     </Select.Option>
                   ))}
                 </Select>
@@ -158,14 +151,14 @@ const StockInAdmin = () => {
 
             <Col span={12}>
               <Form.Item
-                label="Mã sản phẩm"
+                label="Sản phẩm"
                 name="maSanPham"
-                rules={[{ required: true, message: 'Vui lòng chọn mã sản phẩm!' }]}
+                rules={[{ required: true, message: 'Vui lòng chọn sản phẩm!' }]}
               >
                 <Select>
-                  {availableProducts.map(product => (
-                    <Select.Option key={product.maSanPham} value={product.maSanPham}>
-                      {product.tenSanPham}
+                  {products.map((p) => (
+                    <Select.Option key={p.maSanPham} value={p.maSanPham}>
+                      {p.tenSanPham}
                     </Select.Option>
                   ))}
                 </Select>
@@ -184,34 +177,21 @@ const StockInAdmin = () => {
 
             <Col span={12}>
               <Form.Item
-                label="Giá"
-                name="gia"
-                rules={[{ required: true, message: 'Vui lòng nhập giá!' }]}
+                label="Đơn giá"
+                name="donGia"
+                rules={[{ required: true, message: 'Vui lòng nhập đơn giá!' }]}
               >
                 <InputNumber style={{ width: '100%' }} min={0} />
               </Form.Item>
             </Col>
           </Row>
 
-          <Button type="dashed" onClick={handleAddProduct} block>
-            Thêm sản phẩm
-          </Button>
-          
-          {productsInModal.length > 0 && (
-            <div style={{ marginTop: 16 }}>
-              <h4>Sản phẩm đã chọn:</h4>
-              <Table
-                columns={[
-                  { title: 'Mã sản phẩm', dataIndex: 'maSanPham', key: 'maSanPham' },
-                  { title: 'Số lượng', dataIndex: 'soLuong', key: 'soLuong' },
-                  { title: 'Giá', dataIndex: 'gia', key: 'gia' },
-                ]}
-                dataSource={productsInModal}
-                pagination={false}
-                rowKey={(product) => product.maSanPham}
-              />
-            </div>
-          )}
+          <div style={{ marginTop: 24, textAlign: 'right' }}>
+            <Space>
+              <Button onClick={handleCancel}>Hủy</Button>
+              <Button type="primary" htmlType="submit">Nhập hàng</Button>
+            </Space>
+          </div>
         </Form>
       </Modal>
     </div>

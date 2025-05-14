@@ -6,7 +6,8 @@ import {
   MenuFoldOutlined,
   DashboardOutlined,
   AppstoreOutlined,
-  TagOutlined
+  TagOutlined,
+  ShoppingCartOutlined
 } from '@ant-design/icons';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 
@@ -21,27 +22,27 @@ const LayoutAdmin = () => {
     {
       key: '/admin/dashboard',
       icon: <DashboardOutlined />,
-      label: <Link to="/admin/dashboard">Dashboard</Link>,
+      label: <Link to="/admin/dashboard">Bảng điều khiển</Link>,
     },
     {
       key: '/admin/user',
       icon: <UserOutlined />,
-      label: <Link to="/admin/user">Users</Link>,
+      label: <Link to="/admin/user">Tài khoản</Link>,
     },
     {
       key: '/admin/product',
       icon: <AppstoreOutlined />,
-      label: <Link to="/admin/product">Products</Link>,
+      label: <Link to="/admin/product">Sản phẩm</Link>,
     },
     {
       key: '/admin/stockin',
-      icon: <TagOutlined />,
-      label: <Link to="/admin/stockin">Stock In</Link>,
+      icon: <ShoppingCartOutlined /> ,
+      label: <Link to="/admin/stockin">Nhập hàng</Link>,
     },
     {
       key: '/admin/voucher',
       icon: <TagOutlined />,
-      label: <Link to="/admin/voucher">Vouchers</Link>,
+      label: <Link to="/admin/voucher">Khuyến mãi</Link>,
     },
   ];
 

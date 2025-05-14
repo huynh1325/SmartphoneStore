@@ -16,6 +16,9 @@ module.exports = (sequelize, DataTypes) => {
         otherKey: 'maDonHang',
         as: 'danhSachDonHang'
       });
+      SanPham.hasMany(models.PhieuNhap, {
+        foreignKey: 'maSanPham'
+      });
     }
   }
   SanPham.init({
@@ -26,7 +29,6 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
     },
     tenSanPham: DataTypes.STRING,
-    maNhaCungCap: DataTypes.INTEGER,
     gia: DataTypes.DECIMAL(10, 2),
     soLuong: DataTypes.INTEGER,
     anh: DataTypes.STRING,
