@@ -5,9 +5,8 @@ module.exports = {
     await queryInterface.createTable('NhaCungCap', {
       maNhaCungCap: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       tenNhaCungCap: {
         type: Sequelize.STRING

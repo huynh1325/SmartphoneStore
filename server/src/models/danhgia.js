@@ -15,8 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   DanhGia.init({
     maDanhGia: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
+      type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true,
     },

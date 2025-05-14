@@ -23,13 +23,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   SanPham.init({
     maSanPham: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
+      type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true,
     },
     tenSanPham: DataTypes.STRING,
-    gia: DataTypes.DECIMAL(10, 2),
+    gia: DataTypes.DECIMAL(15, 2),
     soLuong: DataTypes.INTEGER,
     anh: DataTypes.STRING,
     heDieuHanh: DataTypes.STRING,

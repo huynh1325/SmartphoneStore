@@ -5,18 +5,17 @@ module.exports = {
     await queryInterface.createTable('HoaDon', {
       maHoaDon: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       maDonHang: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       maNguoiDung: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       tongTien: {
-        type: Sequelize.DECIMAL(10, 2)
+        type: Sequelize.DECIMAL(15, 2)
       },
       createdAt: {
         allowNull: false,

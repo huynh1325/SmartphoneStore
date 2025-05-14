@@ -14,8 +14,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   DiaChi.init({
     maDiaChi: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
+      type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true,
     },

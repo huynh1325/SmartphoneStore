@@ -97,7 +97,9 @@ const Home = () => {
                             </div>
                             <div className={cx('content')}>
                                 <div className={cx('list-product')}>
-                                    {products.map((product) => {
+                                    {products
+                                        .filter((product) => product.soLuong > 0)
+                                        .map((product) => {
                                         const originalPrice = parseFloat(product.gia);
                                         const discountedPrice = originalPrice * (1 - product.phanTramGiam / 100);
                                         return (

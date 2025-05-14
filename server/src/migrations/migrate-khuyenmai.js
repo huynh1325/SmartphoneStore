@@ -5,9 +5,8 @@ module.exports = {
     await queryInterface.createTable('KhuyenMai', {
       maKhuyenMai: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       maNhap: {
         type: Sequelize.STRING

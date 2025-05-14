@@ -18,8 +18,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   NguoiDung.init({
     maNguoiDung: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
+      type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true,
     },

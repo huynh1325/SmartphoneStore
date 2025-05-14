@@ -15,15 +15,14 @@ module.exports = (sequelize, DataTypes) => {
   }
   ChiTietHoaDon.init({
     maChiTietHoaDon: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
+      type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true,
     },
     maHoaDon: DataTypes.INTEGER,
     maSanPham: DataTypes.INTEGER,
     soLuong: DataTypes.INTEGER,
-    gia: DataTypes.DECIMAL(10, 2)
+    gia: DataTypes.DECIMAL(15, 2)
   }, {
     sequelize,
     tableName: 'ChiTietHoaDon',

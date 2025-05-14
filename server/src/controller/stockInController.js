@@ -1,8 +1,11 @@
 import db from '../models/index'
+import { generateCustomId } from '../utils/idGenerator';
 
 const handleCreateStockIn = async (req, res) => {
     try {
         const { maSanPham, maNhaCungCap, soLuong, donGia } = req.body;
+
+        console.log("req.body:", req.body)
 
         if (!maSanPham || !maNhaCungCap || !soLuong || !donGia) {
             return res.status(400).json({
@@ -19,7 +22,10 @@ const handleCreateStockIn = async (req, res) => {
             });
         }
 
+        const newId = await generateCustomId('PN', db.PhieuNhap, 'maPhieuNhap');
+
         const phieuNhap = await db.PhieuNhap.create({
+            maPhieuNhap: newId,
             maSanPham,
             maNhaCungCap,
             soLuong,

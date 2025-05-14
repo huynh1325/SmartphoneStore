@@ -15,8 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   NhaCungCap.init({
     maNhaCungCap: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
+      type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true,
     },

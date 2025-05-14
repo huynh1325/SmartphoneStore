@@ -64,28 +64,27 @@ const StockInAdmin = () => {
     setIsModalVisible(false);
   };
 
-  const handleAddStockIn = async () => {
-    try {
-      const values = await form.validateFields();
+  const handleAddStockIn = async (values) => {
+  try {
+    const response = await fetch('http://localhost:8080/api/v1/stockin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(values),
+    });
 
-      const response = await fetch('http://localhost:8080/api/v1/stockin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
-      });
-
-      const result = await response.json();
-      if (result.EC === 0) {
-        toast.success(result.EM || 'Nhập hàng thành công!');
-        fetchStockInData();
-        setIsModalVisible(false);
-      } else {
-        toast.error(result.EM || 'Đã có lỗi xảy ra!');
-      }
-    } catch (error) {
-      toast.error('Vui lòng nhập đầy đủ thông tin!');
+    const result = await response.json();
+    if (result.EC === 0) {
+      toast.success(result.EM || 'Nhập hàng thành công!');
+      fetchStockInData();
+      setIsModalVisible(false);
+    } else {
+      toast.error(result.EM || 'Đã có lỗi xảy ra!');
     }
-  };
+  } catch (error) {
+    toast.error('Đã có lỗi xảy ra trong quá trình gửi dữ liệu!');
+    console.error(error);
+  }
+};
 
   const columns = [
     {

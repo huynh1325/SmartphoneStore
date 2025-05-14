@@ -5,12 +5,11 @@ module.exports = {
     await queryInterface.createTable('DiaChi', {
       maDiaChi: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       maNguoiDung: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       tenDiaChi: {
         type: Sequelize.STRING,

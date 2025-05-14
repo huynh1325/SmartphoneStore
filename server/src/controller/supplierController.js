@@ -1,4 +1,5 @@
 import db from '../models/index'
+import { generateCustomId } from '../utils/idGenerator';
 
 const getAllSupplier = async (req, res) => {
     try {
@@ -43,7 +44,11 @@ const handleCreateSupplier = async (req, res) => {
             });
         }
         
-        let newSupplier = await db.NhaCungCap.create({ tenNhaCungCap })
+        const newId = await generateCustomId('NCC', db.NhaCungCap, 'maNhaCungCap');
+        let newSupplier = await db.NhaCungCap.create({
+            maNhaCungCap: newId,
+            tenNhaCungCap 
+        })
 
         return res.status(201).json({
             EM: 'Đã thêm nhà cung cấp',

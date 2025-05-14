@@ -1,10 +1,14 @@
 import db from '../models/index'
+import { generateCustomId } from '../utils/idGenerator';
 const deleteImage = require('../utils/deleteImage'); 
 
 const newProduct = async (rawData) => {
 
+    const newId = await generateCustomId('SP', db.SanPham, 'maSanPham');
+
     try {
         await db.SanPham.create({
+            maSanPham: newId,
             tenSanPham: rawData.tenSanPham,
             heDieuHanh: rawData.heDieuHanh,
             cpu: rawData.cpu,

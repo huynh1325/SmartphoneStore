@@ -7,6 +7,7 @@ import path from 'path';
 import fs from 'fs';
 import handlebars from 'handlebars';
 import jwt from 'jsonwebtoken'
+import { generateCustomId } from '../utils/idGenerator';
 // import { getGroupWithRoles } from './JWTService'
 // import { createJWT } from '../middleware/JWTAction'
 
@@ -101,8 +102,11 @@ const registerNewUser = async (rawUserData) => {
         }
     
         let hashPassword = hashUserPassword(rawUserData.password);
+
+        const newId = await generateCustomId('ND', db.NguoiDung, 'maNguoiDung');
         
         await db.NguoiDung.create({
+            maNguoiDung: newId,
             email: rawUserData.email,
             matKhau: hashPassword,
             soDienThoai: rawUserData.phone,

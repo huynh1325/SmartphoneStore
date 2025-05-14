@@ -5,15 +5,14 @@ module.exports = {
     await queryInterface.createTable('DonHang', {
       maDonHang: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       maNguoiDung: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       maKhuyenMai: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       soLuong: {
         type: Sequelize.INTEGER
@@ -31,10 +30,10 @@ module.exports = {
         type: Sequelize.STRING
       },
       tongGiam: {
-        type: Sequelize.DECIMAL(10, 2)
+        type: Sequelize.DECIMAL(15, 2)
       },
       tongTien: {
-        type: Sequelize.DECIMAL(10, 2)
+        type: Sequelize.DECIMAL(15, 2)
       },
       createdAt: {
         allowNull: false,

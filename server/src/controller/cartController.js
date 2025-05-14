@@ -1,9 +1,11 @@
 import db from '../models/index'
+import { generateCustomId } from '../utils/idGenerator';
 
 const handleAddToCart = async (req, res) => {
     try {
         const { maSanPham } = req.body;
         const maNguoiDung = req.user.id;
+        const newId = await generateCustomId('DH', db.DonHang, 'maDonHang');
 
         const product = await db.SanPham.findByPk(maSanPham);
         if (!product) {
@@ -13,7 +15,10 @@ const handleAddToCart = async (req, res) => {
         let donHang = await db.DonHang.findOne({ where: { maNguoiDung } });
 
         if (!donHang) {
-            donHang = await db.DonHang.create({ maNguoiDung });
+            donHang = await db.DonHang.create({
+                maDonHang: newId,
+                maNguoiDung
+            });
         }
 
         const cartItem = await db.ChiTietDonHang.findOne({
@@ -74,7 +79,7 @@ const getAllCart = async (req, res) => {
             include: [
                 {
                     model: db.SanPham,
-                    as: 'sanPham', // đúng alias bạn đã định nghĩa trong model
+                    as: 'sanPham',
                     attributes: ['tenSanPham', 'gia', 'anh']
                 }
             ]

@@ -22,8 +22,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   DonHang.init({
     maDonHang: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
+      type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true,
     },
@@ -34,8 +33,8 @@ module.exports = (sequelize, DataTypes) => {
     ghiChu: DataTypes.STRING,
     trangThai: DataTypes.STRING,
     phuongThucThanhToan: DataTypes.STRING,
-    tongGiam: DataTypes.DECIMAL(10, 2),
-    tongTien: DataTypes.DECIMAL(10, 2)
+    tongGiam: DataTypes.DECIMAL(15, 2),
+    tongTien: DataTypes.DECIMAL(15, 2)
   }, {
     sequelize,
     tableName: 'DonHang',

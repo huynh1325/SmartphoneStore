@@ -15,14 +15,13 @@ module.exports = (sequelize, DataTypes) => {
   }
   HoaDon.init({
     maHoaDon: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
+      type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true,
     },
     maDonHang: DataTypes.INTEGER,
     maNguoiDung: DataTypes.INTEGER,
-    tongTien: DataTypes.DECIMAL(10, 2)
+    tongTien: DataTypes.DECIMAL(15, 2)
   }, {
     sequelize,
     tableName: 'HoaDon',
