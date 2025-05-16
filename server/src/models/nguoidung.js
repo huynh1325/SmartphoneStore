@@ -12,7 +12,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       NguoiDung.hasOne(models.HoaDon);
-      NguoiDung.hasMany(models.DonHang);
+      NguoiDung.hasMany(models.DonHang,
+        {
+          foreignKey: 'maNguoiDung',
+          as: 'donHang'
+        });
       NguoiDung.hasOne(models.DonHang, {foreignKey: 'maNguoiDung'});
     }
   }

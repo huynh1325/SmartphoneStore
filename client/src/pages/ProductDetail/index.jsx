@@ -34,6 +34,11 @@ const ProductDetail = () => {
 
     const handleAddToCart = async () => {
 
+        const token = localStorage.getItem("access_token");
+        if (!token) {
+            toast.error("Bạn chưa đăng nhập!");
+        }
+
         try {
             const res = await addToCart(product)
             if (res.EC === 1) {

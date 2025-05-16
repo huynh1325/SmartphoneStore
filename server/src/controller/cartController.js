@@ -5,18 +5,27 @@ const handleAddToCart = async (req, res) => {
     try {
         const { maSanPham } = req.body;
         const maNguoiDung = req.user.id;
-        const newId = await generateCustomId('DH', db.DonHang, 'maDonHang');
+        const newIdDH = await generateCustomId('DH', db.DonHang, 'maDonHang');
+        const newIdCTDH = await generateCustomId('CTDH', db.ChiTietDonHang, 'maChiTietDonHang');
 
         const product = await db.SanPham.findByPk(maSanPham);
         if (!product) {
             return res.status(404).json({ message: 'Không tìm thấy sản phẩm' });
         }
 
-        let donHang = await db.DonHang.findOne({ where: { maNguoiDung } });
+        let donHang = await db.DonHang.findOne({
+            where: { maNguoiDung },
+            include: [
+                {
+                    model: db.NguoiDung,
+                    as: 'nguoiDung'
+                }
+            ]
+        });
 
         if (!donHang) {
             donHang = await db.DonHang.create({
-                maDonHang: newId,
+                maDonHang: newIdDH,
                 maNguoiDung
             });
         }
@@ -36,6 +45,7 @@ const handleAddToCart = async (req, res) => {
         }
 
         const newItem = await db.ChiTietDonHang.create({
+            maChiTietDonHang: newIdCTDH,
             maDonHang: donHang.maDonHang,
             maSanPham,
             gia: product.gia,

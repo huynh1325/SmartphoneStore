@@ -5,10 +5,11 @@ import { faUser, faCartShopping, faHouse, faMagnifyingGlass, faArrowDown} from '
 import Login from '../Login';
 import Register from '../Register';
 import VerifyUser from '../VerifyUser'
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../Context/auth.context';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useCart } from '../../components/Context/CartContext';
 
 const cx = classNames.bind(styles);
 
@@ -19,7 +20,21 @@ const Header = () => {
     const [modalRegister, setModalRegister] = useState(false);
     const [modalVerifyUser, setModalVerifyUser] = useState(false);
     const [email, setEmail] = useState("");
-    const { auth, setAuth } = useContext(AuthContext)
+
+    const { auth, setAuth } = useContext(AuthContext);
+    const { cartItems, clearCart, fetchCart } = useCart();
+
+    useEffect(() => {
+        if (auth.isAuthenticated) {
+            fetchCart();
+        } else {
+            clearCart();
+        }
+    }, [auth.isAuthenticated]);
+    
+    const totalQuantity = cartItems.reduce((total, item) => {
+        return total + (item.soLuong || 1);
+    }, 0);
 
     const lastName = (name) => {
         const nameParts = name.split(" ");
@@ -61,7 +76,8 @@ const Header = () => {
                 role: ""
             }
         })
-        toast.success("Đăng xuất thành công")
+        toast.success("Đăng xuất thành công");
+        clearCart();
         navigate("/");
     }
 
@@ -92,7 +108,7 @@ const Header = () => {
                 <button className={cx('cart')} onClick={cartRedirect}>
                     <FontAwesomeIcon icon={faCartShopping} className={cx('cart-icon')}/>
                     <span>Giỏ hàng</span>
-                    <span className={cx('cart-number-badge')}>0</span>
+                    <span className={cx('cart-number-badge')}>{totalQuantity}</span>
                 </button>
                 <button className={cx('account')}>
                     <FontAwesomeIcon icon={faUser} className={cx('account-icon')}/>

@@ -138,7 +138,6 @@ const checkPassword = (inputPassword, hashPassword) => {
 
 const loginService = async (email, password) => {
     try {
-        console.log(email, password)
         const user = await db.NguoiDung.findOne({
             where: { email: email }
         });

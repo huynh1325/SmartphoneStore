@@ -18,6 +18,7 @@ import NotFoundPage from './pages/NotFoundPage'
 import VoucherAdmin from './admin/pages/VoucherAdmin/index.jsx';
 import StockInAdmin from './admin/pages/StockInAdmin/index.jsx';
 import SupplierAdmin from './admin/pages/SupplierAdmin/index.jsx';
+import { CartProvider } from './components/Context/CartContext.jsx';
 
 const router = createBrowserRouter([
   {
@@ -77,7 +78,9 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthWrapper>
-      <RouterProvider router={router}/>
+      <CartProvider>
+        <RouterProvider router={router}/>
+      </CartProvider>
     </AuthWrapper>
   </StrictMode>,
 )
