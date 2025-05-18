@@ -5,9 +5,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useState, useEffect, useCallback } from "react";
 import { getAllCart } from "../../util/api";
+import { useNavigate } from "react-router-dom";
 
 const cx = classNames.bind(styles);
-
 
 const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
@@ -15,6 +15,8 @@ const Cart = () => {
     const [selectedItems, setSelectedItems] = useState({});
 
     const [quantities, setQuantities] = useState({});
+
+    const navigate = useNavigate();
 
     const handleToggleAll = () => {
         const allSelected = Object.keys(selectedItems).length === cartItems.length;
@@ -84,6 +86,10 @@ const Cart = () => {
             }));
         }
     };
+
+    const redirectCheckout = () => {
+        navigate("/checkout")
+    }
 
     const totalPrice = cartItems.reduce((total, item) => {
         const id = item.maChiTietDonHang;
@@ -178,7 +184,7 @@ const Cart = () => {
                                 <div className={cx("element")}>Xóa</div>
                                 <div className={cx("quantity")}>Tổng cộng ({totalQuantity}) sản phẩm:</div>
                                 <div className={cx("price")}>{totalPrice.toLocaleString()}đ</div>
-                                <div className={cx("buy")}>Mua hàng</div>
+                                <div className={cx("buy")} onClick={redirectCheckout}>Mua hàng</div>
                             </div>
                         </div>
                     </div>

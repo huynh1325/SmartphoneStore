@@ -1,14 +1,11 @@
 import db from '../models/index'
-import { generateCustomId } from '../utils/idGenerator';
 const deleteImage = require('../utils/deleteImage'); 
 
 const newProduct = async (rawData) => {
 
-    const newId = await generateCustomId('SP', db.SanPham, 'maSanPham');
-
     try {
         await db.SanPham.create({
-            maSanPham: newId,
+            maSanPham: rawData.maSanPham,
             tenSanPham: rawData.tenSanPham,
             heDieuHanh: rawData.heDieuHanh,
             cpu: rawData.cpu,
@@ -17,6 +14,7 @@ const newProduct = async (rawData) => {
             dungLuongLuuTru: rawData.dungLuongLuuTru,
             chipDoHoa: rawData.chipDoHoa,
             theNho: rawData.theNho,
+            mau: rawData.mau,
             gia: rawData.gia,
             inch: rawData.inch,
             nhanHieu: rawData.nhanHieu,
@@ -60,6 +58,7 @@ const updateProduct = async (data) => {
 
         if (sanPham) {
             await db.SanPham.update({
+                maSanPham: data.maSanPham,
                 tenSanPham: data.tenSanPham,
                 heDieuHanh: data.heDieuHanh,
                 cpu: data.cpu,
@@ -70,6 +69,7 @@ const updateProduct = async (data) => {
                 chipDoHoa: data.chipDoHoa,
                 theNho: data.theNho,
                 nhanHieu: data.nhanHieu,
+                mau: data.mau,
                 phanTramGiam: data.phanTramGiam,
                 anh: anhCapNhat
             },
@@ -100,7 +100,6 @@ const updateProduct = async (data) => {
 }
 
 const deleteProduct = async (maSanPham) => {
-
     try {
 
         const sanPham = await db.SanPham.findOne({
@@ -137,6 +136,36 @@ const deleteProduct = async (maSanPham) => {
     }
 }
 
+const fetchAllProducts = async () => {
+    let products = await db.SanPham.findAll({
+        order: [['maSanPham', 'DESC']]
+    });
+
+    const productWithSuppliers = await Promise.all(products.map(async (product) => {
+        const receipts = await db.PhieuNhap.findAll({
+            where: {
+                maSanPham: product.maSanPham
+            },
+            attributes: ['maNhaCungCap'],
+            include: {
+                model: db.NhaCungCap,
+                attributes: ['tenNhaCungCap']
+            }
+        });
+
+        const suppliers = receipts
+            .filter(receipt => receipt.NhaCungCap !== null)
+            .map(receipt => receipt.NhaCungCap ? receipt.NhaCungCap.tenNhaCungCap : 'Không có nhà cung cấp');
+
+        return {
+            ...product.toJSON(),
+            nhaCungCap: suppliers
+        };
+    }));
+
+    return productWithSuppliers;
+}
+
 module.exports = {
-    newProduct, updateProduct, deleteProduct
+    newProduct, updateProduct, deleteProduct, fetchAllProducts
 }

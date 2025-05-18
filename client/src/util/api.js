@@ -16,16 +16,20 @@ const userLogin = (email, password) => {
 //     return axios.get('/api/v1/getproduct')
 // }
 
-const createProduct = (tenSanPham, heDieuHanh, ram, dungLuongLuuTru, inch, gia, nuocSanXuat, nhanHieu, phanTramGiam, anh) => {
-    return axios.post('/api/v1/products', {
-        tenSanPham, heDieuHanh, ram, dungLuongLuuTru, inch, gia, nuocSanXuat, nhanHieu, phanTramGiam, anh
-    })
+const createProduct = (formData) => {
+    return axios.post('/api/v1/products', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
 }
 
-const updateProduct = (maSanPham ,tenSanPham, heDieuHanh, ram, dungLuongLuuTru, inch, gia, nuocSanXuat, nhanHieu, phanTramGiam, anh) => {
-    return axios.put(`/api/v1/products/${maSanPham}`, {
-        tenSanPham, heDieuHanh, ram, dungLuongLuuTru, inch, gia, nuocSanXuat, nhanHieu, phanTramGiam, anh
-    })
+const updateProduct = (maSanPham, formData) => {
+    return axios.put(`/api/v1/products/${encodeURIComponent(maSanPham)}`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
 }
 
 const verifyUserCode = (email, code) => {

@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { Table, Button, Space, Modal, Form, Input, Upload, InputNumber, Row, Col } from 'antd';
 import { toast } from "react-toastify";
 import { UploadOutlined } from '@ant-design/icons';
+import { createProduct, updateProduct } from '../../../util/api';
 
 const ProductAdmin = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -57,47 +58,6 @@ const ProductAdmin = () => {
       }
     };
 
-    const handleCreateProduct = async () => {
-      try {
-          const values = await form.validateFields();
-  
-          const formData = new FormData();
-          formData.append("tenSanPham", values.tenSanPham);
-          formData.append("heDieuHanh", values.heDieuHanh);
-          formData.append("cpu", values.cpu);
-          formData.append("ram", values.ram);
-          formData.append("dungLuongLuuTru", values.dungLuongLuuTru);
-          formData.append("inch", values.inch);
-          formData.append("gia", values.gia);
-          formData.append("chipDoHoa", values.chipDoHoa);
-          formData.append("nhanHieu", values.nhanHieu);
-          formData.append("theNho", values.theNho);
-          formData.append("phanTramGiam", values.phanTramGiam);
-        
-          if (values.anh && values.anh.length > 0) {
-            formData.append("anh", values.anh[0].originFileObj);
-          }
-  
-          const res = await fetch("http://localhost:8080/api/v1/products", {
-              method: "POST",
-              body: formData,
-          });
-  
-          const data = await res.json();
-  
-          if (data.EC === 0) {
-            toast.success("Thêm sản phẩm thành công!");
-            setIsModalVisible(false);
-            form.resetFields();
-            fetchProducts();
-          } else {
-            toast.error(data.EM || "Có lỗi xảy ra!");
-          }
-      } catch (err) {
-          console.error("Lỗi thêm sản phẩm:", err);
-          toast.error("Lỗi thêm sản phẩm!");
-      }
-  };
 
   const columns = [
     {
@@ -126,7 +86,7 @@ const ProductAdmin = () => {
       render: (_, record) => {
         const ncc = record.nhaCungCap;
         if (Array.isArray(ncc) && ncc.length > 0) {
-          const uniqueNCC = [...new Set(ncc)]; // <-- lọc trùng
+          const uniqueNCC = [...new Set(ncc)];
           return uniqueNCC.join(', ');
         }
         return 'Chưa có';
@@ -168,19 +128,69 @@ const ProductAdmin = () => {
       ]
     : [];
 
+  let colors = '';
+    try {
+      const parsed = typeof product.mau === 'string' ? JSON.parse(product.mau) : product.mau;
+      colors = Array.isArray(parsed) ? parsed.join(', ') : '';
+    } catch (err) {
+      colors = '';
+  }
+
   form.setFieldsValue({
     ...product,
     anh: fileList,
+    mau: colors
   });
 
   setIsModalVisible(true);
   };
+
+  
+  const handleCreateProduct = async () => {
+    try {
+      const values = await form.validateFields();
+
+      const formData = new FormData();
+      formData.append("maSanPham", values.maSanPham);
+      formData.append("tenSanPham", values.tenSanPham);
+      formData.append("heDieuHanh", values.heDieuHanh);
+      formData.append("cpu", values.cpu);
+      formData.append("ram", values.ram);
+      formData.append("dungLuongLuuTru", values.dungLuongLuuTru);
+      formData.append("inch", values.inch);
+      formData.append("gia", values.gia);
+      formData.append("chipDoHoa", values.chipDoHoa);
+      formData.append("nhanHieu", values.nhanHieu);
+      formData.append("theNho", values.theNho);
+      formData.append("mau", JSON.stringify(values.mau.split(',').map(m => m.trim())));
+      formData.append("phanTramGiam", values.phanTramGiam);
+    
+      if (values.anh && values.anh.length > 0) {
+        formData.append("anh", values.anh[0].originFileObj);
+      }
+  
+      const res = await createProduct(formData);
+
+      if (+res.EC === 0) {
+        toast.success(res.EM);
+        setIsModalVisible(false);
+        form.resetFields();
+        fetchProducts();
+      } else {
+        toast.error(res.EM);
+      }
+    } catch (err) {
+        console.error("Lỗi thêm sản phẩm:", err);
+        toast.error("Lỗi thêm sản phẩm!");
+      }
+    };
 
   const handleUpdateProduct = async () => {
     try {
       const values = await form.validateFields();
   
       const formData = new FormData();
+      formData.append("maSanPham", values.maSanPham);
       formData.append("tenSanPham", values.tenSanPham);
       formData.append("heDieuHanh", values.heDieuHanh);
       formData.append("cpu", values.cpu);
@@ -191,30 +201,23 @@ const ProductAdmin = () => {
       formData.append("theNho", values.theNho);
       formData.append("chipDoHoa", values.chipDoHoa);
       formData.append("nhanHieu", values.nhanHieu);
+      formData.append("mau", JSON.stringify(values.mau.split(',').map(m => m.trim())));
       formData.append("phanTramGiam", values.phanTramGiam);
 
       if (values.anh && values.anh.length > 0 && values.anh[0].originFileObj) {
         formData.append("anh", values.anh[0].originFileObj);
       }
-  
-      const res = await fetch(`http://localhost:8080/api/v1/products/${editingProduct.maSanPham}`, {
-        method: "PUT",
-        body: formData,
-      });
-  
 
-      const data = await res.json();
-
-      console.log(data)
-  
-      if (data.EC === 0) {
-        toast.success(data.EM);
+      const res = await updateProduct(editingProduct.maSanPham, formData);
+      
+      if (+res.EC === 0) {
+        toast.success(res.EM);
         setIsModalVisible(false);
         setIsEdit(false);
         form.resetFields();
         fetchProducts();
       } else {
-        toast.error(data.EM || "Cập nhật thất bại!");
+        toast.error(res.EM || "Cập nhật thất bại!");
       }
     } catch (error) {
       console.error("Lỗi cập nhật:", error);
@@ -257,6 +260,16 @@ const ProductAdmin = () => {
       >
         <Form form={form} layout="vertical">
           <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                label="Mã sản phẩm"
+                name="maSanPham"
+                rules={[{ required: true, message: 'Vui lòng nhập mã sản phẩm!' }]}
+              >
+                <Input disabled={isEdit} />
+              </Form.Item>
+            </Col>
+
             <Col span={12}>
               <Form.Item
                 label="Tên sản phẩm"
@@ -345,6 +358,16 @@ const ProductAdmin = () => {
                 rules={[{ required: true, message: 'Vui lòng nhập dung lượng RAM!' }]}
               >
                 <Input />
+              </Form.Item>
+            </Col>
+
+            <Col span={12}>
+              <Form.Item
+                label="Màu sắc (cách nhau bởi dấu phẩy)"
+                name="mau"
+                rules={[{ required: true, message: 'Vui lòng nhập màu sắc!' }]}
+              >
+                <Input placeholder="Ví dụ: Đỏ, Xanh, Đen" />
               </Form.Item>
             </Col>
 

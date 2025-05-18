@@ -24,44 +24,19 @@ const getProduct = async (req, res) => {
 }
 
 const getAllProduct = async (req, res) => {
-     try {
-        let products = await db.SanPham.findAll({
-            order: [['maSanPham', 'DESC']]
-        });
-
-        const productWithSuppliers = await Promise.all(products.map(async (product) => {
-            const receipts = await db.PhieuNhap.findAll({
-                where: {
-                    maSanPham: product.maSanPham
-                },
-                attributes: ['maNhaCungCap'],
-                include: {
-                    model: db.NhaCungCap,
-                    attributes: ['tenNhaCungCap']
-                }
-            });
-
-            const suppliers = receipts
-                .filter(receipt => receipt.NhaCungCap !== null)
-                .map(receipt => receipt.NhaCungCap ? receipt.NhaCungCap.tenNhaCungCap : 'Không có nhà cung cấp');
-
-            return {
-                ...product.toJSON(),
-                nhaCungCap: suppliers
-            };
-        }));
-
+    try {
+        const products = await productService.fetchAllProducts();
         return res.status(200).json({
-            EM: "Lấy danh sách sản phẩm thành công",
             EC: 0,
-            DT: productWithSuppliers
+            EM: "Lấy sản phẩm thành công",
+            DT: products,
         });
-    } catch (e) {
-        console.log(e);
+    }
+    catch (e) {
+        console.error("Lỗi khi lấy sản phẩm:", e);
         return res.status(500).json({
-            EM: 'Lỗi từ server',
             EC: -1,
-            DT: []
+            EM: "Lỗi server",
         });
     }
 }
@@ -93,39 +68,44 @@ const handleCreateProduct = async (req, res) => {
         
         return res.status(200).json({
             EM: data.EM,
-            EC: data.EC,
-            DT: ''
+            EC: data.EC
         })
 
     } catch (e) {
         return res.status(500).json({
-            EM: 'error from server',
-            EC: '-1',
-            DT: ''
+            EM: data.EM,
+            EC: data.EC
         })
     }
 }
 
 const handleUpdateProduct = async (req, res) => {
 
-    const maSanPham = req.params.maSanPham;
-    const imageFile = req.file;
-    
-    let productData = {
-        ...req.body,
-        maSanPham
-    }
+    try {
+        const maSanPham = req.params.maSanPham;
+        const imageFile = req.file;
+        
+        let productData = {
+            ...req.body,
+            maSanPham
+        }
 
-    if (imageFile) {
-        productData.image = `/image/${imageFile.filename}`;
-    }
+        if (imageFile) {
+            productData.image = `/image/${imageFile.filename}`;
+        }
 
-    let data = await productService.updateProduct(productData);
-    return res.status(200).json({
-        EM: data.EM,
-        EC: data.EC,
-        DT: data
-    })
+        let data = await productService.updateProduct(productData);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC
+        })
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({
+            EM: data.EM,
+            EC: data.EC
+        })
+    }
     
 }
 

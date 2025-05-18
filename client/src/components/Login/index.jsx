@@ -13,7 +13,6 @@ const Login = (props) => {
     const [password, setPassword] = useState("");
     const { auth, setAuth } = useContext(AuthContext);
 
-    // console.log("auth", auth)
     const switchToRegister = () => {
         props.onClose();
         props.openRegister();

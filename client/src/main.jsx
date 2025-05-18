@@ -7,6 +7,7 @@ import {
 import './index.css'
 import ProductDetail from './pages/ProductDetail/index.jsx';
 import Cart from './pages/Cart/index.jsx'
+import Checkout from './pages/Checkout/index.jsx'
 import Home from './pages/Home'
 import App from './App.jsx'
 import UserAdmin from './admin/pages/UserAdmin/index.jsx';
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
       {
         path: "cart",
         element: <Cart />
+      },
+      {
+        path: "checkout",
+        element: <Checkout />
       },
       {
         path: "admin",
