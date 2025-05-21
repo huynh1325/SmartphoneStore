@@ -5,15 +5,15 @@ const handleAddToCart = async (req, res) => {
     try {
         const { maSanPham } = req.body;
         const maNguoiDung = req.user.id;
-        const newIdDH = await generateCustomId('DH', db.DonHang, 'maDonHang');
-        const newIdCTDH = await generateCustomId('CTDH', db.ChiTietDonHang, 'maChiTietDonHang');
+        const newIdGH = await generateCustomId('GH', db.GioHang, 'maGioHang');
+        const newIdCTGH = await generateCustomId('CTGH', db.ChiTietGioHang, 'maChiTietGioHang');
 
         const product = await db.SanPham.findByPk(maSanPham);
         if (!product) {
             return res.status(404).json({ message: 'Không tìm thấy sản phẩm' });
         }
 
-        let donHang = await db.DonHang.findOne({
+        let gioHang = await db.GioHang.findOne({
             where: { maNguoiDung },
             include: [
                 {
@@ -23,16 +23,16 @@ const handleAddToCart = async (req, res) => {
             ]
         });
 
-        if (!donHang) {
-            donHang = await db.DonHang.create({
-                maDonHang: newIdDH,
+        if (!gioHang) {
+            gioHang = await db.GioHang.create({
+                maGioHang: newIdGH,
                 maNguoiDung
             });
         }
 
-        const cartItem = await db.ChiTietDonHang.findOne({
+        const cartItem = await db.ChiTietGioHang.findOne({
             where: {
-                maDonHang: donHang.maDonHang,
+                maGioHang: gioHang.maGioHang,
                 maSanPham,
             },
         });
@@ -44,9 +44,9 @@ const handleAddToCart = async (req, res) => {
             })
         }
 
-        const newItem = await db.ChiTietDonHang.create({
-            maChiTietDonHang: newIdCTDH,
-            maDonHang: donHang.maDonHang,
+        const newItem = await db.ChiTietGioHang.create({
+            maChiTietGioHang: newIdCTGH,
+            maGioHang: gioHang.maGioHang,
             maSanPham,
             gia: product.gia,
             soLuong: 1,
@@ -70,11 +70,11 @@ const getAllCart = async (req, res) => {
     try {
         const maNguoiDung = req.user.id;
 
-        const donHang = await db.DonHang.findOne({
+        const gioHang = await db.GioHang.findOne({
             where: { maNguoiDung }
         });
 
-        if (!donHang) {
+        if (!gioHang) {
             return res.status(200).json({
                 EM: 'Giỏ hàng rỗng',
                 EC: 0,
@@ -82,9 +82,9 @@ const getAllCart = async (req, res) => {
             });
         }
 
-        const cartItems = await db.ChiTietDonHang.findAll({
+        const cartItems = await db.ChiTietGioHang.findAll({
             where: {
-                maDonHang: donHang.maDonHang
+                maGioHang: gioHang.maGioHang
             },
             include: [
                 {

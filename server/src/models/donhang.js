@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
         otherKey: 'maSanPham',
         as: 'danhSachSanPham'
       });
+      DonHang.hasOne(models.HoaDon, { foreignKey: "maDonHang" });
     }
   }
   DonHang.init({

@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { Table, Button, Space, Modal, Form, Input, Upload, InputNumber, Row, Col } from 'antd';
 import { toast } from "react-toastify";
 import { UploadOutlined } from '@ant-design/icons';
-import { createProduct, updateProduct } from '../../../util/api';
+import { createProduct, updateProduct, fetchAllProduct, deleteProduct } from '../../../util/api';
 
 const ProductAdmin = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -15,10 +15,9 @@ const ProductAdmin = () => {
 
     const fetchProducts = useCallback(async () => {
       try {
-          const response = await fetch('http://localhost:8080/api/v1/products');
-          const result = await response.json();
-          if (result.EC === 0) {
-              setProducts(result.DT);
+          const res = await fetchAllProduct();
+          if (+res.EC === 0) {
+              setProducts(res.DT);
           } else {
               toast.error("không lấy được danh sách sản phẩm");
           }
@@ -38,16 +37,13 @@ const ProductAdmin = () => {
 
     const handleDeleteProduct = async () => {
       try {
-        const res = await fetch(`http://localhost:8080/api/v1/products/${deletingProduct.maSanPham}`, {
-          method: "DELETE",
-        });
-        const data = await res.json();
-    
-        if (data.EC === 0) {
+        const res = await deleteProduct(deletingProduct.maSanPham);
+        console.log("res: ", res);
+        if (+res.EC === 0) {
           toast.success("Xóa sản phẩm thành công!");
           fetchProducts();
         } else {
-          toast.error(data.EM || "Xóa thất bại!");
+          toast.error(res.EM || "Xóa thất bại!");
         }
       } catch (err) {
         console.log(err);

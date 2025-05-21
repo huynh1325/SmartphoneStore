@@ -12,9 +12,9 @@ const userLogin = (email, password) => {
     })
 }
 
-// const fetchAllProduct = () => {
-//     return axios.get('/api/v1/getproduct')
-// }
+const fetchAllProduct = () => {
+    return axios.get('/api/v1/products')
+}
 
 const createProduct = (formData) => {
     return axios.post('/api/v1/products', formData, {
@@ -32,6 +32,10 @@ const updateProduct = (maSanPham, formData) => {
     });
 }
 
+const deleteProduct = (maSanPham) => {
+    return axios.delete(`/api/v1/products/${encodeURIComponent(maSanPham)}`);
+}
+
 const verifyUserCode = (email, code) => {
     return axios.post(`/api/v1/verify-user`, {email, code})
 }
@@ -45,5 +49,5 @@ const getAllCart = () => {
 }
 
 export {
-    registerNewUser, createProduct, updateProduct, verifyUserCode, userLogin, addToCart, getAllCart
+    registerNewUser, createProduct, updateProduct, verifyUserCode, userLogin, addToCart, getAllCart, fetchAllProduct, deleteProduct
 }

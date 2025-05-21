@@ -4,6 +4,7 @@ import Header from '../../components/Header';
 import { useState, useEffect, useCallback } from 'react';
 import Footer from '../../components/Footer';
 import { Link } from 'react-router-dom';
+import { fetchAllProduct } from '../../util/api';
 
 const cx = classNames.bind(styles);
 
@@ -46,12 +47,11 @@ const Home = () => {
 
     const fetchProducts = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/v1/products');
-            const result = await response.json();
-            if (result.EC === 0) {
-                setProducts(result.DT);
+            const res = await fetchAllProduct();
+            if (+res.EC === 0) {
+                setProducts(res.DT);
             } else {
-                console.error('Lỗi API:', result.EM);
+                console.error('Lỗi API:', res.EM);
             }
         } catch (error) {
             console.error('Lỗi fetch:', error);

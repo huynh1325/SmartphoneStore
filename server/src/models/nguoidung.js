@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
           foreignKey: 'maNguoiDung',
           as: 'donHang'
         });
-      NguoiDung.hasOne(models.DonHang, {foreignKey: 'maNguoiDung'});
+      NguoiDung.hasOne(models.GioHang, {foreignKey: 'maNguoiDung'});
     }
   }
   NguoiDung.init({

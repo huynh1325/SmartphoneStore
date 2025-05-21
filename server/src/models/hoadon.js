@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       HoaDon.belongsTo(models.NguoiDung);
+      HoaDon.belongsTo(models.DonHang, { foreignKey: "maDonHang" });
     }
   }
   HoaDon.init({

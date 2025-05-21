@@ -5,10 +5,11 @@ import productController from "../controller/productController";
 import userController from "../controller/userController";
 import cartController from "../controller/cartController";
 import stockInController from "../controller/stockInController";
-import supplierController from "../controller/supplierController"
+import supplierController from "../controller/supplierController";
+import paymentController from '../controller/paymentController';
 import multer from "multer";
 import path from 'path';
-import auth from '../middleware/auth'
+import auth from '../middleware/auth';
 var appRoot = require('app-root-path');
  
 const router = express.Router();
@@ -58,6 +59,11 @@ const initWebRoutes = (app) => {
     
     router.get("/suppliers", supplierController.getAllSupplier);
     router.post("/suppliers", supplierController.handleCreateSupplier);
+    
+    router.get("/checkout/:maDonHang", supplierController.getAllSupplier);
+
+    router.post('/create-payment-url', auth, paymentController.createPaymentUrl);
+    router.get('/vnpay-return', paymentController.vnpayReturn);
     
     return app.use("/api/v1/", router);
 }
