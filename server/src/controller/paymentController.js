@@ -40,50 +40,53 @@ const createPaymentUrl = async (req, res) => {
 
         const tmnCode = process.env.VNP_TMNCODE;
         const secretKey = process.env.VNP_HASH_SECRET;
-        const vnpUrl = process.env.VNP_URL;
+        let vnpUrl = process.env.VNP_URL;
         const returnUrl = process.env.VNP_RETURN_URL;
 
         const vnp_TxnRef = maDonHang;
-        const vnp_Amount = tongTien * 100;
         const vnp_Locale = 'vn';
-        const vnp_BankCode = '';
-        // const vnp_IpAddr = ipAddr;
-        const vnp_OrderInfo = `Thanh toan don hang ${maDonHang}`;
+        const vnp_BankCode = 'NCB';
+        const vnp_OrderInfo = `Thanhtoandonhang${maDonHang}`;
         const vnp_CreateDate = moment().format('YYYYMMDDHHmmss');
 
         const vnp_Params = {
             vnp_Version: '2.1.0',
             vnp_Command: 'pay',
             vnp_TmnCode: tmnCode,
+            vnp_BankCode,
             vnp_Locale,
             vnp_CurrCode: 'VND',
             vnp_TxnRef,
             vnp_OrderInfo,
             vnp_OrderType: 'other',
-            vnp_Amount,
+            vnp_Amount: (tongTien * 100).toString(),
             vnp_ReturnUrl: returnUrl,
             vnp_IpAddr,
             vnp_CreateDate,
         };
 
-        const sortedParams = Object.fromEntries(Object.entries(vnp_Params).sort());
-        const signData = qs.stringify(sortedParams, { encode: true });
-        const hmac = crypto.createHmac('sha512', secretKey);
-        const secureHash = hmac.update(signData).digest('hex');
-        console.log("sortedParams: ", sortedParams);
-        console.log("signData: ", signData);
-        console.log("hmac: ", hmac);
-        console.log("secureHash: ", secureHash);
+        let paymentUrl = new URL(vnpUrl);
 
+        Object.entries(vnp_Params)
+            .sort(([key1], [key2]) => key1.toString().localeCompare(key2.toString()))
+            .forEach(([key, value]) => {
+                if (value) {
+                    
+                  paymentUrl.searchParams.append(key, value.toString());
+                }
 
+            })
 
-        sortedParams.vnp_SecureHash = secureHash;
-        const paymentUrl = `${vnpUrl}?${qs.stringify(sortedParams, { encode: true })}`;
+        const hmac = crypto.createHmac("sha512", secretKey);
+        const signed = hmac.update(Buffer.from(paymentUrl.search.slice(1), "utf-8")).digest("hex");
+        
+        paymentUrl.searchParams.append("vnp_SecureHash", signed);
+
 
         return res.status(200).json({
             EM: 'Tạo URL thanh toán thành công',
             EC: 0,
-            DT: paymentUrl
+            DT: paymentUrl.toString()
         });
     } catch (error) {
         console.error(error);
@@ -104,7 +107,7 @@ const vnpayReturn = async (req, res) => {
 
         const secretKey = process.env.VNP_HASH_SECRET;
         const sortedParams = Object.fromEntries(Object.entries(vnp_Params).sort());
-        const signData = qs.stringify(sortedParams, { encode: true });
+        const signData = qs.stringify(sortedParams, { encode: false });
         const hmac = crypto.createHmac('sha512', secretKey);
         const checkSum = hmac.update(signData).digest('hex');
 
