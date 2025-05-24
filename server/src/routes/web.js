@@ -7,6 +7,7 @@ import cartController from "../controller/cartController";
 import stockInController from "../controller/stockInController";
 import supplierController from "../controller/supplierController";
 import paymentController from '../controller/paymentController';
+import orderController from '../controller/orderController';
 import multer from "multer";
 import path from 'path';
 import auth from '../middleware/auth';
@@ -40,28 +41,38 @@ appE.use('/image', express.static(appRoot + '/src/public/image'));
 const initWebRoutes = (app) => {
     router.get("/", homeController.handleHelloWorld);
     
+    //login register
     router.post("/register", apiController.handleRegister);
     router.post("/verify-user", apiController.handleVerifyUser);
     router.post("/login", apiController.handleLogin);
+
+    //user
     router.get("/users", userController.getAllUser);
     
+    //product
     router.get("/products/:maSanPham", productController.getProduct)
     router.get("/products", productController.getAllProduct);
     router.post("/products", upload.single('anh'), productController.handleCreateProduct);
     router.put("/products/:maSanPham", upload.single('anh'), productController.handleUpdateProduct);
     router.delete("/products/:maSanPham", upload.single('anh'), productController.handleDeleteProduct);
     
+    //cart
     router.post("/carts/add", auth, cartController.handleAddToCart);
     router.get("/carts", auth, cartController.getAllCart);
 
+    //stockin
     router.get("/stockin", stockInController.getAllStockIn);
     router.post("/stockin", stockInController.handleCreateStockIn);
     
+    //supplier
     router.get("/suppliers", supplierController.getAllSupplier);
     router.post("/suppliers", supplierController.handleCreateSupplier);
     
-    router.get("/checkout/:maDonHang", supplierController.getAllSupplier);
+    //order
+    router.post('/orders', auth, orderController.handleCreateOrder);
+    router.get('/orders/:maDonHang', auth, orderController.getOrderById);
 
+    //checkout
     router.post('/create-payment-url', auth, paymentController.createPaymentUrl);
     router.get('/vnpay-return', paymentController.vnpayReturn);
     

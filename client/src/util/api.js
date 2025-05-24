@@ -48,6 +48,19 @@ const getAllCart = () => {
     return axios.get(`/api/v1/carts`)
 }
 
+const createOrder = (orderData) => {
+    return axios.post(`/api/v1/orders`, orderData)
+}
+
+const getOrderById = (id) => {
+    return axios.get(`/api/v1/orders/${id}`)
+}
+
+const createPaymentUrl = ({ maDonHang: id }) => {
+    return axios.post('/api/v1/create-payment-url', { maDonHang: id })
+}
+
 export {
-    registerNewUser, createProduct, updateProduct, verifyUserCode, userLogin, addToCart, getAllCart, fetchAllProduct, deleteProduct
+    registerNewUser, createProduct, updateProduct, verifyUserCode, userLogin, addToCart, getAllCart, fetchAllProduct, deleteProduct, createOrder, getOrderById,
+    createPaymentUrl
 }
