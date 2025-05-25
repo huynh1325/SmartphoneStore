@@ -89,6 +89,9 @@ const Header = () => {
         navigate("/cart");
     }
 
+    const purchaseRedirect = () => {
+        navigate("/purchase");
+    }
 
     return (
         <div>
@@ -126,6 +129,7 @@ const Header = () => {
                         {auth.isAuthenticated ? (
                             <ul>
                                 <li>Trang cá nhân</li>
+                                <li onClick={purchaseRedirect}>Đơn mua</li>
                                 <li onClick={handleLogout}>Đăng xuất</li>
                             </ul>
                         ) : (

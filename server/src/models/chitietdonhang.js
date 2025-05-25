@@ -23,7 +23,6 @@ module.exports = (sequelize, DataTypes) => {
     maDonHang: DataTypes.INTEGER,
     maSanPham: DataTypes.INTEGER,
     soLuong: DataTypes.INTEGER,
-    daChon: DataTypes.BOOLEAN,
     gia: DataTypes.DECIMAL(15, 2)
   }, {
     sequelize,

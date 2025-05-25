@@ -20,9 +20,6 @@ module.exports = {
       gia: {
         type: Sequelize.DECIMAL(15, 2)
       },
-      daChon: {
-        type: Sequelize.BOOLEAN
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

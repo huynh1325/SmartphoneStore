@@ -24,7 +24,6 @@ module.exports = (sequelize, DataTypes) => {
     maSanPham: DataTypes.STRING,
     soLuong: DataTypes.INTEGER,
     gia: DataTypes.DECIMAL(15, 2),
-    daChon: DataTypes.BOOLEAN,
   }, {
     sequelize,
     tableName: 'ChiTietGioHang',
