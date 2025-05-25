@@ -10,15 +10,22 @@
     justify-content: space-between;
     margin-bottom: 12px;
     font-size: 15px;
+    height: 40px;
+    line-height: 40px;
 
     .order-id {
         font-weight: 500;
+        height: 40px;
+        line-height: 40px;
     }
-
+    
     .order-status {
         color: green;
-        font-weight: 600;
     }
+}
+
+.order-item + .order-item {
+    margin-top: 16px;
 }
 
 .order-body {
@@ -38,7 +45,6 @@
         width: 80px;
         height: 80px;
         object-fit: cover;
-        border: 1px solid #ccc;
         border-radius: 4px;
     }
 

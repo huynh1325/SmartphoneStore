@@ -4,7 +4,8 @@ import { generateCustomId } from '../utils/idGenerator';
 const handleCreateOrder = async (req, res) => {
     try {
         const maNguoiDung = req.user.id;
-        const { sanPhams, tongTien } = req.body;
+        const { sanPhams, tongTien, phuongThucThanhToan, diaChi } = req.body;
+        console.log(req.body)
 
         if (!sanPhams || sanPhams.length === 0) {
             return res.status(400).json({
@@ -20,7 +21,9 @@ const handleCreateOrder = async (req, res) => {
             maDonHang,
             maNguoiDung,
             tongTien,
-            trangThai: 'Cho_Thanh_Toan'
+            trangThai: 'Cho_Thanh_Toan',
+            phuongThucThanhToan,
+            diaChiGiaoHang: diaChi
         });
 
         for (const sp of sanPhams) {
@@ -57,8 +60,7 @@ const handleCreateOrder = async (req, res) => {
         console.error("Lỗi khi tạo đơn hàng:", error);
         return res.status(500).json({
             EC: -1,
-            EM: "Lỗi server khi tạo đơn hàng",
-            DT: null
+            EM: "Lỗi server khi tạo đơn hàng"
         });
     }
 }
@@ -88,16 +90,62 @@ const getOrderById = async (req, res) => {
         });
 
         if (!order) {
-            return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
+            return res.status(404).json({
+            EM: "Không tìm thấy đơn hàng",
+            EC: 2
+        })
         }
 
         res.json(order);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Lỗi khi lấy đơn hàng" });
+        console.error("Error: ", error);
+        return res.status(500).json({
+            EM: 'error from server',
+            EC: -1
+        })
+    }
+}
+
+
+const getOrdersByUser = async (req, res) => {
+    try {
+        const maNguoiDung = req.user.id;
+        const order = await db.DonHang.findAll({
+            where: {
+                maNguoiDung
+            },
+            include: [
+                {
+                    model: db.ChiTietDonHang,
+                    as: 'chiTietDonHang',
+                    include: [
+                        {
+                            model: db.SanPham,
+                            as: 'sanPham'
+                        }
+                    ]
+                }
+            ]
+        });
+
+        if (!order) {
+            return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
+        }
+
+        return res.status(200).json({
+            EM: "Lấy danh sách đơn hàng thành công",
+            EC: 0,
+            DT: order
+        })
+    } catch (error) {
+        console.error("Error: ", error);
+        return res.status(500).json({
+            EM: 'error from server',
+            EC: -1
+        })
     }
 }
 
 module.exports = {
-    handleCreateOrder, getOrderById
+    handleCreateOrder, getOrderById, getOrdersByUser
 }

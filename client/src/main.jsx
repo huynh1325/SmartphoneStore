@@ -15,6 +15,7 @@ import LayoutAdmin from './admin/layout.admin.jsx';
 import DashboardAdmin from './admin/pages/DashboardAdmin/index.jsx';
 import ProductAdmin from './admin/pages/ProductAdmin/index.jsx';
 import { AuthWrapper } from './components/Context/auth.context.jsx';
+import OrderAdmin from './admin/pages/OrderAdmin/index.jsx';
 import NotFoundPage from './pages/NotFoundPage'
 import VoucherAdmin from './admin/pages/VoucherAdmin/index.jsx';
 import StockInAdmin from './admin/pages/StockInAdmin/index.jsx';
@@ -70,6 +71,10 @@ const router = createBrowserRouter([
           {
             path: "stockin",
             element: <StockInAdmin />
+          },
+          {
+            path: "order",
+            element: <OrderAdmin />
           },
           {
             path: "voucher",

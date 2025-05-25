@@ -49,7 +49,7 @@ const createPaymentUrl = async (req, res) => {
         const tmnCode = process.env.VNP_TMNCODE;
         const secretKey = process.env.VNP_HASH_SECRET;
         let vnpUrl = process.env.VNP_URL;
-        const returnUrl = 'https://3092-2a09-bac5-d5c8-16dc-00-247-e.ngrok-free.app/api/v1/vnpay-return'
+        const returnUrl = 'https://7126-2a09-bac5-d5c9-16dc-00-247-18.ngrok-free.app/api/v1/vnpay-return'
 
         const vnp_TxnRef = maDonHang;
         const vnp_Locale = 'vn';
@@ -129,7 +129,7 @@ const vnpayReturn = async (req, res) => {
         }
 
         await db.DonHang.update(
-            { trangThai: 'DA_THANH_TOAN' },
+            { trangThai: 'Da_Thanh_Toan' },
             { where: { maDonHang: vnp_TxnRef } }
         );
 
@@ -146,12 +146,28 @@ const vnpayReturn = async (req, res) => {
         //     tongTien: donHang.tongTien
         // });
 
-        return res.redirect(`http://localhost:5173/admin/product`);
+        const chiTietDonHang = await db.ChiTietDonHang.findAll({
+            where: { maDonHang: vnp_TxnRef }
+        });
+
+        for (const item of chiTietDonHang) {
+            const sanPham = await db.SanPham.findOne({
+                where: { maSanPham: item.maSanPham }
+            });
+
+            if (sanPham) {
+                const soLuongMoi = sanPham.soLuong - item.soLuong;
+                await sanPham.update({ soLuong: Math.max(soLuongMoi, 0) });
+            }
+        }
+
+        return res.redirect(`http://localhost:5173/purchase`);
     } catch (error) {
         console.error('Lỗi khi xử lý phản hồi từ VNPAY:', error);
         return res.status(500).json({ message: 'Lỗi xử lý phản hồi từ VNPAY' });
     }
 };
+
 module.exports = {
     createPaymentUrl, vnpayReturn
 }

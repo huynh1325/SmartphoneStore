@@ -56,11 +56,29 @@ const getOrderById = (id) => {
     return axios.get(`/api/v1/orders/${id}`)
 }
 
+const getOrderByUser = (id) => {
+    return axios.get(`/api/v1/orders`)
+}
+
+
 const createPaymentUrl = ({ maDonHang: id }) => {
     return axios.post('/api/v1/create-payment-url', { maDonHang: id })
 }
 
+const fetchAllOrder = () => {
+    return axios.get(`/api/v1/orders`)
+}
+
+const createAddress = () => {
+    return axios.post(`/api/v1/address`)
+}
+
+const getAddressByUser = () => {
+    return axios.get(`/api/v1/address`)
+}
+
+
 export {
     registerNewUser, createProduct, updateProduct, verifyUserCode, userLogin, addToCart, getAllCart, fetchAllProduct, deleteProduct, createOrder, getOrderById,
-    createPaymentUrl
+    createPaymentUrl, fetchAllOrder, createAddress, getAddressByUser, getOrderByUser
 }
