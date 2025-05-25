@@ -3,21 +3,14 @@ import qs from 'qs';
 import crypto from 'crypto';
 import moment from 'moment';
 import db from '../models';
-import { generateCustomId } from '../utils/idGenerator';
+import { createInvoice } from './invoiceController';
 
 const createPaymentUrl = async (req, res) => {
     try {
         const ipAddrRaw = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
         const ipAddr = ipAddrRaw && ipAddrRaw.split(',')[0].trim();
         const vnp_IpAddr = (ipAddr === '::1') ? '127.0.0.1' : ipAddr;
-        const maNguoiDung = req.user.id;
         const { maDonHang } = req.body;
-        // const { sanPhams, tongTien } = req.body;
-
-        // if (!sanPhams || !Array.isArray(sanPhams) || sanPhams.length === 0) {
-        //     return res.status(400).json({ message: 'Danh sách sản phẩm không hợp lệ' });
-        // }
-
         const donHang = await db.DonHang.findOne({ where: { maDonHang } });
         if (!donHang) {
             return res.status(404).json({ message: 'Không tìm thấy đơn hàng' });
@@ -25,31 +18,10 @@ const createPaymentUrl = async (req, res) => {
         
         const tongTien = donHang.tongTien;
 
-        // const maDonHang = await generateCustomId('DH', db.DonHang, 'maDonHang');
-        // const newOrder = await db.DonHang.create({
-        //     maDonHang,
-        //     maNguoiDung,
-        //     trangThai: 'CHO_THANH_TOAN',
-        //     tongTien: tongTien,
-        //     phuongThucThanhToan: 'VNPAY'
-        // });
-
-        // for (const sp of sanPhams) {
-        //     const maChiTietDonHang = await generateCustomId('CTDH', db.ChiTietDonHang, 'maChiTietDonHang');
-
-        //     await db.ChiTietDonHang.create({
-        //         maChiTietDonHang,
-        //         maDonHang,
-        //         maSanPham: sp.maSanPham,
-        //         soLuong: sp.soLuong,
-        //         gia: sp.gia
-        //     });
-        // }
-
         const tmnCode = process.env.VNP_TMNCODE;
         const secretKey = process.env.VNP_HASH_SECRET;
         let vnpUrl = process.env.VNP_URL;
-        const returnUrl = 'https://7126-2a09-bac5-d5c9-16dc-00-247-18.ngrok-free.app/api/v1/vnpay-return'
+        const returnUrl = 'https://4dfd-2a09-bac5-d5c8-e6-00-17-25d.ngrok-free.app/api/v1/vnpay-return'
 
         const vnp_TxnRef = maDonHang;
         const vnp_Locale = 'vn';
@@ -138,14 +110,6 @@ const vnpayReturn = async (req, res) => {
             return res.status(404).json({ message: 'Không tìm thấy đơn hàng' });
         }
 
-        // const maHoaDon = await generateCustomId('HD', db.HoaDon, 'maHoaDon');
-        // await db.HoaDon.create({
-        //     maHoaDon,
-        //     maDonHang: vnp_TxnRef,
-        //     maNguoiDung: donHang.maNguoiDung,
-        //     tongTien: donHang.tongTien
-        // });
-
         const chiTietDonHang = await db.ChiTietDonHang.findAll({
             where: { maDonHang: vnp_TxnRef }
         });
@@ -160,8 +124,10 @@ const vnpayReturn = async (req, res) => {
                 await sanPham.update({ soLuong: Math.max(soLuongMoi, 0) });
             }
         }
+        
+        const invoiceResult = await createInvoice(donHang, chiTietDonHang);
 
-        return res.redirect(`http://localhost:5173/purchase`);
+        return res.redirect(`http://localhost:5173/purchase?payment=success`);
     } catch (error) {
         console.error('Lỗi khi xử lý phản hồi từ VNPAY:', error);
         return res.status(500).json({ message: 'Lỗi xử lý phản hồi từ VNPAY' });

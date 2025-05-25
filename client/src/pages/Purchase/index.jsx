@@ -1,12 +1,14 @@
 import classNames from 'classnames/bind';
 import styles from './Purchase.module.scss';
 import Header from "../../components/Header";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AllOrders from "../../components/AllOrders"
 import PendingPayment from "../../components/PendingPayment"
 import Shipping from "../../components/Shipping"
 import Completed from "../../components/Completed"
 import Cancelled from "../../components/Cancelled"
+import { useLocation } from 'react-router-dom';
+import { toast } from "react-toastify";
 
 const cx = classNames.bind(styles);
 
@@ -23,6 +25,18 @@ const Purchase = () => {
 
     const [activeSidebar, setActiveSidebar] = useState(1);
     const [activeTab, setActiveTab] = useState(0);
+
+    const location = useLocation();
+
+    useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        const paymentStatus = queryParams.get('payment');
+
+        if (paymentStatus === 'success') {
+            toast.success('Thanh toán thành công!');
+        }
+
+    }, [location.search]);
 
     return (
         <>
