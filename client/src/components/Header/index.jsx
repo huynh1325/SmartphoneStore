@@ -6,7 +6,7 @@ import Login from '../Login';
 import Register from '../Register';
 import VerifyUser from '../VerifyUser'
 import { useState, useContext, useEffect } from 'react';
-import { AuthContext } from '../Context/auth.context';
+import { AuthContext } from '../Context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useCart } from '../../components/Context/CartContext';
@@ -86,6 +86,10 @@ const Header = () => {
     }
 
     const cartRedirect = () => {
+        if (!auth.isAuthenticated) {
+            toast.warn("Vui lòng đăng nhập để xem giỏ hàng!");
+            return;
+        }
         navigate("/cart");
     }
 

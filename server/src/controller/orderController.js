@@ -1,24 +1,64 @@
 import db from '../models/index';
 import { generateCustomId } from '../utils/idGenerator';
 
+const tryCreateOrderWithUniqueId = async (orderData, maxRetry = 5) => {
+    let retries = maxRetry;
+    while (retries > 0) {
+        const maDonHang = await generateCustomId('DH', db.DonHang, 'maDonHang');
+        try {
+            const order = await db.DonHang.create({
+                ...orderData,
+                maDonHang,
+            });
+            console.log(`Tạo đơn hàng thành công với mã: ${maDonHang}`);
+            return order;
+        } catch (error) {
+            if (error.name === 'SequelizeUniqueConstraintError') {
+                console.warn(`Mã đơn hàng bị trùng: ${maDonHang}. Thử lại (${maxRetry - retries + 1}/${maxRetry})`);
+                retries--;
+                if (retries === 0) throw error;
+            } else {
+                throw error;
+            }
+        }
+    }
+};
+
+const tryCreateOrderDetailWithUniqueId = async (detailData, maxRetry = 5) => {
+    let retries = maxRetry;
+    while (retries > 0) {  
+        const maChiTietDonHang = await generateCustomId('CTDH', db.ChiTietDonHang, 'maChiTietDonHang');
+        try {
+            const detail = await db.ChiTietDonHang.create({
+                ...detailData,
+                maChiTietDonHang,
+            });
+            return detail;
+        } catch (error) {
+            if (error.name === 'SequelizeUniqueConstraintError') {
+                retries--;
+                if (retries === 0) throw error;
+            } else {
+                throw error;
+            }
+        }
+    }
+};
+
 const handleCreateOrder = async (req, res) => {
     try {
         const maNguoiDung = req.user.id;
         const { sanPhams, tongTien, phuongThucThanhToan, diaChi } = req.body;
-        console.log(req.body)
 
         if (!sanPhams || sanPhams.length === 0) {
             return res.status(400).json({
                 EC: 1,
                 EM: "Không có sản phẩm nào trong đơn hàng",
-                DT: null
+                DT: null,
             });
         }
 
-        const maDonHang = await generateCustomId('DH', db.DonHang, 'maDonHang');
-
-        const newOrder = await db.DonHang.create({
-            maDonHang,
+        const newOrder = await tryCreateOrderWithUniqueId({
             maNguoiDung,
             tongTien,
             trangThai: 'Cho_Thanh_Toan',
@@ -29,25 +69,23 @@ const handleCreateOrder = async (req, res) => {
         for (const sp of sanPhams) {
             const product = await db.SanPham.findByPk(sp.maSanPham);
             if (product) {
-
-                const maChiTietDonHang = await generateCustomId('CTDH', db.ChiTietDonHang, 'maChiTietDonHang');
-
-                await db.ChiTietDonHang.create({
-                    maChiTietDonHang: maChiTietDonHang,
-                    maDonHang: maDonHang,
+                await tryCreateOrderDetailWithUniqueId({
+                    maDonHang: newOrder.maDonHang,
                     maSanPham: sp.maSanPham,
                     soLuong: sp.soLuong,
                     gia: sp.gia,
                 });
 
+                // Xoá khỏi giỏ hàng nếu có
                 const gioHang = await db.GioHang.findOne({ where: { maNguoiDung } });
-
-                await db.ChiTietGioHang.destroy({
-                    where: {
-                        maGioHang: gioHang.maGioHang,
-                        maSanPham: sp.maSanPham
-                    }
-                });
+                if (gioHang) {
+                    await db.ChiTietGioHang.destroy({
+                        where: {
+                            maGioHang: gioHang.maGioHang,
+                            maSanPham: sp.maSanPham,
+                        }
+                    });
+                }
             }
         }
 
@@ -63,7 +101,7 @@ const handleCreateOrder = async (req, res) => {
             EM: "Lỗi server khi tạo đơn hàng"
         });
     }
-}
+};
 
 const getOrderById = async (req, res) => {
     const { maDonHang } = req.params;

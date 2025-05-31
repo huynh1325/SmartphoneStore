@@ -48,6 +48,7 @@ const Home = () => {
     const fetchProducts = useCallback(async () => {
         try {
             const res = await fetchAllProduct();
+            console.log(res)
             if (+res.EC === 0) {
                 setProducts(res.DT);
             } else {

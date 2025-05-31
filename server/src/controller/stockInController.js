@@ -5,8 +5,6 @@ const handleCreateStockIn = async (req, res) => {
     try {
         const { maSanPham, maNhaCungCap, soLuong, donGia } = req.body;
 
-        console.log("req.body:", req.body)
-
         if (!maSanPham || !maNhaCungCap || !soLuong || !donGia) {
             return res.status(400).json({
               EM: 'Thiếu dữ liệu',

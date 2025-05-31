@@ -93,7 +93,7 @@ const Cart = () => {
         const id = item.maChiTietGioHang;
         if (selectedItems[id]) {
             const qty = quantities[id] || item.soLuong || 1;
-            return total + qty * item.gia;
+            return total + qty * item.giaDaGiam;
         }
         return total;
     }, 0);
@@ -126,7 +126,7 @@ const Cart = () => {
                 tenSanPham: item.sanPham?.tenSanPham,
                 anh: item.sanPham?.anh,
                 soLuong: quantities[item.maChiTietGioHang] || item.soLuong || 1,
-                gia: item.gia
+                gia: item.giaDaGiam
             }));
         
         return {
@@ -179,7 +179,7 @@ const Cart = () => {
                                         <img alt="Ảnh" src={item.sanPham?.anh ? `${IMAGE_BASE_URL}${item.sanPham.anh}` : ""} />
                                         <div>{item.sanPham?.tenSanPham}</div>
                                     </div>
-                                    <div className={cx("element")}>{formatPrice(item.gia)}</div>
+                                    <div className={cx("element")}>{formatPrice(item.giaDaGiam)}</div>
                                     <div className={cx("element", "input-quantity")}>
                                         <button onClick={() => handleDecrease(item.maChiTietGioHang)}>
                                             <FontAwesomeIcon icon={faMinus} />
@@ -194,7 +194,7 @@ const Cart = () => {
                                         </button>
                                     </div>
                                     <div className={cx("element", "color-red")}>
-                                        {( (quantities[item.maChiTietGioHang] || item.soLuong || 1) * item.gia ).toLocaleString('vi-VN')}đ
+                                        {( (quantities[item.maChiTietGioHang] || item.soLuong || 1) * item.giaDaGiam ).toLocaleString('vi-VN')}đ
                                     </div>
                                     <div className={cx("element")}>Xóa</div>
                                 </div>

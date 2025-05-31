@@ -2,7 +2,7 @@ import { useState, useContext } from 'react';
 import styles from './Login.module.scss';
 import classNames from 'classnames/bind';
 import { userLogin } from '../../util/api';
-import { AuthContext } from '../Context/auth.context';
+import { AuthContext } from '../Context/AuthContext';
 import { toast } from 'react-toastify';
 
 const cx = classNames.bind(styles);

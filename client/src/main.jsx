@@ -14,7 +14,7 @@ import UserAdmin from './admin/pages/UserAdmin/index.jsx';
 import LayoutAdmin from './admin/layout.admin.jsx';
 import DashboardAdmin from './admin/pages/DashboardAdmin/index.jsx';
 import ProductAdmin from './admin/pages/ProductAdmin/index.jsx';
-import { AuthWrapper } from './components/Context/auth.context.jsx';
+import { AuthWrapper } from './components/Context/AuthContext.jsx';
 import OrderAdmin from './admin/pages/OrderAdmin/index.jsx';
 import NotFoundPage from './pages/NotFoundPage'
 import VoucherAdmin from './admin/pages/VoucherAdmin/index.jsx';

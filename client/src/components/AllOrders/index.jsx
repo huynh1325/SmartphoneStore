@@ -51,7 +51,7 @@ const AllOrders = () => {
             {orders.map(order => (
                 <div key={order.maDonHang} className={cx('order-item')}>
                     <div className={cx('order-header')}>
-                        <span className={cx('order-id')}>Đơn hàng: <strong>{order.maDonHang}</strong></span>
+                        <span className={cx('order-id')}>Đơn hàng: <strong>#{order.maDonHang}</strong></span>
                         <span className={cx('order-status')}>{formatTrangThai(order.trangThai)}</span>
                     </div>
 

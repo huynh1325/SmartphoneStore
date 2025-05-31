@@ -19,8 +19,9 @@ const ProductDetail = () => {
         try {
             const res = await fetch(`http://localhost:8080/api/v1/products/${id}`);
             const data = await res.json();
+            console.log(data)
             if (data.EC === 0) {
-            setProduct(data.DT);
+                setProduct(data.DT);
             } else {
             console.error('Không tìm thấy sản phẩm:', data.EM);
             }
@@ -72,6 +73,17 @@ const ProductDetail = () => {
                             <div className={cx("address")}>
                                 <FontAwesomeIcon icon={faLocationDot} className={cx("location-icon")} />
                                 <span>36 Cao Thắng, Thanh Bình, Hải Châu, Đà Nẵng</span>
+                            </div>
+                            <div className={cx("color-list")}>
+                                {product.mau ? (
+                                    JSON.parse(product.mau).map((mauSac, index) => (
+                                        <li key={index} className={cx("color-item")}>
+                                            {mauSac}
+                                        </li>
+                                    ))
+                                    ) : (
+                                        <></>
+                                )}
                             </div>
                             <div className={cx('price')}>
                                 <div className={cx('discount')}>

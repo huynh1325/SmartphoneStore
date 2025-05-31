@@ -21,7 +21,7 @@ const createPaymentUrl = async (req, res) => {
         const tmnCode = process.env.VNP_TMNCODE;
         const secretKey = process.env.VNP_HASH_SECRET;
         let vnpUrl = process.env.VNP_URL;
-        const returnUrl = 'https://4dfd-2a09-bac5-d5c8-e6-00-17-25d.ngrok-free.app/api/v1/vnpay-return'
+        const returnUrl = 'https://93aa-14-191-113-35.ngrok-free.app/api/v1/vnpay-return'
 
         const vnp_TxnRef = maDonHang;
         const vnp_Locale = 'vn';

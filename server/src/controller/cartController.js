@@ -90,15 +90,27 @@ const getAllCart = async (req, res) => {
                 {
                     model: db.SanPham,
                     as: 'sanPham',
-                    attributes: ['tenSanPham', 'gia', 'anh']
+                    attributes: ['tenSanPham', 'gia', 'anh', 'phanTramGiam']
                 }
             ]
+        });
+
+        const result = cartItems.map(item => {
+            const sanPham = item.sanPham;
+            const goc = item.gia;
+            const giam = sanPham?.phanTramGiam || 0;
+            const giaDaGiam = Math.round(goc - (goc * giam / 100));
+
+            return {
+                ...item.toJSON(),
+                giaDaGiam
+            };
         });
 
         return res.status(200).json({
             EM: 'Lấy giỏ hàng thành công',
             EC: 0,
-            DT: cartItems
+            DT: result
         });
     } catch (error) {
         console.error(error);

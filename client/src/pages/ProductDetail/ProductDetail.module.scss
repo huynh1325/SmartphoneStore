@@ -175,3 +175,17 @@
 .info-row:last-child::after {
     content: none;
 }
+
+.color-list {
+  margin-top: 12px;
+}
+
+.color-item {
+  display: inline-block;
+  background-color: #f0f0f0;
+  color: #333;
+  padding: 4px 8px;
+  margin-right: 8px;
+  margin-bottom: 6px;
+  border-radius: 6px;
+}
