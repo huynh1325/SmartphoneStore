@@ -44,10 +44,6 @@ module.exports = {
       ram: {
         type: Sequelize.STRING
       },
-      mau: {
-        type: Sequelize.JSON,
-        allowNull: true
-      },
       dungLuongLuuTru: {
         type: Sequelize.STRING
       },

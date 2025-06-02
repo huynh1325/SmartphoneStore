@@ -9,6 +9,7 @@ import supplierController from "../controller/supplierController";
 import paymentController from '../controller/paymentController';
 import orderController from '../controller/orderController';
 import addressController from '../controller/addressController'
+import colorProductController from '../controller/colorProductController'
 import multer from "multer";
 import path from 'path';
 import auth from '../middleware/auth';
@@ -81,6 +82,8 @@ const initWebRoutes = (app) => {
     //address
     router.post('/address', auth, addressController.handleCreateAddress);
     router.get('/address', auth, addressController.getAddressByUser);
+    
+    router.get('/productcolor/:maSanPham', colorProductController.getAllColorProduct);
     
     return app.use("/api/v1/", router);
 }

@@ -76,7 +76,6 @@ const handleCreateOrder = async (req, res) => {
                     gia: sp.gia,
                 });
 
-                // Xoá khỏi giỏ hàng nếu có
                 const gioHang = await db.GioHang.findOne({ where: { maNguoiDung } });
                 if (gioHang) {
                     await db.ChiTietGioHang.destroy({

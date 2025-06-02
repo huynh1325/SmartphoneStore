@@ -26,7 +26,7 @@ const StockInAdmin = () => {
       const result = await response.json();
       if (result.EC === 0) setStockInData(result.DT);
       else toast.error(result.EM);
-    } catch (error) {
+    } catch {
       toast.error('Không thể lấy dữ liệu phiếu nhập!');
     }
   };
@@ -37,18 +37,23 @@ const StockInAdmin = () => {
       const result = await response.json();
       if (result.EC === 0) {
         setProducts(result.DT);
-        const map = {};
-        result.DT.forEach((p) => {
-          try {
-            map[p.maSanPham] = JSON.parse(p.mau);
-          } catch {
-            map[p.maSanPham] = [];
+        const fetchColors = async () => {
+          const colorMap = {};
+          for (const p of result.DT) {
+            try {
+              const res = await fetch(`http://localhost:8080/api/v1/productcolor/${p.maSanPham}`);
+              const resJson = await res.json();
+              colorMap[p.maSanPham] = resJson.DT || [];
+            } catch {
+              colorMap[p.maSanPham] = [];
+            }
           }
-        });
-        setProductColorMap(map);
+          setProductColorMap(colorMap);
+        };
+        fetchColors();
       }
-    } catch (error) {
-      console.error(error);
+    } catch {
+      toast.error('Lỗi khi lấy danh sách sản phẩm!');
     }
   };
 
@@ -57,8 +62,8 @@ const StockInAdmin = () => {
       const response = await fetch('http://localhost:8080/api/v1/suppliers');
       const result = await response.json();
       if (result.EC === 0) setSuppliers(result.DT);
-    } catch (error) {
-      console.error(error);
+    } catch {
+      toast.error('Lỗi khi lấy danh sách nhà cung cấp!');
     }
   };
 
@@ -91,25 +96,25 @@ const StockInAdmin = () => {
         }
       }
 
-      const payload = [];
-
-      values.sanPhams.forEach((sp) => {
-        sp.chiTietMau.forEach((ct) => {
-          payload.push({
+      const payload = {
+        maNhaCungCap: values.maNhaCungCap,
+        donGia: values.donGia,
+        sanPhamNhap: values.sanPhams.flatMap((sp) =>
+          sp.chiTiet.map((ct) => ({
             maSanPham: sp.maSanPham,
-            donGia: sp.donGia,
-            mau: ct.mau,
+            mauSanPham: ct.mauSanPham,
             soLuong: ct.soLuong,
-            maNhaCungCap: values.maNhaCungCap || null,
-          });
-        });
-      });
+          }))
+        ),
+      };
 
       const response = await fetch('http://localhost:8080/api/v1/stockin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
-      });
+      });  
+      
+      console.log(payload)
 
       const result = await response.json();
       if (result.EC === 0) {
@@ -119,19 +124,38 @@ const StockInAdmin = () => {
       } else {
         toast.error(result.EM || 'Lỗi khi nhập hàng!');
       }
-    } catch (error) {
+    } catch {
       toast.error('Lỗi gửi dữ liệu!');
     }
   };
 
-
   const columns = [
-    { title: 'Mã phiếu nhập', dataIndex: 'maPhieuNhap', key: 'maPhieuNhap' },
-    { title: 'Tên nhà cung cấp', dataIndex: 'tenNhaCungCap', key: 'tenNhaCungCap' },
-    { title: 'Tên sản phẩm', dataIndex: 'tenSanPham', key: 'tenSanPham' },
-    { title: 'Màu', dataIndex: 'mau', key: 'mau' },
-    { title: 'Số lượng', dataIndex: 'soLuong', key: 'soLuong' },
-    { title: 'Đơn giá', dataIndex: 'donGia', key: 'donGia' },
+    {
+      title: 'Nhà cung cấp',
+      dataIndex: 'tenNhaCungCap',
+      key: 'tenNhaCungCap',
+      render: (_, record) => record.tenNhaCungCap || 'Không xác định',
+    },
+    {
+      title: 'Đơn giá',
+      dataIndex: 'donGia',
+      key: 'donGia',
+      render: (value) => `${(value ?? 0).toLocaleString()} ₫`,
+    },
+    {
+      title: 'Sản phẩm nhập',
+      dataIndex: 'sanPhamNhap',
+      key: 'sanPhamNhap',
+      render: (items) => (
+        <ul style={{ paddingLeft: 16 }}>
+          {items?.map((item, idx) => (
+            <li key={idx}>
+              <strong>{item.sanPham}</strong> - Màu: {item.mau}, Số Lượng: {item.soLuong}
+            </li>
+          ))}
+        </ul>
+      ),
+    }
   ];
 
   return (
@@ -152,8 +176,8 @@ const StockInAdmin = () => {
       >
         <Form form={form} layout="vertical" onFinish={handleAddStockIn}>
           <Row gutter={16}>
-            <Col span={24}>
-              <Form.Item label="Nhà cung cấp (không bắt buộc)" name="maNhaCungCap">
+            <Col span={12}>
+              <Form.Item label="Nhà cung cấp" name="maNhaCungCap">
                 <Select allowClear placeholder="Chọn nhà cung cấp (nếu có)">
                   {suppliers.map((s) => (
                     <Select.Option key={s.maNhaCungCap} value={s.maNhaCungCap}>
@@ -161,6 +185,15 @@ const StockInAdmin = () => {
                     </Select.Option>
                   ))}
                 </Select>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="Đơn giá"
+                name="donGia"
+                rules={[{ required: true, message: 'Nhập đơn giá!' }]}
+              >
+                <InputNumber min={0} style={{ width: '100%' }} />
               </Form.Item>
             </Col>
           </Row>
@@ -171,18 +204,14 @@ const StockInAdmin = () => {
                 {fields.map(({ key, name, ...restField }) => (
                   <div key={key} style={{ border: '1px solid #eee', padding: 16, marginBottom: 16 }}>
                     <Row gutter={16}>
-                      <Col span={10}>
+                      <Col span={20}>
                         <Form.Item
                           {...restField}
                           label="Sản phẩm"
                           name={[name, 'maSanPham']}
                           rules={[{ required: true, message: 'Chọn sản phẩm!' }]}
                         >
-                          <Select
-                            onChange={() => {
-                              form.validateFields();
-                            }}
-                          >
+                          <Select placeholder="Chọn sản phẩm">
                             {products.map((p) => (
                               <Select.Option key={p.maSanPham} value={p.maSanPham}>
                                 {p.tenSanPham}
@@ -192,31 +221,23 @@ const StockInAdmin = () => {
                         </Form.Item>
                       </Col>
 
-                      <Col span={6}>
-                        <Form.Item
-                          {...restField}
-                          label="Đơn giá"
-                          name={[name, 'donGia']}
-                          rules={[{ required: true, message: 'Nhập đơn giá!' }]}
-                        >
-                          <InputNumber min={0} style={{ width: '100%' }} />
-                        </Form.Item>
-                      </Col>
-
                       <Col span={4}>
                         <Button danger onClick={() => remove(name)} style={{ marginTop: 30 }}>
-                          Xóa sản phẩm
+                          Xóa
                         </Button>
                       </Col>
                     </Row>
 
-                    {/* Danh sách màu cho sản phẩm */}
                     <Form.List name={[name, 'chiTietMau']}>
                       {(colorFields, { add: addColor, remove: removeColor }) => (
                         <>
                           {colorFields.map(({ key: colorKey, name: colorName, ...colorRest }) => {
                             const selectedProduct = form.getFieldValue(['sanPhams', name, 'maSanPham']);
                             const colorOptions = productColorMap[selectedProduct] || [];
+                            const allColors = form.getFieldValue(['sanPhams', name, 'chiTietMau']) || [];
+                            const selectedColors = allColors.map((c, i) =>
+                              i === colorName ? null : c?.mau
+                            );
 
                             return (
                               <Row key={colorKey} gutter={16} style={{ marginBottom: 8 }}>
@@ -227,12 +248,14 @@ const StockInAdmin = () => {
                                     name={[colorName, 'mau']}
                                     rules={[{ required: true, message: 'Chọn màu!' }]}
                                   >
-                                    <Select>
-                                      {colorOptions.map((color) => (
-                                        <Select.Option key={color} value={color}>
-                                          {color}
-                                        </Select.Option>
-                                      ))}
+                                    <Select placeholder="Chọn màu">
+                                      {colorOptions
+                                        .filter((colorObj) => !selectedColors.includes(colorObj.mau))
+                                        .map((colorObj) => (
+                                          <Select.Option key={colorObj.id} value={colorObj.mau}>
+                                            {colorObj.mau}
+                                          </Select.Option>
+                                        ))}
                                     </Select>
                                   </Form.Item>
                                 </Col>
@@ -250,7 +273,7 @@ const StockInAdmin = () => {
 
                                 <Col span={4}>
                                   <Button danger onClick={() => removeColor(colorName)} style={{ marginTop: 30 }}>
-                                    Xóa màu
+                                    Xóa
                                   </Button>
                                 </Col>
                               </Row>
@@ -266,7 +289,6 @@ const StockInAdmin = () => {
                     </Form.List>
                   </div>
                 ))}
-
                 <Form.Item>
                   <Button type="dashed" onClick={() => add()} block>
                     Thêm sản phẩm

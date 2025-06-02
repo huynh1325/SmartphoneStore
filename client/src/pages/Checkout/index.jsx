@@ -20,9 +20,10 @@ const Checkout = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedAddress, setSelectedAddress] = useState('address_id_1');
     const selectedProducts = location.state?.sanPhams || [];
-    const navigate = useNavigate();
     const [newAddress, setNewAddress] = useState({ name: '', phone: '', address: '' });
     const [isAddingNew, setIsAddingNew] = useState(false);
+    const [voucherCode, setVoucherCode] = useState();
+
     const [addresses, setAddresses] = useState([
         {
             id: 'address_id_1',
@@ -39,8 +40,9 @@ const Checkout = () => {
             isDefault: false
         },
     ]);
-
+    
     const [currentAddress, setCurrentAddress] = useState(addresses.find(addr => addr.isDefault));
+    const navigate = useNavigate();
 
     const TickSvg = () => (
         <span className={cx("tick-wrapper")}> 
@@ -51,6 +53,19 @@ const Checkout = () => {
             </svg>
         </span>
     );
+
+    const handleApplyVoucher = () => {
+        if (!voucherCode) {
+            toast.warning("Vui lòng nhập mã giảm giá!");
+            return;
+        }
+
+        if (voucherCode === "GIAM10") {
+            toast.success("Áp dụng mã giảm giá 10%!");
+        } else {
+            toast.error("Mã giảm giá không hợp lệ!");
+        }
+    };
 
     const handleCheckout = async () => {
         try {
@@ -239,9 +254,13 @@ const Checkout = () => {
                         <div className={cx("container-content")}> 
                             <div className={cx("checkout-container")}> 
                                 <div className={cx("voucher")}> 
-                                    <div className={cx("voucher-heaeder")}>Sử dụng mã giảm giá:</div>
-                                    <input />
-                                    <div className={cx("voucher-btn")}>Áp dụng</div>
+                                    <div className={cx("voucher-header")}>Sử dụng mã giảm giá:</div>
+                                    <input
+                                        value={voucherCode}
+                                        onChange={(e) => setVoucherCode(e.target.value)}
+                                    />
+                                    <div className={cx("voucher-btn")} onClick={() => handleApplyVoucher()}>Áp dụng</div>
+                                    {/* <div className={cx("voucher-apply")}>S</div> */}
                                 </div>
 
                                 <div className={cx("checkout")}> 

@@ -2,9 +2,11 @@ import db from '../models/index'
 const deleteImage = require('../utils/deleteImage'); 
 
 const newProduct = async (rawData) => {
+    const t = await db.sequelize.transaction();
+
 
     try {
-        await db.SanPham.create({
+        const product = await db.SanPham.create({
             maSanPham: rawData.maSanPham,
             tenSanPham: rawData.tenSanPham,
             heDieuHanh: rawData.heDieuHanh,
@@ -14,7 +16,6 @@ const newProduct = async (rawData) => {
             dungLuongLuuTru: rawData.dungLuongLuuTru,
             chipDoHoa: rawData.chipDoHoa,
             theNho: rawData.theNho,
-            mau: rawData.mau,
             gia: rawData.gia,
             inch: rawData.inch,
             nhanHieu: rawData.nhanHieu,
@@ -22,12 +23,30 @@ const newProduct = async (rawData) => {
             anh: rawData.image
         })
 
+        if (rawData.mau) {
+            let mauList = rawData.mau;
+
+            if (typeof rawData.mau === 'string') {
+                mauList = JSON.parse(rawData.mau);
+            }
+
+            for (let mauItem of mauList) {
+                await db.MauSacSanPham.create({
+                    maSanPham: product.maSanPham,
+                    mau: mauItem
+                }, { transaction: t });
+            }
+        }
+
+        await t.commit();
+
         return {
             EM: 'Thêm sản phẩm thành công',
             EC: 0
         }
     } catch (e) {
         console.log(e)
+        await t.rollback();
         return {
             EM: 'Something wrongs in service...',
             EC: -2
@@ -142,18 +161,20 @@ const fetchAllProducts = async () => {
     });
 
     const productWithSuppliers = await Promise.all(products.map(async (product) => {
-        const receipts = await db.PhieuNhap.findAll({
+        const chiTietPhieuNhaps = await db.ChiTietPhieuNhap.findAll({
             where: {
                 maSanPham: product.maSanPham
             },
-            attributes: ['maNhaCungCap'],
             include: {
-                model: db.NhaCungCap,
-                attributes: ['tenNhaCungCap']
+                model: db.PhieuNhap,
+                include: {
+                    model: db.NhaCungCap,
+                    attributes: ['tenNhaCungCap']
+                }
             }
         });
 
-        const suppliers = receipts
+        const suppliers = chiTietPhieuNhaps
             .filter(receipt => receipt.NhaCungCap !== null)
             .map(receipt => receipt.NhaCungCap ? receipt.NhaCungCap.tenNhaCungCap : 'Không có nhà cung cấp');
 

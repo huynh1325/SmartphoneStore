@@ -10,13 +10,14 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      PhieuNhap.belongsTo(models.SanPham, {
-        foreignKey: 'maSanPham'
-      });
-
       PhieuNhap.belongsTo(models.NhaCungCap, {
         foreignKey: 'maNhaCungCap'
       });
+
+      PhieuNhap.hasMany(models.ChiTietPhieuNhap, {
+        foreignKey: 'maPhieuNhap',
+        as: 'chiTietPhieuNhap'
+      })
     }
   }
   PhieuNhap.init({
@@ -26,8 +27,6 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
     },
     maNhaCungCap: DataTypes.STRING,
-    maSanPham: DataTypes.STRING,
-    soLuong: DataTypes.INTEGER,
     donGia: DataTypes.DECIMAL(15, 2),
   }, {
     sequelize,

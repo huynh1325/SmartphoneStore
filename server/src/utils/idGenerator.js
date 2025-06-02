@@ -11,9 +11,6 @@ const generateCustomId = async (prefix, model, fieldName, length = 4) => {
         nextNumber = lastNumber + 1;
     }
 
-    const random = Math.floor(Math.random() * 9) + 1;
-    nextNumber += random;
-
     const paddedNumber = String(nextNumber).padStart(length, '0');
     return `${prefix}${paddedNumber}`;
 };

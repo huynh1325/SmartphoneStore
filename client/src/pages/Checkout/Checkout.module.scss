@@ -145,12 +145,13 @@
 
 .voucher {
     display: flex;
+    flex-wrap: wrap;
     margin-top: 10px;
     font-size: 1.8rem;
     height: 100%;
     width: 50%;
 
-    .voucher-heaeder {
+    .voucher-header {
         height: 43px;
         margin-right: 10px;
         line-height: 43px;
@@ -183,6 +184,15 @@
 
     .voucher-btn:hover {
         background-color: rgba(238, 75, 43, 0.92);
+    }
+
+    .voucher-apply {
+        margin-top: 12px;
+        border-radius: 4px;
+        margin-right: 12px;
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        min-width: 100px;
     }
 }
 

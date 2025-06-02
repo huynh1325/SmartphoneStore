@@ -16,8 +16,11 @@ module.exports = (sequelize, DataTypes) => {
         otherKey: 'maGioHang',
         as: 'danhSachGioHang'
       });
-      SanPham.hasMany(models.PhieuNhap, {
+      SanPham.hasMany(models.ChiTietPhieuNhap, {
         foreignKey: 'maSanPham'
+      });
+      SanPham.hasMany(models.MauSacSanPham, {
+        foreignKey: 'maSanPham',
       });
     }
   }
@@ -38,8 +41,6 @@ module.exports = (sequelize, DataTypes) => {
     phanTramGiam: DataTypes.INTEGER,
     theNho: DataTypes.STRING,
     chipDoHoa: DataTypes.STRING,
-    soLuong: DataTypes.INTEGER,
-    mau: DataTypes.STRING,
     ram: DataTypes.STRING,
     dungLuongLuuTru: DataTypes.STRING
   }, {

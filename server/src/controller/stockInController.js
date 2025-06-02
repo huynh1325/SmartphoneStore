@@ -1,84 +1,127 @@
 import db from '../models/index'
-import { generateCustomId } from '../utils/idGenerator';
+import { v4 as uuidv4 } from 'uuid';
 
 const handleCreateStockIn = async (req, res) => {
-    try {
-        const { maSanPham, maNhaCungCap, soLuong, donGia } = req.body;
+  const t = await db.sequelize.transaction();
 
-        if (!maSanPham || !maNhaCungCap || !soLuong || !donGia) {
-            return res.status(400).json({
-              EM: 'Thiếu dữ liệu',
-              EC: 0,
-            });
-        }
+  try {
+    const { maNhaCungCap, sanPhamNhap, donGia } = req.body;
 
-        const sanPham = await db.SanPham.findByPk(maSanPham);
-        if (!sanPham) {
-            return res.status(404).json({
-              EM: 'Không tìm thấy sản phẩm',
-              EC: 2,
-            });
-        }
-
-        const newId = await generateCustomId('PN', db.PhieuNhap, 'maPhieuNhap');
-
-        const phieuNhap = await db.PhieuNhap.create({
-            maPhieuNhap: newId,
-            maSanPham,
-            maNhaCungCap,
-            soLuong,
-            donGia
-        });
-
-        await sanPham.update({
-            soLuong: sanPham.soLuong + Number(soLuong)
-        });
-
-        return res.status(201).json({
-          EM: 'Nhập hàng thành công',
-          EC: 0,
-          DT: phieuNhap,
-        });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({
-          EM: 'Lỗi server',
-          EC: -1,
-        });
+    if (!maNhaCungCap || !Array.isArray(sanPhamNhap) || sanPhamNhap.length === 0) {
+      return res.status(400).json({
+        EM: 'Thiếu dữ liệu nhập hàng',
+        EC: 1,
+      });
     }
+
+    const maPhieuNhap = uuidv4();
+
+    const data = await db.PhieuNhap.create({
+      maPhieuNhap,
+      maNhaCungCap,
+      donGia
+    }, { transaction: t });
+
+    for (const item of sanPhamNhap) {
+      const { maSanPham, mauSanPham, soLuong } = item;
+
+
+      const sanPham = await db.SanPham.findByPk(maSanPham);
+      if (!sanPham) {
+        await t.rollback();
+        return res.status(404).json({
+          EM: `Không tìm thấy sản phẩm mã ${maSanPham}`,
+          EC: 2,
+        });
+      }
+
+      const chiTietMau = await db.MauSacSanPham.findOne({
+        where: {
+          maSanPham: maSanPham,
+          mau: mauSanPham,
+        },
+      });
+
+      if (!chiTietMau) {
+        await t.rollback();
+        return res.status(404).json({
+          EM: `Không tìm thấy màu '${mauSanPham}' cho sản phẩm mã '${maSanPham}'`,
+          EC: 3,
+        });
+      }
+
+      const maChiTietPhieuNhap = uuidv4();
+
+      await db.ChiTietPhieuNhap.create({
+        maChiTietPhieuNhap,
+        maPhieuNhap,
+        maSanPham,
+        maMauSacSanPham: chiTietMau.id,
+        soLuong,
+      }, { transaction: t });
+
+    }
+
+    await t.commit();
+
+    return res.status(201).json({
+      EM: 'Nhập hàng thành công',
+      EC: 0,
+      DT: data
+    });
+
+  } catch (err) {
+    console.error(err);
+    await t.rollback();
+    return res.status(500).json({
+      EM: 'Lỗi server khi nhập hàng',
+      EC: -1,
+    });
+  }
 }
 
+
 const getAllStockIn = async (req, res) => {
-    try {
-      const receipts = await db.PhieuNhap.findAll({
-        order: [['maPhieuNhap', 'DESC']],
-        include: [
-          {
-            model: db.SanPham,
-            attributes: ['tenSanPham'],
-          },
-          {
-            model: db.NhaCungCap,
-            attributes: ['tenNhaCungCap'],
-          },
-        ],
-      });
+  try {
+    const receipts = await db.PhieuNhap.findAll({
+      order: [['maPhieuNhap', 'DESC']],
+      include: [
+        {
+          model: db.ChiTietPhieuNhap,
+          as: 'chiTietPhieuNhap',
+          include: [
+            {
+              model: db.SanPham,
+              attributes: ['maSanPham', 'tenSanPham']
+            },
+            {
+              model: db.MauSacSanPham,
+              attributes: ['mau']
+            }
+          ]
+        },
+        {
+          model: db.NhaCungCap,
+          attributes: ['maNhaCungCap', 'tenNhaCungCap']
+        }
+      ]
+    });
 
     const data = receipts.map((receipt) => ({
       maPhieuNhap: receipt.maPhieuNhap,
-      maSanPham: receipt.maSanPham,
-      tenSanPham: receipt.SanPham?.tenSanPham || 'Không rõ',
-      maNhaCungCap: receipt.maNhaCungCap,
       tenNhaCungCap: receipt.NhaCungCap?.tenNhaCungCap || 'Không rõ',
-      soLuong: receipt.soLuong,
       donGia: receipt.donGia,
-      ngayNhap: receipt.createdAt,
+      sanPhamNhap: receipt.chiTietPhieuNhap?.map(ct => ({
+        sanPham: ct.SanPham?.tenSanPham,
+        mau: ct.MauSacSanPham?.mau || 'Không rõ',
+        soLuong: ct.soLuong,
+      }))
     }));
 
     return res.status(200).json({
       EM: 'Lấy danh sách phiếu nhập thành công',
       EC: 0,
-      DT: data,
+      DT: data
     });
   } catch (error) {
     console.error('Lỗi khi lấy danh sách phiếu nhập:', error);
@@ -88,7 +131,8 @@ const getAllStockIn = async (req, res) => {
       DT: [],
     });
   }
-}
+};
+
 
 module.exports = {
     handleCreateStockIn, getAllStockIn
