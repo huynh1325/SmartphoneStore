@@ -77,8 +77,11 @@ const getAddressByUser = () => {
     return axios.get(`/api/v1/address`)
 }
 
+const fetctColorProduct = (id) => {
+    return axios.get(`/api/v1/productcolor/${id}`)
+}
 
 export {
     registerNewUser, createProduct, updateProduct, verifyUserCode, userLogin, addToCart, getAllCart, fetchAllProduct, deleteProduct, createOrder, getOrderById,
-    createPaymentUrl, fetchAllOrder, createAddress, getAddressByUser, getOrderByUser
+    createPaymentUrl, fetchAllOrder, createAddress, getAddressByUser, getOrderByUser, fetctColorProduct
 }

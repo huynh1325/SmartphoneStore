@@ -60,6 +60,13 @@ const handleCreateStockIn = async (req, res) => {
         soLuong,
       }, { transaction: t });
 
+      await db.MauSacSanPham.update(
+        { soLuong: chiTietMau.soLuong + soLuong },
+        {
+          where: { id: chiTietMau.id },
+          transaction: t,
+        }
+      );
     }
 
     await t.commit();

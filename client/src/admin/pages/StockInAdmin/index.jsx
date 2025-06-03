@@ -100,9 +100,9 @@ const StockInAdmin = () => {
         maNhaCungCap: values.maNhaCungCap,
         donGia: values.donGia,
         sanPhamNhap: values.sanPhams.flatMap((sp) =>
-          sp.chiTiet.map((ct) => ({
+          (sp.chiTietMau || []).map((ct) => ({
             maSanPham: sp.maSanPham,
-            mauSanPham: ct.mauSanPham,
+            mauSanPham: ct.mau,
             soLuong: ct.soLuong,
           }))
         ),
@@ -112,9 +112,7 @@ const StockInAdmin = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
-      });  
-      
-      console.log(payload)
+      });
 
       const result = await response.json();
       if (result.EC === 0) {
@@ -124,7 +122,8 @@ const StockInAdmin = () => {
       } else {
         toast.error(result.EM || 'Lỗi khi nhập hàng!');
       }
-    } catch {
+    } catch (error) {
+      console.error('Lỗi gửi dữ liệu:', error);
       toast.error('Lỗi gửi dữ liệu!');
     }
   };

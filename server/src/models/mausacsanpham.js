@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
   MauSacSanPham.init({
     maSanPham: DataTypes.STRING,
     mau: DataTypes.STRING,
+    soLuong: DataTypes.INTEGER
   }, {
     sequelize,
     tableName: 'MauSacSanPham',

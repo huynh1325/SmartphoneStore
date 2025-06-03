@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       });
       SanPham.hasMany(models.MauSacSanPham, {
         foreignKey: 'maSanPham',
+        as: 'MauSacSanPham'
       });
     }
   }
@@ -32,7 +33,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     tenSanPham: DataTypes.STRING,
     gia: DataTypes.DECIMAL(15, 2),
-    soLuong: DataTypes.INTEGER,
     anh: DataTypes.STRING,
     heDieuHanh: DataTypes.STRING,
     cpu: DataTypes.STRING,

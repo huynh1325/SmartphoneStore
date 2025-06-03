@@ -177,15 +177,16 @@
 }
 
 .color-list {
-  margin-top: 12px;
+    margin-top: 12px;
 }
 
 .color-item {
-  display: inline-block;
-  background-color: #f0f0f0;
-  color: #333;
-  padding: 4px 8px;
-  margin-right: 8px;
-  margin-bottom: 6px;
-  border-radius: 6px;
+    display: inline-block;
+    background-color: #fff;
+    color: #333;
+    padding: 4px 8px;
+    margin-right: 8px;
+    margin-bottom: 6px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
 }

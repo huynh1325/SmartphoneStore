@@ -4,7 +4,6 @@ const deleteImage = require('../utils/deleteImage');
 const newProduct = async (rawData) => {
     const t = await db.sequelize.transaction();
 
-
     try {
         const product = await db.SanPham.create({
             maSanPham: rawData.maSanPham,
@@ -12,7 +11,6 @@ const newProduct = async (rawData) => {
             heDieuHanh: rawData.heDieuHanh,
             cpu: rawData.cpu,
             ram: rawData.ram,
-            soLuong: 0,
             dungLuongLuuTru: rawData.dungLuongLuuTru,
             chipDoHoa: rawData.chipDoHoa,
             theNho: rawData.theNho,
@@ -156,8 +154,30 @@ const deleteProduct = async (maSanPham) => {
 }
 
 const fetchAllProducts = async () => {
+    const Sequelize = db.Sequelize;
+
     let products = await db.SanPham.findAll({
-        order: [['maSanPham', 'DESC']]
+        order: [['maSanPham', 'DESC']],
+        include: [
+            {
+                model: db.MauSacSanPham,
+                as: 'MauSacSanPham',
+                attributes: [],
+            },
+        ],
+        attributes: {
+            include: [
+                [
+                    Sequelize.fn(
+                        'COALESCE',
+                        Sequelize.fn('SUM', Sequelize.col('MauSacSanPham.soLuong')),
+                        0
+                    ),
+                    'soLuong'
+                ]
+            ],
+        },
+        group: ['SanPham.maSanPham']
     });
 
     const productWithSuppliers = await Promise.all(products.map(async (product) => {
@@ -175,8 +195,8 @@ const fetchAllProducts = async () => {
         });
 
         const suppliers = chiTietPhieuNhaps
-            .filter(receipt => receipt.NhaCungCap !== null)
-            .map(receipt => receipt.NhaCungCap ? receipt.NhaCungCap.tenNhaCungCap : 'Không có nhà cung cấp');
+            .map(receipt => receipt.PhieuNhap?.NhaCungCap?.tenNhaCungCap)
+            .filter(Boolean);
 
         return {
             ...product.toJSON(),

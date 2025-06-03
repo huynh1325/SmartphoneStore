@@ -14,9 +14,6 @@ module.exports = {
       gia: {
         type: Sequelize.DECIMAL(15, 2)
       },
-      soLuong: {
-        type: Sequelize.INTEGER
-      },
       anh: {
         type: Sequelize.STRING
       },

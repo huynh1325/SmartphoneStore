@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useParams } from 'react-router-dom';
 import { faCartShopping, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { useState, useEffect } from "react";
-import { addToCart } from "../../util/api";
+import { addToCart, fetctColorProduct } from "../../util/api";
 import { toast } from "react-toastify";
 
 const cx = classNames.bind(styles);
@@ -13,24 +13,39 @@ const cx = classNames.bind(styles);
 const ProductDetail = () => {
     const { id } = useParams();
     const [product, setProduct] = useState(null);
+    const [colors, setColors] = useState([]);
 
     useEffect(() => {
         const fetchProduct = async () => {
-        try {
-            const res = await fetch(`http://localhost:8080/api/v1/products/${id}`);
-            const data = await res.json();
-            console.log(data)
-            if (data.EC === 0) {
-                setProduct(data.DT);
-            } else {
-            console.error('Không tìm thấy sản phẩm:', data.EM);
+            try {
+                const res = await fetch(`http://localhost:8080/api/v1/products/${id}`);
+                const data = await res.json();
+                console.log(data)
+                if (data.EC === 0) {
+                    setProduct(data.DT);
+                } else {
+                console.error('Không tìm thấy sản phẩm:', data.EM);
+                }
+            } catch (error) {
+                console.error('Lỗi fetch:', error);
             }
-        } catch (error) {
-            console.error('Lỗi fetch:', error);
-        }
+        };
+
+        const fetchColors = async () => {
+            try {
+                const res = await fetctColorProduct(id);
+                if (res.EC === 0) {
+                    setColors(res.DT);
+                } else {
+                    toast.error(res.EM)
+                }
+            } catch (error) {
+                console.error("Lỗi gọi API màu:", error);
+            }
         };
 
         fetchProduct();
+        fetchColors();
     }, [id]);
 
     const handleAddToCart = async () => {
@@ -75,14 +90,14 @@ const ProductDetail = () => {
                                 <span>36 Cao Thắng, Thanh Bình, Hải Châu, Đà Nẵng</span>
                             </div>
                             <div className={cx("color-list")}>
-                                {product.mau ? (
-                                    JSON.parse(product.mau).map((mauSac, index) => (
-                                        <li key={index} className={cx("color-item")}>
-                                            {mauSac}
+                                {colors.length > 0 ? (
+                                    colors.map((color) => (
+                                        <li key={color.id} className={cx("color-item")}>
+                                            {color.mau}
                                         </li>
                                     ))
-                                    ) : (
-                                        <></>
+                                ) : (
+                                    <span>Không có màu</span>
                                 )}
                             </div>
                             <div className={cx('price')}>
