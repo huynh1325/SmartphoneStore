@@ -8,8 +8,9 @@ import stockInController from "../controller/stockInController";
 import supplierController from "../controller/supplierController";
 import paymentController from '../controller/paymentController';
 import orderController from '../controller/orderController';
-import addressController from '../controller/addressController'
-import colorProductController from '../controller/colorProductController'
+import voucherController from '../controller/voucherController';
+import addressController from '../controller/addressController';
+import colorProductController from '../controller/colorProductController';
 import multer from "multer";
 import path from 'path';
 import auth from '../middleware/auth';
@@ -83,7 +84,14 @@ const initWebRoutes = (app) => {
     router.post('/address', auth, addressController.handleCreateAddress);
     router.get('/address', auth, addressController.getAddressByUser);
     
+    //productcolor
     router.get('/productcolor/:maSanPham', colorProductController.getAllColorProduct);
+
+    //voucher
+    router.post('/vouchers', voucherController.handleCreateVoucher);
+    router.get('/vouchers', voucherController.fetchAllVoucher);
+    router.put('/vouchers/:maKhuyenMai', voucherController.handleUpdateVoucher);
+    router.delete('/vouchers/:maKhuyenMai', voucherController.handleDeleteVoucher);
     
     return app.use("/api/v1/", router);
 }

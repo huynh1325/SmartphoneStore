@@ -18,12 +18,18 @@ module.exports = {
         type: Sequelize.STRING
       },
       giaTriGiam: {
-        type: Sequelize.INTEGER
+        type: Sequelize.DECIMAL(15, 2)
+      },
+      kieuGiamGia: {
+        type: Sequelize.STRING
+      },
+      giaTriGiamToiDa: {
+        type: Sequelize.DECIMAL(15, 2)
       },
       soLuong: {
         type: Sequelize.INTEGER
       },
-      soLuongSuDung: {
+      soLuongDaDung: {
         type: Sequelize.INTEGER
       },
       ngayBatDau: {
@@ -31,6 +37,9 @@ module.exports = {
       },
       ngayKetThuc: {
         type: Sequelize.DATE
+      },
+      trangThai: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
