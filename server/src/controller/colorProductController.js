@@ -13,7 +13,7 @@ const getAllColorProduct = async (req, res) => {
 
     const dsMau = await db.MauSacSanPham.findAll({
       where: { maSanPham },
-      attributes: ['id', 'mau'],
+      attributes: ['id', 'mau', 'soLuong'],
     });
 
     return res.status(200).json({

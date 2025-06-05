@@ -21,7 +21,7 @@ const createPaymentUrl = async (req, res) => {
         const tmnCode = process.env.VNP_TMNCODE;
         const secretKey = process.env.VNP_HASH_SECRET;
         let vnpUrl = process.env.VNP_URL;
-        const returnUrl = 'https://93aa-14-191-113-35.ngrok-free.app/api/v1/vnpay-return'
+        const returnUrl = 'https://7200-14-191-113-35.ngrok-free.app/api/v1/vnpay-return'
 
         const vnp_TxnRef = maDonHang;
         const vnp_Locale = 'vn';
@@ -115,13 +115,22 @@ const vnpayReturn = async (req, res) => {
         });
 
         for (const item of chiTietDonHang) {
-            const sanPham = await db.SanPham.findOne({
-                where: { maSanPham: item.maSanPham }
-            });
+            if (item.mau) {
+                const mauSanPham = await db.MauSacSanPham.findOne({
+                    where: {
+                        maSanPham: item.maSanPham,
+                        mau: item.mau
+                    }
+                });
 
-            if (sanPham) {
-                const soLuongMoi = sanPham.soLuong - item.soLuong;
-                await sanPham.update({ soLuong: Math.max(soLuongMoi, 0) });
+                if (mauSanPham) {
+                    const soLuongMoiMau = mauSanPham.soLuong - item.soLuong;
+                    await mauSanPham.update({ soLuong: Math.max(soLuongMoiMau, 0) });
+                } else {
+                    console.warn(`Không tìm thấy màu ${item.mau} cho sản phẩm ${item.maSanPham}`);
+                }
+            } else {
+                console.warn(`Chi tiết đơn hàng thiếu màu: ${item.maChiTietDonHang}`);
             }
         }
         

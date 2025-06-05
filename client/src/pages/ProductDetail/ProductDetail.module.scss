@@ -189,4 +189,17 @@
     margin-bottom: 6px;
     border-radius: 6px;
     border: 1px solid var(--border-color);
+    cursor: pointer;
+
+    &.active {
+        border: 2px solid #007bff;
+        background-color: #e7f1ff;
+        font-weight: bold;
+    }
+
+    &.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+        cursor: not-allowed;
+    }
 }

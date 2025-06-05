@@ -14,6 +14,9 @@ module.exports = {
       maSanPham: {
         type: Sequelize.STRING
       },
+      mau: {
+        type: Sequelize.STRING
+      },
       soLuong: {
         type: Sequelize.INTEGER
       },

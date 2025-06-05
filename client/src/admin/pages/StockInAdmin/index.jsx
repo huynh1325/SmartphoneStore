@@ -177,7 +177,7 @@ const StockInAdmin = () => {
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item label="Nhà cung cấp" name="maNhaCungCap">
-                <Select allowClear placeholder="Chọn nhà cung cấp (nếu có)">
+                <Select allowClear placeholder="Chọn nhà cung cấp">
                   {suppliers.map((s) => (
                     <Select.Option key={s.maNhaCungCap} value={s.maNhaCungCap}>
                       {s.tenNhaCungCap}

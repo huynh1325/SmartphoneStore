@@ -2,8 +2,9 @@ import db from '../models/index'
 import { generateCustomId } from '../utils/idGenerator';
 
 const handleAddToCart = async (req, res) => {
+    console.log(req.body)
     try {
-        const { maSanPham } = req.body;
+        const { maSanPham, mau } = req.body;
         const maNguoiDung = req.user.id;
         const newIdGH = await generateCustomId('GH', db.GioHang, 'maGioHang');
         const newIdCTGH = await generateCustomId('CTGH', db.ChiTietGioHang, 'maChiTietGioHang');
@@ -34,6 +35,7 @@ const handleAddToCart = async (req, res) => {
             where: {
                 maGioHang: gioHang.maGioHang,
                 maSanPham,
+                mau
             },
         });
 
@@ -48,6 +50,7 @@ const handleAddToCart = async (req, res) => {
             maChiTietGioHang: newIdCTGH,
             maGioHang: gioHang.maGioHang,
             maSanPham,
+            mau,
             gia: product.gia,
             soLuong: 1,
         });
@@ -95,17 +98,27 @@ const getAllCart = async (req, res) => {
             ]
         });
 
-        const result = cartItems.map(item => {
-            const sanPham = item.sanPham;
-            const goc = item.gia;
-            const giam = sanPham?.phanTramGiam || 0;
-            const giaDaGiam = Math.round(goc - (goc * giam / 100));
+        const result = await Promise.all(
+            cartItems.map(async item => {
+                const sanPham = item.sanPham;
+                const goc = item.gia;
+                const giam = sanPham?.phanTramGiam || 0;
+                const giaDaGiam = Math.round(goc - (goc * giam / 100));
 
-            return {
-                ...item.toJSON(),
-                giaDaGiam
-            };
-        });
+                const tonKho = await db.MauSacSanPham.findOne({
+                    where: {
+                        maSanPham: item.maSanPham,
+                        mau: item.mau
+                    }
+                });
+
+                return {
+                    ...item.toJSON(),
+                    giaDaGiam,
+                    soLuongTon: tonKho?.soLuong || 0
+                };
+            })
+        );
 
         return res.status(200).json({
             EM: 'Lấy giỏ hàng thành công',

@@ -23,7 +23,8 @@ const sendEmailWithTemplate = async (hoaDon, nguoiDung, chiTietItems) => {
             items: chiTietItems.map(item => ({
                 name: item.tenSanPham,
                 quantity: item.soLuong,
-                price: item.gia
+                price: item.gia,
+                mau: item.mau
             })),
             total: hoaDon.tongTien.toLocaleString('vi-VN')
         });
@@ -91,7 +92,8 @@ const createInvoice = async (donHang, chiTietDonHang) => {
             chiTietItems.push({
                 tenSanPham: sanPham.tenSanPham,
                 soLuong: item.soLuong,
-                gia: item.gia
+                gia: item.gia,
+                mau: item.mau
             });
 
             await db.ChiTietHoaDon.create({
@@ -100,7 +102,8 @@ const createInvoice = async (donHang, chiTietDonHang) => {
                 maSanPham: item.maSanPham,
                 tenSanPham: sanPham.tenSanPham,
                 soLuong: item.soLuong,
-                gia: item.gia
+                gia: item.gia,
+                mau: item.mau
             });
         }
 

@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     maGioHang: DataTypes.STRING,
     maSanPham: DataTypes.STRING,
+    mau: DataTypes.STRING,
     soLuong: DataTypes.INTEGER,
     gia: DataTypes.DECIMAL(15, 2),
   }, {

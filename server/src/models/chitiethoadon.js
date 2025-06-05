@@ -20,7 +20,8 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
     },
     maHoaDon: DataTypes.INTEGER,
-    maSanPham: DataTypes.INTEGER,
+    maSanPham: DataTypes.STRING,
+    mau: DataTypes.STRING,
     soLuong: DataTypes.INTEGER,
     gia: DataTypes.DECIMAL(15, 2)
   }, {

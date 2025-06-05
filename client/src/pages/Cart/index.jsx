@@ -46,6 +46,7 @@ const Cart = () => {
     const fetchCarts = useCallback(async () => {
         try {
             const response = await getAllCart();
+            console.log(response)
             if (response.EC === 0) {
                 setCartItems(response.DT);
                 const initialQuantities = {};
@@ -66,10 +67,20 @@ const Cart = () => {
     }, [fetchCarts]);
 
     const handleIncrease = (id) => {
-        setQuantities(prev => ({
-            ...prev,
-            [id]: (prev[id] || 1) + 1
-        }));
+        const cartItem = cartItems.find(item => item.maChiTietGioHang === id);
+        const maxStock = cartItem?.soLuongTon || 1;
+        
+        setQuantities(prev => {
+            const newQty = (prev[id] || 1) + 1;
+            if (newQty > maxStock) {
+                toast.warning(`Chỉ còn lại ${maxStock} sản phẩm cho màu ${cartItem?.mau}`);
+                return prev;
+            }
+            return {
+                ...prev,
+                [id]: newQty
+            };
+        });
     };
 
     const handleDecrease = (id) => {
@@ -80,13 +91,21 @@ const Cart = () => {
     };
 
     const handleQuantityChange = (id, e) => {
-        const value = e.target.value;
-        if (!isNaN(value) && value >= 1) {
-            setQuantities(prev => ({
-                ...prev,
-                [id]: parseInt(value)
-            }));
+        const value = parseInt(e.target.value);
+        if (isNaN(value) || value < 1) return;
+
+        const cartItem = cartItems.find(item => item.maChiTietGioHang === id);
+        const maxStock = cartItem?.sanPham?.mauSacSanPhams?.[0]?.soLuong || 1;
+
+        if (value > maxStock) {
+            toast.warning(`Chỉ còn lại ${maxStock} sản phẩm cho màu ${cartItem?.mau}`);
+            return;
         }
+
+        setQuantities(prev => ({
+            ...prev,
+            [id]: value
+        }));
     };
 
     const totalPrice = cartItems.reduce((total, item) => {
@@ -126,7 +145,8 @@ const Cart = () => {
                 tenSanPham: item.sanPham?.tenSanPham,
                 anh: item.sanPham?.anh,
                 soLuong: quantities[item.maChiTietGioHang] || item.soLuong || 1,
-                gia: item.giaDaGiam
+                gia: item.giaDaGiam,
+                mau: item.mau
             }));
         
         return {
@@ -177,7 +197,15 @@ const Cart = () => {
                                     </div>
                                     <div className={cx("element", "first-element")}>
                                         <img alt="Ảnh" src={item.sanPham?.anh ? `${IMAGE_BASE_URL}${item.sanPham.anh}` : ""} />
-                                        <div>{item.sanPham?.tenSanPham}</div>
+                                        <div>
+                                            <div>{item.sanPham?.tenSanPham}</div>
+                                            {item.mau && (
+                                                <div className={cx("color-info")}>
+                                                    Màu: <span>{item.mau}</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                        
                                     </div>
                                     <div className={cx("element")}>{formatPrice(item.giaDaGiam)}</div>
                                     <div className={cx("element", "input-quantity")}>

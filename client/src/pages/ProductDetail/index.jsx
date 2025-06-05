@@ -14,6 +14,7 @@ const ProductDetail = () => {
     const { id } = useParams();
     const [product, setProduct] = useState(null);
     const [colors, setColors] = useState([]);
+    const [selectedColor, setSelectedColor] = useState(null);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -48,6 +49,12 @@ const ProductDetail = () => {
         fetchColors();
     }, [id]);
 
+    useEffect(() => {
+        if (colors.length > 0 && !selectedColor) {
+            setSelectedColor(colors[0].mau);
+        }
+    }, [colors, selectedColor]);
+
     const handleAddToCart = async () => {
 
         const token = localStorage.getItem("access_token");
@@ -56,7 +63,7 @@ const ProductDetail = () => {
         }
 
         try {
-            const res = await addToCart(product)
+            const res = await addToCart({ ...product, mau: selectedColor })
             if (res.EC === 1) {
                 toast.error(res.EM);
             }
@@ -92,7 +99,14 @@ const ProductDetail = () => {
                             <div className={cx("color-list")}>
                                 {colors.length > 0 ? (
                                     colors.map((color) => (
-                                        <li key={color.id} className={cx("color-item")}>
+                                        <li
+                                            key={color.id}
+                                            className={cx("color-item", {
+                                                active: selectedColor === color.mau,
+                                                disabled: color.soLuong == null || color.soLuong <= 0
+                                            })}
+                                            onClick={() => setSelectedColor(color.mau)}
+                                        >
                                             {color.mau}
                                         </li>
                                     ))

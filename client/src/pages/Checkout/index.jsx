@@ -242,7 +242,14 @@ const Checkout = () => {
                                 <div key={ct.maChiTietDonHang} className={cx("checkout-product")}> 
                                     <div className={cx("element", "first-element")}> 
                                         <img alt="Ảnh" src={ct.anh ? `${IMAGE_BASE_URL}${ct.anh}` : ""} />
-                                        <div>{ct.tenSanPham}</div>
+                                        <div>
+                                            <div>{ct.tenSanPham}</div>
+                                            {ct.mau && (
+                                                <div className={cx("color-info")}>
+                                                    Màu: <span>{ct.mau}</span>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                     <div className={cx("element")}>{formatCurrency(ct.gia)}</div>
                                     <div className={cx("element", "input-quantity")}>{ct.soLuong}</div>

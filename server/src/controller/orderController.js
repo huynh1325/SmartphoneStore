@@ -74,6 +74,7 @@ const handleCreateOrder = async (req, res) => {
                     maSanPham: sp.maSanPham,
                     soLuong: sp.soLuong,
                     gia: sp.gia,
+                    mau: sp.mau,
                 });
 
                 const gioHang = await db.GioHang.findOne({ where: { maNguoiDung } });
