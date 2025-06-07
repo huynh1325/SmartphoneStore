@@ -16,12 +16,12 @@ const createPaymentUrl = async (req, res) => {
             return res.status(404).json({ message: 'Không tìm thấy đơn hàng' });
         }
         
-        const tongTien = donHang.tongTien;
+        const tongTien = donHang.tongThanhToan;
 
         const tmnCode = process.env.VNP_TMNCODE;
         const secretKey = process.env.VNP_HASH_SECRET;
         let vnpUrl = process.env.VNP_URL;
-        const returnUrl = 'https://7200-14-191-113-35.ngrok-free.app/api/v1/vnpay-return'
+        const returnUrl = 'https://11ef-123-26-104-97.ngrok-free.app/api/v1/vnpay-return'
 
         const vnp_TxnRef = maDonHang;
         const vnp_Locale = 'vn';
@@ -108,6 +108,20 @@ const vnpayReturn = async (req, res) => {
         const donHang = await db.DonHang.findOne({ where: { maDonHang: vnp_TxnRef } });
         if (!donHang) {
             return res.status(404).json({ message: 'Không tìm thấy đơn hàng' });
+        }
+
+        if (donHang.maKhuyenMai) {
+            const voucher = await db.KhuyenMai.findOne({ where: { maKhuyenMai: donHang.maKhuyenMai } });
+            if (voucher) {
+                if (voucher.soLuongDaDung === null || voucher.soLuongDaDung === undefined) {
+                    voucher.soLuongDaDung = 1;
+                } else {
+                    voucher.soLuongDaDung += 1;
+                }
+                await voucher.save();
+            } else {
+                console.warn(`Không tìm thấy mã khuyến mãi: ${donHang.maKhuyenMai}`);
+            }
         }
 
         const chiTietDonHang = await db.ChiTietDonHang.findAll({

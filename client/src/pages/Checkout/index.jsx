@@ -4,7 +4,7 @@ import styles from './Checkout.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { useState } from "react";
-import { createOrder, createPaymentUrl } from "../../util/api";
+import { createOrder, createPaymentUrl, getVoucherByCode } from "../../util/api";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Modal, Radio, Button } from 'antd';
@@ -22,7 +22,9 @@ const Checkout = () => {
     const selectedProducts = location.state?.sanPhams || [];
     const [newAddress, setNewAddress] = useState({ name: '', phone: '', address: '' });
     const [isAddingNew, setIsAddingNew] = useState(false);
-    const [voucherCode, setVoucherCode] = useState();
+    const [voucherCode, setVoucherCode] = useState('');
+    const [appliedVouchers, setAppliedVouchers] = useState([]);
+    const [selectedVoucher, setSelectedVoucher] = useState(null);
 
     const [addresses, setAddresses] = useState([
         {
@@ -54,28 +56,69 @@ const Checkout = () => {
         </span>
     );
 
-    const handleApplyVoucher = () => {
+    const handleApplyVoucher = async () => {
         if (!voucherCode) {
             toast.warning("Vui lòng nhập mã giảm giá!");
             return;
         }
 
-        if (voucherCode === "GIAM10") {
-            toast.success("Áp dụng mã giảm giá 10%!");
+        if (appliedVouchers.some(v => v.maNhap === voucherCode)) {
+            toast.info("Mã đã được áp dụng trước đó!");
+            return;
+        }
+
+        const res = await getVoucherByCode(voucherCode.trim());
+
+        if (res.EC === 0 && res.DT) {
+            toast.success(`Thêm mã thành công: ${voucherCode}`);
+            setAppliedVouchers(prev => [...prev, res.DT]);
+            setSelectedVoucher(res.DT);
+            setVoucherCode('');
         } else {
-            toast.error("Mã giảm giá không hợp lệ!");
+            toast.error("Mã giảm giá không hợp lệ hoặc đã hết hạn!");
         }
     };
 
+    const calculateDiscount = () => {
+        const total = selectedProducts.reduce((sum, item) => sum + item.soLuong * item.gia, 0);
+        let discount = 0;
+
+        if (!selectedVoucher) return 0;
+
+        if (selectedVoucher.kieuGiamGia === "giamThang") {
+            discount = parseFloat(selectedVoucher.giaTriGiam);
+        } else if (selectedVoucher.kieuGiamGia === "phanTram") {
+            discount = (total * parseFloat(selectedVoucher.giaTriGiam)) / 100;
+
+            if (selectedVoucher.giaTriGiamToiDa != null) {
+                discount = Math.min(discount, parseFloat(selectedVoucher.giaTriGiamToiDa));
+            }
+        }
+
+        return Math.min(discount, total);
+    };
+
+
     const handleCheckout = async () => {
+        const tongTienHang = selectedProducts.reduce(
+            (sum, item) => sum + item.soLuong * item.gia,
+            0
+        );
+
+        const tongTienGiam = calculateDiscount();
+        const tongThanhToan = tongTienHang - tongTienGiam;
+
         try {
             const orderData = {
                 hoTen: currentAddress.name,
                 diaChi: currentAddress.address,
                 soDienThoai: currentAddress.phone,
-                tongTien: selectedProducts.reduce((sum, item) => sum + item.soLuong * item.gia, 0),
+                tongTienHang,
+                tongTienGiam,
+                tongThanhToan,
                 sanPhams: selectedProducts,
-                phuongThucThanhToan: selectedPayment === "option1" ? "COD" : "VNPAY"
+                phuongThucThanhToan: selectedPayment === "option1" ? "COD" : "VNPAY",
+                maKhuyenMai: selectedVoucher?.maKhuyenMai ?? null
             };
 
             const response = await createOrder(orderData);
@@ -106,7 +149,8 @@ const Checkout = () => {
     const calculateTotal = () => {
         if (!selectedProducts || selectedProducts.length === 0) return 0;
         const total = selectedProducts.reduce((sum, item) => sum + item.soLuong * item.gia, 0);
-        return total.toLocaleString('vi-VN');
+        const discount = calculateDiscount();
+        return total - discount;
     };
 
     const formatCurrency = (num) => {
@@ -137,32 +181,32 @@ const Checkout = () => {
                             )}
 
                             <Modal
-                            title="Địa Chỉ Của Tôi"
-                            open={isModalOpen}
-                            onCancel={() => {
-                                setIsModalOpen(false);
-                                setIsAddingNew(false);
-                            }}
-                            footer={[
-                                <Button key="cancel" onClick={() => {
+                                title="Địa Chỉ Của Tôi"
+                                open={isModalOpen}
+                                onCancel={() => {
                                     setIsModalOpen(false);
                                     setIsAddingNew(false);
-                                }}>
-                                    Hủy
-                                </Button>,
-                                <Button
-                                    key="ok"
-                                    type="primary"
-                                    onClick={() => {
-                                        const selected = addresses.find(addr => addr.id === selectedAddress);
-                                        setCurrentAddress(selected);
+                                }}
+                                footer={[
+                                    <Button key="cancel" onClick={() => {
                                         setIsModalOpen(false);
-                                    }}
-                                >
-                                    Xác nhận
-                                </Button>
-                            ]}
-                        >
+                                        setIsAddingNew(false);
+                                    }}>
+                                        Hủy
+                                    </Button>,
+                                    <Button
+                                        key="ok"
+                                        type="primary"
+                                        onClick={() => {
+                                            const selected = addresses.find(addr => addr.id === selectedAddress);
+                                            setCurrentAddress(selected);
+                                            setIsModalOpen(false);
+                                        }}
+                                    >
+                                        Xác nhận
+                                    </Button>
+                                ]}
+                            >
                             <Radio.Group
                                 onChange={(e) => setSelectedAddress(e.target.value)}
                                 value={selectedAddress}
@@ -267,26 +311,54 @@ const Checkout = () => {
                                         onChange={(e) => setVoucherCode(e.target.value)}
                                     />
                                     <div className={cx("voucher-btn")} onClick={() => handleApplyVoucher()}>Áp dụng</div>
-                                    {/* <div className={cx("voucher-apply")}>S</div> */}
+                                    <div className={cx("voucher-list")}>
+                                        {appliedVouchers.map((voucher, index) => (
+                                            <div
+                                                key={index}
+                                                className={cx("applied-voucher", {
+                                                    active: selectedVoucher?.maNhap === voucher.maNhap
+                                                })}
+                                                onClick={() => setSelectedVoucher(voucher)}
+                                            >
+                                                {voucher.maNhap} {selectedVoucher?.maNhap === voucher.maNhap && <TickSvg />}
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
-
                                 <div className={cx("checkout")}> 
                                     <div className={cx("checkout-option")}> 
                                         <button className={cx({ active: selectedPayment === 'option1' })} onClick={() => setSelectedPayment("option1")}>Thanh toán khi nhận hàng {selectedPayment === "option1" && <TickSvg />}</button>
                                         <button className={cx({ active: selectedPayment === 'option2' })} onClick={() => setSelectedPayment("option2")}>Thanh toán qua VNPAY {selectedPayment === "option2" && <TickSvg />}</button>
                                     </div>
-                                    <div className={cx("shipping")}> 
-                                        <div className={cx("shipping-header")}>Tiền phí vận chuyển</div>
-                                        <div>Miễn phí</div>
+                                    <div className={cx("price")}>
+                                        <div className={cx("shipping")}>
+                                            <div className={cx("shipping-header")}>Tiền phí vận chuyển</div>
+                                            <div>Miễn phí</div>
+                                        </div>
+                                        <div className={cx("price-original")}>
+                                            <div className={cx("price-original-header")}>
+                                                Tổng tiền hàng
+                                            </div>
+                                            <div>
+                                                {formatCurrency(selectedProducts.reduce((sum, item) => sum + item.soLuong * item.gia, 0))}
+                                            </div>
+                                        </div>
+                                        <div className={cx("discount")}>
+                                            <div className={cx("discount-header")}>Tổng tiền giảm giá</div>
+                                            <div>-{formatCurrency(calculateDiscount())}</div>
+                                        </div>
+                                        
+                                        <div className={cx("price-total")}>
+                                            <div className={cx("price-total-header")}>Tổng thanh toán</div>
+                                            <div>{formatCurrency(calculateTotal())}</div>
+                                        </div>
                                     </div>
-                                    <div className={cx("buy")}> 
-                                        <div>Tổng thanh toán: {calculateTotal()}đ</div>
+                                    <div className={cx("buy")}>
                                         <button className={cx("checkout-btn")} onClick={handleCheckout}>Đặt hàng</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>

@@ -26,7 +26,9 @@ const sendEmailWithTemplate = async (hoaDon, nguoiDung, chiTietItems) => {
                 price: item.gia,
                 mau: item.mau
             })),
-            total: hoaDon.tongTien.toLocaleString('vi-VN')
+            tongTienHang: (hoaDon.tongTienHang || 0).toLocaleString('vi-VN'),
+            tongTienGiam: (hoaDon.tongTienGiam || 0).toLocaleString('vi-VN'),
+            tongThanhToan: (hoaDon.tongThanhToan || 0).toLocaleString('vi-VN')
         });
 
         const transporter = nodemailer.createTransport({
@@ -59,21 +61,17 @@ const createInvoice = async (donHang, chiTietDonHang) => {
     try {
         const maHoaDon = await generateCustomId('HD', db.HoaDon, 'maHoaDon');
 
-        const tinhTongTien = (chiTietDonHang) => {
-            return chiTietDonHang.reduce((total, item) => {
-                const gia = parseFloat(item.gia) || 0;
-                const soLuong = item.soLuong || 0;
-                return total + gia * soLuong;
-            }, 0);
-        };
-
-        const tongTien = tinhTongTien(chiTietDonHang);
+        const tongTienHang = donHang.tongTienHang || 0;
+        const tongTienGiam = donHang.tongTienGiam || 0;
+        const tongThanhToan = donHang.tongThanhToan || 0;
 
         const hoaDon = await db.HoaDon.create({
             maHoaDon,
             maDonHang: donHang.maDonHang,
             maNguoiDung: donHang.maNguoiDung,
-            tongTien
+            tongTienHang,
+            tongTienGiam,
+            tongThanhToan
         });
 
         const chiTietItems = [];
@@ -117,7 +115,9 @@ const createInvoice = async (donHang, chiTietDonHang) => {
             await sendEmailWithTemplate({
                 maHoaDon,
                 maDonHang: donHang.maDonHang,
-                tongTien: tinhTongTien(chiTietDonHang)
+                tongTienHang,
+                tongTienGiam,
+                tongThanhToan
             }, nguoiDung, chiTietItems);
         } else {
             console.warn(`Không tìm thấy người dùng với mã: ${donHang.maNguoiDung}`);

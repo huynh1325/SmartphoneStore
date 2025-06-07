@@ -14,7 +14,13 @@ module.exports = {
       maNguoiDung: {
         type: Sequelize.STRING
       },
-      tongTien: {
+      tongTienHang: {
+        type: Sequelize.DECIMAL(15, 2)
+      },
+      tongTienGiam: {
+        type: Sequelize.DECIMAL(15, 2)
+      },
+      tongThanhToan: {
         type: Sequelize.DECIMAL(15, 2)
       },
       createdAt: {

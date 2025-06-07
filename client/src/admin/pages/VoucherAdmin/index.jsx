@@ -47,11 +47,16 @@ const VoucherAdmin = () => {
     title: 'Giá trị giảm',
     dataIndex: 'giaTriGiam',
     key: 'giaTriGiam',
-    render: (_, record) => (
-      record.kieuGiamGia === 'phanTram'
-        ? `${record.giaTriGiam}% (tối đa ${record.giaTriGiamToiDa}đ)`
-        : `${record.giaTriGiam}đ`
-    ),
+    render: (_, record) => {
+      if (record.kieuGiamGia === 'phanTram') {
+        const maxDiscount = record.giaTriGiamToiDa;
+        return maxDiscount
+          ? `${record.giaTriGiam}% (tối đa ${maxDiscount}đ)`
+          : `${record.giaTriGiam}%`;
+      } else {
+        return `${record.giaTriGiam}đ`;
+      }
+    }
   },
   {
     title: 'Số lượng',

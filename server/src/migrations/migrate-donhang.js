@@ -29,10 +29,13 @@ module.exports = {
       phuongThucThanhToan: {
         type: Sequelize.STRING
       },
-      tongGiam: {
+      tongTienHang: {
         type: Sequelize.DECIMAL(15, 2)
       },
-      tongTien: {
+      tongTienGiam: {
+        type: Sequelize.DECIMAL(15, 2)
+      },
+      tongThanhToan: {
         type: Sequelize.DECIMAL(15, 2)
       },
       createdAt: {

@@ -185,21 +185,13 @@
     .voucher-btn:hover {
         background-color: rgba(238, 75, 43, 0.92);
     }
-
-    .voucher-apply {
-        margin-top: 12px;
-        border-radius: 4px;
-        margin-right: 12px;
-        padding: 8px 12px;
-        border: 1px solid #ccc;
-        min-width: 100px;
-    }
 }
 
 
 .checkout {
     margin-top: 10px;
     font-size: 1.8rem;
+    width: 630px;
 
     .checkout-option {
 
@@ -224,19 +216,59 @@
         }
     }
 
-    .shipping {
-        margin-top: 12px;
+    .price {
         display: flex;
-        width: 600px;
+        flex-direction: column;
 
-        .shipping-header {
-            width: 400px;
+        .price-original {
+            margin-top: 12px;
+            display: flex;
+            width: 600px;
+
+            .price-original-header {
+                width: 400px;
+            }
+        }
+
+        .shipping {
+            margin-top: 16px;
+            display: flex;
+            width: 600px;
+
+            .shipping-header {
+                width: 400px;
+            }
+        }
+
+        .discount {
+            margin-top: 12px;
+            display: flex;
+            width: 600px;
+
+            .discount-header {
+                display: flex;
+                width: 400px;
+            }
+        }
+
+        .price-total {
+            margin-top: 12px;
+            display: flex;
+            width: 600px;
+            color: #ee4d2d;
+            font-size: 2rem;
+            font-weight: 600;
+
+            .price-total-header {
+                width: 400px;
+            }
         }
     }
 
+
+
     .payment {
         display: flex;
-        margin-top: 20px;
 
         .payment-header {
             width: 400px;
@@ -274,14 +306,9 @@
         align-items: center;
         margin-top: 20px;
 
-        div {
-            width: 400px;
-            color: #ee4d2d;
-            font-size: 2rem;
-            font-weight: 600;
-        }
 
         .checkout-btn {
+            margin-left: 350px;
             width: 200px;
             border: none;
             align-items: center;
@@ -333,4 +360,27 @@
 
 .color-info {
     margin-top: 8px;
+}
+
+.voucher-list {
+    margin-top: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.applied-voucher {
+    position: relative;
+    background-color: #fff;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    padding: 4px 8px;
+    text-align: center;
+    border-radius: 4px;
+    min-width: 100px;
+
+    &.active {
+        border-color: #ee4d2d;
+        color: #ee4d2d;
+    }
 }

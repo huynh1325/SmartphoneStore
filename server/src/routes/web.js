@@ -90,6 +90,7 @@ const initWebRoutes = (app) => {
     //voucher
     router.post('/vouchers', voucherController.handleCreateVoucher);
     router.get('/vouchers', voucherController.fetchAllVoucher);
+    router.get('/vouchers/:maNhap', voucherController.getVoucherByCodeInput);
     router.put('/vouchers/:maKhuyenMai', voucherController.handleUpdateVoucher);
     router.delete('/vouchers/:maKhuyenMai', voucherController.handleDeleteVoucher);
     

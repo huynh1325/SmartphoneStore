@@ -9,7 +9,7 @@
     table { width: 100%; border-collapse: collapse; margin-top: 20px; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
     th { background-color: #f4f4f4; }
-    .total { font-weight: bold; text-align: right; }
+    .total-row td { font-weight: bold; text-align: right; }
   </style>
 </head>
 <body>
@@ -40,9 +40,19 @@
           <td>{{multiply price quantity}}</td>
         </tr>
       {{/each}}
+      <tr class="total-row">
+        <td colspan="4">Tổng tiền hàng:</td>
+        <td>{{tongTienHang}} ₫</td>
+      </tr>
+      <tr class="total-row">
+        <td colspan="4">Tổng tiền giảm:</td>
+        <td>-{{tongTienGiam}} ₫</td>
+      </tr>
+      <tr class="total-row">
+        <td colspan="4">Tổng thanh toán:</td>
+        <td>{{tongThanhToan}} ₫</td>
+      </tr>
     </tbody>
   </table>
-
-  <p class="total">Tổng cộng: {{total}} ₫</p>
 </body>
 </html>

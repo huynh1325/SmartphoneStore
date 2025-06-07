@@ -22,7 +22,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     maDonHang: DataTypes.INTEGER,
     maNguoiDung: DataTypes.INTEGER,
-    tongTien: DataTypes.DECIMAL(15, 2)
+    tongTienHang: DataTypes.DECIMAL(15, 2),
+    tongTienGiam: DataTypes.DECIMAL(15, 2),
+    tongThanhToan: DataTypes.DECIMAL(15, 2)
   }, {
     sequelize,
     tableName: 'HoaDon',

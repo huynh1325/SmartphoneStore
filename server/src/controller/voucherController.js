@@ -1,3 +1,4 @@
+import { where } from 'sequelize';
 import db from '../models/index'
 import { generateCustomId } from '../utils/idGenerator';
 
@@ -54,6 +55,28 @@ const fetchAllVoucher = async (req, res) => {
         })
     } catch (error) {
         console.error('Lỗi khi lấy danh sách voucher:', error);
+        return res.status(500).json({
+            EM: 'Lỗi server',
+            EC: -1,
+        });
+    }
+}
+
+const getVoucherByCodeInput = async (req, res) => {
+    try {
+        const { maNhap } = req.params;
+
+        const voucher = await db.KhuyenMai.findOne({
+            where: { maNhap: maNhap.trim() }
+        });
+        
+        return res.status(200).json({
+            EM: "Lấy voucher thành công",
+            EC: 0,
+            DT: voucher
+        })
+    } catch (error) {
+        console.error('Lỗi khi lấy voucher:', error);
         return res.status(500).json({
             EM: 'Lỗi server',
             EC: -1,
@@ -147,5 +170,5 @@ const handleDeleteVoucher = async (req, res) => {
 };
 
 module.exports = {
-    handleCreateVoucher, fetchAllVoucher, handleUpdateVoucher, handleDeleteVoucher
+    handleCreateVoucher, fetchAllVoucher, handleUpdateVoucher, handleDeleteVoucher, getVoucherByCodeInput
 }

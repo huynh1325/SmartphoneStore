@@ -34,8 +34,9 @@ module.exports = (sequelize, DataTypes) => {
     ghiChu: DataTypes.STRING,
     trangThai: DataTypes.STRING,
     phuongThucThanhToan: DataTypes.STRING,
-    tongGiam: DataTypes.DECIMAL(15, 2),
-    tongTien: DataTypes.DECIMAL(15, 2)
+    tongTienHang: DataTypes.DECIMAL(15, 2),
+    tongTienGiam: DataTypes.DECIMAL(15, 2),
+    tongThanhToan: DataTypes.DECIMAL(15, 2)
   }, {
     sequelize,
     tableName: 'DonHang',

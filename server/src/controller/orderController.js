@@ -48,7 +48,7 @@ const tryCreateOrderDetailWithUniqueId = async (detailData, maxRetry = 5) => {
 const handleCreateOrder = async (req, res) => {
     try {
         const maNguoiDung = req.user.id;
-        const { sanPhams, tongTien, phuongThucThanhToan, diaChi } = req.body;
+        const { sanPhams, tongTienHang, tongTienGiam, tongThanhToan , phuongThucThanhToan, diaChi, maKhuyenMai } = req.body;
 
         if (!sanPhams || sanPhams.length === 0) {
             return res.status(400).json({
@@ -60,7 +60,10 @@ const handleCreateOrder = async (req, res) => {
 
         const newOrder = await tryCreateOrderWithUniqueId({
             maNguoiDung,
-            tongTien,
+            maKhuyenMai,
+            tongTienHang,
+            tongTienGiam,
+            tongThanhToan,
             trangThai: 'Cho_Thanh_Toan',
             phuongThucThanhToan,
             diaChiGiaoHang: diaChi
