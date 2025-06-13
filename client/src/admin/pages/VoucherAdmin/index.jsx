@@ -64,6 +64,11 @@ const VoucherAdmin = () => {
     key: 'soLuong',
   },
   {
+    title: 'Số lượng đã dùng',
+    dataIndex: 'soLuongDaDung',
+    key: 'soLuongDaDung',
+  },
+  {
     title: 'Ngày bắt đầu',
     dataIndex: 'ngayBatDau',
     key: 'ngayBatDau',
@@ -194,7 +199,7 @@ const VoucherAdmin = () => {
   return (
     <div>
       <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between' }}>
-        <h2>Danh sách voucher</h2>
+        <h2>Danh sách khuyến mãi</h2>
         <Button type="primary" onClick={showModal}>Thêm voucher</Button>
       </div>
 
@@ -320,6 +325,7 @@ const VoucherAdmin = () => {
               <Form.Item label="Trạng thái" name="trangThai" rules={[{ required: true }]}>
                 <Select placeholder="Chọn trạng thái">
                   <Select.Option value="active">Hoạt động</Select.Option>
+                  <Select.Option value="hide">Tạm ẩn</Select.Option>
                   <Select.Option value="expired">Hết hạn</Select.Option>
                 </Select>
               </Form.Item>

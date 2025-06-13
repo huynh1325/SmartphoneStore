@@ -11,7 +11,7 @@ const getAllColorProduct = async (req, res) => {
       });
     }
 
-    const dsMau = await db.MauSacSanPham.findAll({
+    const dsMau = await db.MauSanPham.findAll({
       where: { maSanPham },
       attributes: ['id', 'mau', 'soLuong'],
     });

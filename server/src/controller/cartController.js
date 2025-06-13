@@ -105,7 +105,7 @@ const getAllCart = async (req, res) => {
                 const giam = sanPham?.phanTramGiam || 0;
                 const giaDaGiam = Math.round(goc - (goc * giam / 100));
 
-                const tonKho = await db.MauSacSanPham.findOne({
+                const tonKho = await db.MauSanPham.findOne({
                     where: {
                         maSanPham: item.maSanPham,
                         mau: item.mau

@@ -85,9 +85,19 @@ const getVoucherByCode = (code) => {
     return axios.get(`/api/v1/vouchers/${encodeURIComponent(code)}`)
 }
 
-///${encodeURIComponent(maSanPham)}`
+const fetchProductByName = (tenSanPham) => {
+    return axios.get(`/api/v1/products/search`, {
+        params: { tenSanPham }
+    });
+}
+
+const fetchProductByBrand = (nhanHieu) => {
+    return axios.get(`/api/v1/products/filter`, {
+        params: { nhanHieu }
+    });
+}
 
 export {
     registerNewUser, createProduct, updateProduct, verifyUserCode, userLogin, addToCart, getAllCart, fetchAllProduct, deleteProduct, createOrder, getOrderById,
-    createPaymentUrl, fetchAllOrder, createAddress, getAddressByUser, getOrderByUser, fetctColorProduct, getVoucherByCode
+    createPaymentUrl, fetchAllOrder, createAddress, getAddressByUser, getOrderByUser, fetctColorProduct, getVoucherByCode, fetchProductByName, fetchProductByBrand
 }

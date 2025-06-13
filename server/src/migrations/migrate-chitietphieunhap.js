@@ -14,7 +14,7 @@ module.exports = {
       maSanPham: {
         type: Sequelize.STRING
       },
-      maMauSacSanPham: {
+      maMauSanPham: {
         type: Sequelize.INTEGER
       },
       soLuong: {

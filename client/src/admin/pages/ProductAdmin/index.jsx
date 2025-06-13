@@ -6,7 +6,7 @@ import { createProduct, updateProduct, fetchAllProduct, deleteProduct } from '..
 
 const { Option } = Select;
 
-const colorOptions = ['Đỏ', 'Xanh', 'Đen', 'Trắng', 'Vàng', 'Tím', 'Hồng', 'Xám', 'Bạc', 'Xanh dương', 'Xanh lá'];
+const colorOptions = ['Đỏ', 'Đen', 'Trắng', 'Vàng', 'Tím', 'Hồng', 'Xám', 'Bạc', 'Xanh dương', 'Xanh lá'];
 
 const ProductAdmin = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);

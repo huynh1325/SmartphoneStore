@@ -18,8 +18,8 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'maSanPham'
       });
 
-      ChiTietPhieuNhap.belongsTo(models.MauSacSanPham, {
-        foreignKey: 'maMauSacSanPham',
+      ChiTietPhieuNhap.belongsTo(models.MauSanPham, {
+        foreignKey: 'maMauSanPham',
       });
     }
   }
@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     maPhieuNhap: DataTypes.STRING,
     maSanPham: DataTypes.STRING,
-    maMauSacSanPham: DataTypes.INTEGER,
+    maMauSanPham: DataTypes.INTEGER,
     soLuong: DataTypes.INTEGER,
   }, {
     sequelize,

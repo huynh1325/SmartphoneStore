@@ -22,6 +22,7 @@ import StockInAdmin from './admin/pages/StockInAdmin/index.jsx';
 import SupplierAdmin from './admin/pages/SupplierAdmin/index.jsx';
 import { CartProvider } from './components/Context/CartContext.jsx';
 import Purchase from './pages/Purchase/index.jsx';
+import Search from './pages/Search/index.jsx';
 
 const router = createBrowserRouter([
   {
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
       {
         path: "purchase",
         element: <Purchase />
+      },
+      {
+        path: "search",
+        element: <Search />
       },
       {
         path: "admin",

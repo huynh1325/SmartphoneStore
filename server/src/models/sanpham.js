@@ -19,9 +19,9 @@ module.exports = (sequelize, DataTypes) => {
       SanPham.hasMany(models.ChiTietPhieuNhap, {
         foreignKey: 'maSanPham'
       });
-      SanPham.hasMany(models.MauSacSanPham, {
+      SanPham.hasMany(models.MauSanPham, {
         foreignKey: 'maSanPham',
-        as: 'MauSacSanPham'
+        as: 'MauSanPham'
       });
     }
   }

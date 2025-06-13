@@ -95,7 +95,7 @@ const Cart = () => {
         if (isNaN(value) || value < 1) return;
 
         const cartItem = cartItems.find(item => item.maChiTietGioHang === id);
-        const maxStock = cartItem?.sanPham?.mauSacSanPhams?.[0]?.soLuong || 1;
+        const maxStock = cartItem?.sanPham?.mauSanPhams?.[0]?.soLuong || 1;
 
         if (value > maxStock) {
             toast.warning(`Chỉ còn lại ${maxStock} sản phẩm cho màu ${cartItem?.mau}`);

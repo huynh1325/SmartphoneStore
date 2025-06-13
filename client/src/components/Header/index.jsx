@@ -10,6 +10,7 @@ import { AuthContext } from '../Context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useCart } from '../../components/Context/CartContext';
+import { fetchProductByName } from '../../util/api';
 
 const cx = classNames.bind(styles);
 
@@ -20,6 +21,7 @@ const Header = () => {
     const [modalRegister, setModalRegister] = useState(false);
     const [modalVerifyUser, setModalVerifyUser] = useState(false);
     const [email, setEmail] = useState("");
+    const [searchText, setSearchText] = useState("");
 
     const { auth, setAuth } = useContext(AuthContext);
     const { cartItems, clearCart, fetchCart } = useCart();
@@ -35,6 +37,25 @@ const Header = () => {
     const totalQuantity = cartItems.reduce((total, item) => {
         return total + (item.soLuong || 1);
     }, 0);
+
+    const handleSearch = async () => {
+        if (!searchText.trim()) {
+            toast.warn("Vui lòng nhập từ khóa tìm kiếm!");
+            return;
+        }
+
+        try {
+            const response = await fetchProductByName(searchText);
+            if (response.EC === 0) {
+                navigate('/search', { state: { products: response.DT, searchText } });
+            } else {
+                toast.error(response.EM || "Không tìm thấy sản phẩm.");
+            }
+        } catch (error) {
+            console.error("Lỗi tìm kiếm:", error);
+            toast.error("Lỗi khi tìm kiếm sản phẩm");
+        }
+    };
 
     const lastName = (name) => {
         const nameParts = name.split(" ");
@@ -103,8 +124,17 @@ const Header = () => {
                 <div className={cx('logo')} onClick={homeRedirect}>SmartphoneStore</div>
                 <div className={cx('search')}>
                     <FontAwesomeIcon icon={faMagnifyingGlass} className={cx('search-icon')} />
-                    <input type='text' placeholder='Tìm kiếm' className={cx('search-input')}/>
-                    <button className={cx('search-btn')}>
+                    <input
+                        type='text'
+                        placeholder='Tìm kiếm'
+                        className={cx('search-input')}
+                        value={searchText}
+                        onChange={(e) => setSearchText(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') handleSearch();
+                        }}
+                    />
+                    <button className={cx('search-btn')} onClick={handleSearch}>
                         Tìm kiếm
                     </button>
                 </div>

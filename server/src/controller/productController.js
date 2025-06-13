@@ -123,6 +123,64 @@ const handleDeleteProduct = async (req, res) => {
     
 }
 
+const handleSearchProductByName = async (req, res) => {
+    try {
+        const { tenSanPham } = req.query;
+        
+        console.log(tenSanPham)
+
+        if (!tenSanPham) {
+            return res.status(400).json({
+                EC: 1,
+                EM: "Tên sản phẩm không được để trống",
+                DT: []
+            });
+        }
+
+        const products = await productService.searchProductByName(tenSanPham);
+        return res.status(200).json({
+            EC: 0,
+            EM: "Tìm kiếm sản phẩm thành công",
+            DT: products
+        });
+    } catch (e) {
+        console.log("Lỗi khi tìm kiếm sản phẩm:", e);
+        return res.status(500).json({
+            EC: -1,
+            EM: "Lỗi server",
+            DT: []
+        });
+    }
+};
+
+const handleFilterProductByBrand = async (req, res) => {
+    try {
+        const { nhanHieu } = req.query;
+
+        if (!nhanHieu) {
+            return res.status(400).json({
+                EC: 1,
+                EM: "Nhãn hiệu không được để trống",
+                DT: []
+            });
+        }
+
+        const products = await productService.filterProductByBrand(nhanHieu);
+        return res.status(200).json({
+            EC: 0,
+            EM: "Lọc sản phẩm theo nhãn hiệu thành công",
+            DT: products
+        });
+    } catch (e) {
+        console.log("Lỗi khi lọc sản phẩm:", e);
+        return res.status(500).json({
+            EC: -1,
+            EM: "Lỗi server",
+            DT: []
+        });
+    }
+};
+
 module.exports = {
-    handleCreateProduct, getAllProduct, handleUpdateProduct, handleDeleteProduct, getProduct
+    handleCreateProduct, getAllProduct, handleUpdateProduct, handleDeleteProduct, getProduct, handleSearchProductByName, handleFilterProductByBrand
 }

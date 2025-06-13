@@ -21,7 +21,7 @@ const createPaymentUrl = async (req, res) => {
         const tmnCode = process.env.VNP_TMNCODE;
         const secretKey = process.env.VNP_HASH_SECRET;
         let vnpUrl = process.env.VNP_URL;
-        const returnUrl = 'https://11ef-123-26-104-97.ngrok-free.app/api/v1/vnpay-return'
+        const returnUrl = 'https://d03a-2402-800-6e12-83c5-dd0e-5852-a63c-f709.ngrok-free.app/api/v1/vnpay-return'
 
         const vnp_TxnRef = maDonHang;
         const vnp_Locale = 'vn';
@@ -130,7 +130,7 @@ const vnpayReturn = async (req, res) => {
 
         for (const item of chiTietDonHang) {
             if (item.mau) {
-                const mauSanPham = await db.MauSacSanPham.findOne({
+                const mauSanPham = await db.MauSanPham.findOne({
                     where: {
                         maSanPham: item.maSanPham,
                         mau: item.mau

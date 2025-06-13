@@ -14,9 +14,6 @@ module.exports = {
       maKhuyenMai: {
         type: Sequelize.STRING
       },
-      soLuong: {
-        type: Sequelize.INTEGER
-      },
       diaChiGiaoHang: {
         type: Sequelize.STRING
       },

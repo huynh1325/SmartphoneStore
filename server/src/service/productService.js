@@ -29,7 +29,7 @@ const newProduct = async (rawData) => {
             }
 
             for (let mauItem of mauList) {
-                await db.MauSacSanPham.create({
+                await db.MauSanPham.create({
                     maSanPham: product.maSanPham,
                     mau: mauItem
                 }, { transaction: t });
@@ -160,8 +160,8 @@ const fetchAllProducts = async () => {
         order: [['maSanPham', 'DESC']],
         include: [
             {
-                model: db.MauSacSanPham,
-                as: 'MauSacSanPham',
+                model: db.MauSanPham,
+                as: 'MauSanPham',
                 attributes: [],
             },
         ],
@@ -170,7 +170,7 @@ const fetchAllProducts = async () => {
                 [
                     Sequelize.fn(
                         'COALESCE',
-                        Sequelize.fn('SUM', Sequelize.col('MauSacSanPham.soLuong')),
+                        Sequelize.fn('SUM', Sequelize.col('MauSanPham.soLuong')),
                         0
                     ),
                     'soLuong'
@@ -207,6 +207,79 @@ const fetchAllProducts = async () => {
     return productWithSuppliers;
 }
 
+const searchProductByName = async (tenSanPham) => {
+    const Sequelize = db.Sequelize;
+
+    const products = await db.SanPham.findAll({
+        where: {
+            tenSanPham: {
+                [Sequelize.Op.like]: `%${tenSanPham}%`
+            }
+        },
+        include: [
+            {
+                model: db.MauSanPham,
+                as: 'MauSanPham',
+                attributes: []
+            }
+        ],
+        attributes: {
+            include: [
+                [
+                    Sequelize.fn(
+                        'COALESCE',
+                        Sequelize.fn('SUM', Sequelize.col('MauSanPham.soLuong')),
+                        0
+                    ),
+                    'soLuong'
+                ]
+            ]
+        },
+        order: [['maSanPham', 'DESC']],
+        group: ['SanPham.maSanPham']
+    });
+
+    return products.map(product => product.toJSON());
+};
+
+const filterProductByBrand = async (nhanHieu) => {
+    try {
+        const Sequelize = db.Sequelize;
+
+        let products = await db.SanPham.findAll({
+            where: {
+                nhanHieu: nhanHieu
+            },
+            include: [
+                {
+                    model: db.MauSanPham,
+                    as: 'MauSanPham',
+                    attributes: []
+                }
+            ],
+            attributes: {
+                include: [
+                    [
+                        Sequelize.fn(
+                            'COALESCE',
+                            Sequelize.fn('SUM', Sequelize.col('MauSanPham.soLuong')),
+                            0
+                        ),
+                        'soLuong'
+                    ]
+                ]
+            },
+            group: ['SanPham.maSanPham'],
+            order: [['maSanPham', 'DESC']]
+        });
+
+        return products.map(product => product.toJSON());
+    } catch (e) {
+        console.log(e);
+        return [];
+    }
+};
+
 module.exports = {
-    newProduct, updateProduct, deleteProduct, fetchAllProducts
+    newProduct, updateProduct, deleteProduct, fetchAllProducts, searchProductByName, filterProductByBrand
 }

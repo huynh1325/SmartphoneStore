@@ -1,28 +1,21 @@
 import classNames from 'classnames/bind';
-import styles from './Home.module.scss';
+import styles from './Search.module.scss';
 import Header from '../../components/Header';
-import { useState, useEffect, useCallback } from 'react';
 import Footer from '../../components/Footer';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchAllProduct, fetchProductByBrand } from '../../util/api';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { fetchProductByBrand } from '../../util/api';
 
 const cx = classNames.bind(styles);
 
-const Home = () => {
+const Search = () => {
     
-    const [products, setProducts] = useState([]);
-    const navigate = useNavigate();
-
-    const imagesBanner = [
-        "/image/banner1.jpg",
-        "/image/banner2.jpg",
-        "/image/banner3.jpg",
-        "/image/banner4.jpg",
-        "/image/banner5.png",
-        "/image/banner6.jpg",
-        "/image/banner7.jpg"
-    ];
+    const location = useLocation();
+    const products = location.state?.products || [];
+    const searchKeyword = location.state?.searchText || "Điện thoại";
 
     const categories = [
         { name: 'samsung', img: 'https://cdnv2.tgdd.vn/mwg-static/common/Category/3f/68/3f68e22880dd800e9e34d55245048a0f.png' },
@@ -33,39 +26,8 @@ const Home = () => {
         { name: 'vivo', img: 'https://cdnv2.tgdd.vn/mwg-static/common/Category/78/38/783870ef310908b123c50cb43b8f6f92.png' },
         { name: 'honor', img: 'https://cdnv2.tgdd.vn/mwg-static/common/Category/00/e8/00e815b2c60b6f494ec1e19560976fcc.png' }
     ];
-    
-    const [currentBanner, setCurrentBanner] = useState(0);
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-        setCurrentBanner((prev) => {
-            const next = (prev + 1) % imagesBanner.length;
-            return next;
-        });
-        }, 5000);
-    
-        return () => clearInterval(interval);
-    }, []);
-
-    const fetchProducts = useCallback(async () => {
-        try {
-            const res = await fetchAllProduct();
-            console.log(res)
-            if (+res.EC === 0) {
-                setProducts(res.DT);
-            } else {
-                console.error('Lỗi API:', res.EM);
-            }
-        } catch (error) {
-            console.error('Lỗi fetch:', error);
-        }
-    }, []);
-
-    useEffect(() => {
-        fetchProducts();
-    }, [fetchProducts]);
-
-    return (
+    return ( 
         <>
             <Header />
             <div className={cx('main')}>
@@ -74,30 +36,19 @@ const Home = () => {
                         <h2>Danh mục</h2>
                         <div className={cx('list')}>
                             {categories.map((category) => (
-                                <a key={category.name} onClick={() => navigate(`/search?brand=${category.name}`)}>
+                                <a key={category.name}>
                                     <img src={category.img} alt={category.name} />
                                 </a>
                             ))}
                         </div>
                     </div>
                     <div className={cx('container')}>
-                        <div className={cx('container-content')}>
-                            <div className={cx('banner')}>
-                                {imagesBanner.map((img, idx) => (
-                                    <img
-                                        key={idx}
-                                        src={img}
-                                        alt={`Banner ${idx + 1}`}
-                                        className={cx({ active: idx === currentBanner })}
-                                    />
-                                ))}
-                            </div>
+                        <div>
+                            Trang chủ 
+                            <FontAwesomeIcon icon={faChevronRight} className={cx('chevron-right-icon')} />
+                            Kết quả tìm kiếm "{searchKeyword}"
                         </div>
                         <div className={cx('container-content')}>
-                            <div className={cx('container-header')}>
-                                <div className={cx('header-title')}>Gợi ý cho bạn</div>
-                                <div className={cx('header-right')}>Xem tất cả</div>
-                            </div>
                             <div className={cx('content')}>
                                 <div className={cx('list-product')}>
                                     {products
@@ -142,4 +93,4 @@ const Home = () => {
     )
 }
 
-export default Home;
+export default Search

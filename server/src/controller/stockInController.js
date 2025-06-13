@@ -35,7 +35,7 @@ const handleCreateStockIn = async (req, res) => {
         });
       }
 
-      const chiTietMau = await db.MauSacSanPham.findOne({
+      const chiTietMau = await db.MauSanPham.findOne({
         where: {
           maSanPham: maSanPham,
           mau: mauSanPham,
@@ -56,11 +56,11 @@ const handleCreateStockIn = async (req, res) => {
         maChiTietPhieuNhap,
         maPhieuNhap,
         maSanPham,
-        maMauSacSanPham: chiTietMau.id,
+        maMauSanPham: chiTietMau.id,
         soLuong,
       }, { transaction: t });
 
-      await db.MauSacSanPham.update(
+      await db.MauSanPham.update(
         { soLuong: chiTietMau.soLuong + soLuong },
         {
           where: { id: chiTietMau.id },
@@ -102,7 +102,7 @@ const getAllStockIn = async (req, res) => {
               attributes: ['maSanPham', 'tenSanPham']
             },
             {
-              model: db.MauSacSanPham,
+              model: db.MauSanPham,
               attributes: ['mau']
             }
           ]
@@ -120,7 +120,7 @@ const getAllStockIn = async (req, res) => {
       donGia: receipt.donGia,
       sanPhamNhap: receipt.chiTietPhieuNhap?.map(ct => ({
         sanPham: ct.SanPham?.tenSanPham,
-        mau: ct.MauSacSanPham?.mau || 'Không rõ',
+        mau: ct.MauSanPham?.mau || 'Không rõ',
         soLuong: ct.soLuong,
       }))
     }));

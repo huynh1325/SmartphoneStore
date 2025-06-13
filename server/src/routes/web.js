@@ -53,6 +53,8 @@ const initWebRoutes = (app) => {
     router.get("/users", userController.getAllUser);
     
     //product
+    router.get("/products/search", productController.handleSearchProductByName);
+    router.get("/products/filter", productController.handleFilterProductByBrand);
     router.get("/products/:maSanPham", productController.getProduct)
     router.get("/products", productController.getAllProduct);
     router.post("/products", upload.single('anh'), productController.handleCreateProduct);
