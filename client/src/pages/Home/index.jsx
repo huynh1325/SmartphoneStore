@@ -33,6 +33,22 @@ const Home = () => {
         { name: 'vivo', img: 'https://cdnv2.tgdd.vn/mwg-static/common/Category/78/38/783870ef310908b123c50cb43b8f6f92.png' },
         { name: 'honor', img: 'https://cdnv2.tgdd.vn/mwg-static/common/Category/00/e8/00e815b2c60b6f494ec1e19560976fcc.png' }
     ];
+
+    const handleCategoryClick = async (nhanHieu) => {
+        try {
+            const res = await fetchProductByBrand(nhanHieu);
+            if (res && res.DT) {
+                navigate('/filter', {
+                    state: {
+                        products: res.DT,
+                        searchText: nhanHieu
+                    }
+                });
+            }
+        } catch (error) {
+            console.error("Lỗi khi lọc sản phẩm theo brand:", error);
+        }
+    };
     
     const [currentBanner, setCurrentBanner] = useState(0);
 
@@ -74,7 +90,7 @@ const Home = () => {
                         <h2>Danh mục</h2>
                         <div className={cx('list')}>
                             {categories.map((category) => (
-                                <a key={category.name} onClick={() => navigate(`/search?brand=${category.name}`)}>
+                                <a key={category.name} onClick={() => handleCategoryClick(category.name)}>
                                     <img src={category.img} alt={category.name} />
                                 </a>
                             ))}

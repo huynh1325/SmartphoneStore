@@ -1,5 +1,5 @@
 import classNames from 'classnames/bind';
-import styles from './Search.module.scss';
+import styles from './Filter.module.scss';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
@@ -7,16 +7,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { fetchProductByBrand } from '../../util/api';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 const cx = classNames.bind(styles);
 
-const Search = () => {
+const Filter = () => {
     
     const location = useLocation();
     const products = location.state?.products || [];
     const searchKeyword = location.state?.searchText || "Điện thoại";
-    const navigate = useNavigate();
+    const [productList, setProductList] = useState(products);
+    const [currentKeyword, setCurrentKeyword] = useState(searchKeyword);
+
 
     const categories = [
         { name: 'samsung', img: 'https://cdnv2.tgdd.vn/mwg-static/common/Category/3f/68/3f68e22880dd800e9e34d55245048a0f.png' },
@@ -32,12 +34,8 @@ const Search = () => {
         try {
             const res = await fetchProductByBrand(nhanHieu);
             if (res && res.DT) {
-                navigate('/filter', {
-                    state: {
-                        products: res.DT,
-                        searchText: nhanHieu
-                    }
-                });
+                setProductList(res.DT);
+                setCurrentKeyword(nhanHieu);
             }
         } catch (error) {
             console.error("Lỗi khi lọc sản phẩm theo brand:", error);
@@ -63,49 +61,43 @@ const Search = () => {
                         <div>
                             Trang chủ 
                             <FontAwesomeIcon icon={faChevronRight} className={cx('chevron-right-icon')} />
-                            Kết quả tìm kiếm "{searchKeyword}"
+                            Kết quả tìm kiếm "{currentKeyword}"
                         </div>
                         <div className={cx('container-content')}>
                             <div className={cx('content')}>
-                                {products.filter((product) => product.soLuong > 0).length === 0 ? (
-                                    <div className={cx('not-found')}>
-                                        😥 Rất tiếc, không tìm thấy sản phẩm phù hợp với từ khóa "<strong>{searchKeyword}</strong>"
-                                    </div>
-                                    ) : (
-                                    <div className={cx('list-product')}>
-                                        {products
+                                <div className={cx('list-product')}>
+                                    {productList
                                         .filter((product) => product.soLuong > 0)
                                         .map((product) => {
-                                            const originalPrice = parseFloat(product.gia);
-                                            const discountedPrice = originalPrice * (1 - product.phanTramGiam / 100);
-                                            return (
+                                        const originalPrice = parseFloat(product.gia);
+                                        const discountedPrice = originalPrice * (1 - product.phanTramGiam / 100);
+                                        return (
                                             <div key={product.maSanPham} className={cx('product')}>
                                                 <Link to={`/products/${product.maSanPham}`}>
-                                                <img 
-                                                    src={`http://localhost:8080${product.anh}`}
-                                                    alt='Ảnh sản phẩm'
-                                                />
-                                                <div className={cx('product-name')}>
-                                                    {product.tenSanPham}
-                                                </div>
-                                                <div className={cx('info')}>
-                                                    <span className={cx('ram-rom')}>{product.ram} - {product.dungLuongLuuTru}</span>
-                                                    <span className={cx('inch')}>{product.inch}</span>
-                                                </div>
-                                                <div className={cx('price')}>
-                                                    <span className={cx('origin-price')}>
-                                                    {originalPrice.toLocaleString('vi-VN')}đ
-                                                    </span>
-                                                    <span className={cx('discount')}>
-                                                    {Math.round(discountedPrice).toLocaleString('vi-VN')}đ
-                                                    </span>
-                                                </div>
+                                                    <img 
+                                                        src={`http://localhost:8080${product.anh}`}
+                                                        alt='Ảnh sản phẩm'
+                                                    />
+                                                    <div className={cx('product-name')}>
+                                                        {product.tenSanPham}
+                                                    </div>
+                                                    <div className={cx('info')}>
+                                                        <span className={cx('ram-rom')}>{product.ram} - {product.dungLuongLuuTru}</span>
+                                                        <span className={cx('inch')}>{product.inch}</span>
+                                                    </div>
+                                                    <div className={cx('price')}>
+                                                        <span className={cx('origin-price')}>
+                                                            {originalPrice.toLocaleString('vi-VN')}đ
+                                                        </span>
+                                                        <span className={cx('discount')}>
+                                                            {Math.round(discountedPrice).toLocaleString('vi-VN')}đ
+                                                        </span>
+                                                    </div>
                                                 </Link>
                                             </div>
-                                            );
-                                        })}
-                                    </div>
-                                )}
+                                        )
+                                    })}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -116,4 +108,4 @@ const Search = () => {
     )
 }
 
-export default Search
+export default Filter

@@ -23,6 +23,7 @@ import SupplierAdmin from './admin/pages/SupplierAdmin/index.jsx';
 import { CartProvider } from './components/Context/CartContext.jsx';
 import Purchase from './pages/Purchase/index.jsx';
 import Search from './pages/Search/index.jsx';
+import Filter from './pages/Filter/index.jsx';
 
 const router = createBrowserRouter([
   {
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
       {
         path: "search",
         element: <Search />
+      },
+      {
+        path: "filter",
+        element: <Filter />
       },
       {
         path: "admin",
