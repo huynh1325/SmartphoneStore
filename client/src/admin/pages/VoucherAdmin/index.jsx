@@ -67,6 +67,7 @@ const VoucherAdmin = () => {
     title: 'Số lượng đã dùng',
     dataIndex: 'soLuongDaDung',
     key: 'soLuongDaDung',
+    render: (value) => value ?? 0,
   },
   {
     title: 'Ngày bắt đầu',

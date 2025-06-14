@@ -11,6 +11,7 @@ import orderController from '../controller/orderController';
 import voucherController from '../controller/voucherController';
 import addressController from '../controller/addressController';
 import colorProductController from '../controller/colorProductController';
+import statisticalController from '../controller/statisticalController';
 import multer from "multer";
 import path from 'path';
 import auth from '../middleware/auth';
@@ -96,6 +97,11 @@ const initWebRoutes = (app) => {
     router.put('/vouchers/:maKhuyenMai', voucherController.handleUpdateVoucher);
     router.delete('/vouchers/:maKhuyenMai', voucherController.handleDeleteVoucher);
     
+    //statistical
+    router.get('/dashboard', statisticalController.getDashboardStats);
+    router.get('/top-selling', statisticalController.getTopSellingProducts);
+    router.get('/revenue-last-10-days', statisticalController.getRevenueLast10Days);
+
     return app.use("/api/v1/", router);
 }
 

@@ -24,6 +24,7 @@ import { CartProvider } from './components/Context/CartContext.jsx';
 import Purchase from './pages/Purchase/index.jsx';
 import Search from './pages/Search/index.jsx';
 import Filter from './pages/Filter/index.jsx';
+import { Navigate } from 'react-router-dom';
 
 const router = createBrowserRouter([
   {
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
         path: "admin",
         element: <LayoutAdmin />,
         children: [
+          {
+            index: true,
+            element: <Navigate to="dashboard" replace />,
+          },
           {
             path: "dashboard",
             element: <DashboardAdmin />
