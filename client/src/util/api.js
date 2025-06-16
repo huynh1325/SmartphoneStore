@@ -52,6 +52,13 @@ const createOrder = (orderData) => {
     return axios.post(`/api/v1/orders`, orderData)
 }
 
+const updateOrderStatus = (maDonHang, trangThai) => {
+    return axios.put(`/api/v1/orders/${maDonHang}`, {
+        maDonHang,
+        trangThai,
+    });
+};
+
 const getOrderById = (id) => {
     return axios.get(`/api/v1/orders/${id}`)
 }
@@ -99,5 +106,6 @@ const fetchProductByBrand = (nhanHieu) => {
 
 export {
     registerNewUser, createProduct, updateProduct, verifyUserCode, userLogin, addToCart, getAllCart, fetchAllProduct, deleteProduct, createOrder, getOrderById,
-    createPaymentUrl, fetchAllOrder, createAddress, getAddressByUser, getOrderByUser, fetctColorProduct, getVoucherByCode, fetchProductByName, fetchProductByBrand
+    createPaymentUrl, fetchAllOrder, createAddress, getAddressByUser, getOrderByUser, fetctColorProduct, getVoucherByCode, fetchProductByName, fetchProductByBrand,
+    updateOrderStatus
 }

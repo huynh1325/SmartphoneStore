@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Table, Button, Space, Modal, Select } from "antd";
 import { toast } from "react-toastify";
-import { fetchAllOrder } from "../../../util/api";
+import { fetchAllOrder, updateOrderStatus } from "../../../util/api";
 
 const { Option } = Select;
 
@@ -35,7 +35,6 @@ const OrderAdmin = () => {
   }, [fetchOrders]);
 
   useEffect(() => {
-  console.log("Dữ liệu orders đã set:", orders);
 }, [orders]);
 
   const showStatusModal = (order) => {
@@ -47,7 +46,8 @@ const OrderAdmin = () => {
   const handleUpdateStatus = async () => {
     try {
       const res = await updateOrderStatus(selectedOrder.maDonHang, newStatus);
-      if (+res === 0) {
+      console.log(selectedOrder.maDonHang, newStatus)
+      if (+res.EC === 0) {
         toast.success("Cập nhật trạng thái thành công");
         fetchOrders();
       } else {
@@ -118,6 +118,10 @@ const OrderAdmin = () => {
             return "Chờ thanh toán";
           case "Da_Thanh_Toan":
             return "Đã thanh toán";
+          case "Dang_Giao_Hang":
+            return "Đang giao hàng";
+          case "Da_Giao":
+            return "Giao hàng thành công";
           case "Da_Huy":
             return "Đã hủy";
           default:
@@ -166,7 +170,10 @@ const OrderAdmin = () => {
           style={{ width: "100%" }}
         >
           <Option value="Cho_Xac_Nhan">Chờ xác nhận</Option>
+          <Option value="Cho_Thanh_Toan">Chờ thanh toán</Option>
           <Option value="Da_Thanh_Toan">Đã thanh toán</Option>
+          <Option value="Dang_Giao_Hang">Đang giao hàng</Option>
+          <Option value="Da_Giao">Giao hàng thành công</Option>
           <Option value="Da_Huy">Đã hủy</Option>
         </Select>
       </Modal>

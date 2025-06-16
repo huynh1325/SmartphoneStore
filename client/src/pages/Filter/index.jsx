@@ -65,39 +65,49 @@ const Filter = () => {
                         </div>
                         <div className={cx('container-content')}>
                             <div className={cx('content')}>
-                                <div className={cx('list-product')}>
-                                    {productList
-                                        .filter((product) => product.soLuong > 0)
-                                        .map((product) => {
-                                        const originalPrice = parseFloat(product.gia);
-                                        const discountedPrice = originalPrice * (1 - product.phanTramGiam / 100);
-                                        return (
-                                            <div key={product.maSanPham} className={cx('product')}>
-                                                <Link to={`/products/${product.maSanPham}`}>
-                                                    <img 
-                                                        src={`http://localhost:8080${product.anh}`}
-                                                        alt='Ảnh sản phẩm'
-                                                    />
-                                                    <div className={cx('product-name')}>
-                                                        {product.tenSanPham}
+                                {productList.filter((product) => product.soLuong > 0).length === 0 ? (
+                                    <div className={cx('not-found')}>
+                                        😥 Rất tiếc, không tìm thấy sản phẩm phù hợp với từ khóa "<strong>{currentKeyword}</strong>"
+                                    </div>
+                                ) : (
+                                    <div className={cx('list-product')}>
+                                        {productList
+                                            .filter((product) => product.soLuong > 0)
+                                            .map((product) => {
+                                                const originalPrice = parseFloat(product.gia);
+                                                const discountedPrice = originalPrice * (1 - product.phanTramGiam / 100);
+                                                return (
+                                                    <div key={product.maSanPham} className={cx('product')}>
+                                                        <Link to={`/products/${product.maSanPham}`}>
+                                                            <img
+                                                                src={`http://localhost:8080${product.anh}`}
+                                                                alt="Ảnh sản phẩm"
+                                                            />
+                                                            <div className={cx('product-name')}>
+                                                                {product.tenSanPham}
+                                                            </div>
+                                                            <div className={cx('info')}>
+                                                                <span className={cx('ram-rom')}>
+                                                                    {product.ram} - {product.dungLuongLuuTru}
+                                                                </span>
+                                                                <span className={cx('inch')}>
+                                                                    {product.inch}
+                                                                </span>
+                                                            </div>
+                                                            <div className={cx('price')}>
+                                                                <span className={cx('origin-price')}>
+                                                                    {originalPrice.toLocaleString('vi-VN')}đ
+                                                                </span>
+                                                                <span className={cx('discount')}>
+                                                                    {Math.round(discountedPrice).toLocaleString('vi-VN')}đ
+                                                                </span>
+                                                            </div>
+                                                        </Link>
                                                     </div>
-                                                    <div className={cx('info')}>
-                                                        <span className={cx('ram-rom')}>{product.ram} - {product.dungLuongLuuTru}</span>
-                                                        <span className={cx('inch')}>{product.inch}</span>
-                                                    </div>
-                                                    <div className={cx('price')}>
-                                                        <span className={cx('origin-price')}>
-                                                            {originalPrice.toLocaleString('vi-VN')}đ
-                                                        </span>
-                                                        <span className={cx('discount')}>
-                                                            {Math.round(discountedPrice).toLocaleString('vi-VN')}đ
-                                                        </span>
-                                                    </div>
-                                                </Link>
-                                            </div>
-                                        )
-                                    })}
-                                </div>
+                                                );
+                                            })}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

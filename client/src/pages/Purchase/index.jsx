@@ -3,7 +3,7 @@ import styles from './Purchase.module.scss';
 import Header from "../../components/Header";
 import { useState, useEffect } from 'react';
 import AllOrders from "../../components/AllOrders"
-import PendingPayment from "../../components/PendingPayment"
+import PendingOrder from "../../components/PendingOrder"
 import Shipping from "../../components/Shipping"
 import Completed from "../../components/Completed"
 import Cancelled from "../../components/Cancelled"
@@ -14,7 +14,7 @@ const cx = classNames.bind(styles);
 
 const tabList = [
     { label: 'Tất cả', component: <AllOrders /> },
-    { label: 'Chờ thanh toán', component: <PendingPayment /> },
+    { label: 'Chờ xác nhận', component: <PendingOrder /> },
     { label: 'Vận chuyển', component: <Shipping /> },
     { label: 'Hoàn thành', component: <Completed /> },
     { label: 'Đã hủy', component: <Cancelled /> },

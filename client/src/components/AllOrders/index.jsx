@@ -35,6 +35,8 @@ const AllOrders = () => {
         switch (status) {
             case "Cho_Thanh_Toan":
                 return "Chờ Thanh Toán";
+            case "Cho_Xac_Nhan":
+                return "Chờ Xác Nhận";
             case "Da_Thanh_Toan":
                 return "Đã Thanh Toán";
             case "Dang_Giao":

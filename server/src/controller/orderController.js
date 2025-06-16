@@ -1,5 +1,6 @@
 import db from '../models/index';
 import { generateCustomId } from '../utils/idGenerator';
+import { createInvoice } from './invoiceController';
 
 const tryCreateOrderWithUniqueId = async (orderData, maxRetry = 5) => {
     let retries = maxRetry;
@@ -108,9 +109,9 @@ const handleCreateOrder = async (req, res) => {
 
 const handleUpdateOrderStatus = async (req, res) => {
     try {
-        const { maDonHang, trangThaiMoi } = req.body;
+        const { maDonHang, trangThai } = req.body;
 
-        if (!maDonHang || !trangThaiMoi) {
+        if (!maDonHang || !trangThai) {
             return res.status(400).json({
                 EC: 1,
                 EM: "Thiếu mã đơn hàng hoặc trạng thái mới",
@@ -127,8 +128,16 @@ const handleUpdateOrderStatus = async (req, res) => {
             });
         }
 
-        donHang.trangThai = trangThaiMoi;
+        donHang.trangThai = trangThai;
         await donHang.save();
+
+        if (trangThai === 'Da_Giao') {
+            const chiTietDonHang = await db.ChiTietDonHang.findAll({
+                where: { maDonHang }
+            });
+
+            const result = await createInvoice(donHang, chiTietDonHang);
+        }
 
         return res.status(200).json({
             EC: 0,

@@ -76,6 +76,7 @@ const initWebRoutes = (app) => {
     
     //order
     router.post('/orders', auth, orderController.handleCreateOrder);
+    router.put('/orders/:maDonHang', auth, orderController.handleUpdateOrderStatus);
     router.get('/orders/:maDonHang', auth, orderController.getOrderById);
     router.get('/orders', auth, orderController.getOrdersByUser);
 
