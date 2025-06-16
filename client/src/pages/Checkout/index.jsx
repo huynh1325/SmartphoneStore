@@ -3,48 +3,40 @@ import classNames from 'classnames/bind';
 import styles from './Checkout.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import { createOrder, createPaymentUrl, getVoucherByCode } from "../../util/api";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Modal, Radio, Button } from 'antd';
+import { AuthContext } from "../../components/Context/AuthContext";
+import AddressModal from "../../components/Address";
+import axios from "axios";
 
 const cx = classNames.bind(styles);
 
 const Checkout = () => {
-    const [selected, setSelected] = useState("option1");
     const [selectedPayment, setSelectedPayment] = useState("option1");
-    const [orders, setOrders] = useState(null);
     const IMAGE_BASE_URL = "http://localhost:8080";
     const location = useLocation();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedAddress, setSelectedAddress] = useState('address_id_1');
     const selectedProducts = location.state?.sanPhams || [];
-    const [newAddress, setNewAddress] = useState({ name: '', phone: '', address: '' });
-    const [isAddingNew, setIsAddingNew] = useState(false);
     const [voucherCode, setVoucherCode] = useState('');
     const [appliedVouchers, setAppliedVouchers] = useState([]);
     const [selectedVoucher, setSelectedVoucher] = useState(null);
 
-    const [addresses, setAddresses] = useState([
-        {
-            id: 'address_id_1',
-            name: 'Huynh Nguyễn',
-            phone: '0376675020',
-            address: '5 Nguyễn Xí, Phường Hòa Minh, Quận Liên Chiểu, Đà Nẵng',
-            isDefault: true
-        },
-        {
-            id: 'address_id_2',
-            name: 'Kim Phượng',
-            phone: '0985855377',
-            address: 'Đối diện cây xăng số 10, Thị xã Tân Uyên, Bình Dương',
-            isDefault: false
-        },
-    ]);
-    
-    const [currentAddress, setCurrentAddress] = useState(addresses.find(addr => addr.isDefault));
+    const [addresses, setAddresses] = useState([]);
+    const [currentAddress, setCurrentAddress] = useState(null);
+
     const navigate = useNavigate();
+
+    const { auth } = useContext(AuthContext);
+    const fullName = auth.user.name || "";
+    const phone = auth.user.phone || "";
+    const lastName = fullName.trim().split(" ").slice(-1)[0];
+
+    useEffect(() => {
+        console.log("currentAddress vừa cập nhật:", currentAddress);
+    }, [currentAddress]);
 
     const TickSvg = () => (
         <span className={cx("tick-wrapper")}> 
@@ -55,6 +47,39 @@ const Checkout = () => {
             </svg>
         </span>
     );
+    
+    const fetchAddresses = async () => {
+        try {
+            const token = localStorage.getItem('access_token');
+            const res = await axios.get('http://localhost:8080/api/v1/address', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            const list = res.data || [];
+            setAddresses(list);
+
+            const defaultAddr = list.find(addr => addr.isDefault);
+            setCurrentAddress(defaultAddr || list[0]);
+
+            return list;
+        } catch (err) {
+            console.error("Lỗi khi lấy địa chỉ:", err);
+        }
+    };
+
+    useEffect(() => {
+        fetchAddresses();
+    }, []);
+
+    const handleNewAddressAdded = async (newAddr) => {
+        const updated = await fetchAddresses();
+        const matchedAddr = updated.find(addr => addr.maDiaChi === newAddr.maDiaChi);
+
+        setSelectedAddress(matchedAddr?.maDiaChi || null);
+        setCurrentAddress(matchedAddr || null);
+    };
 
     const handleApplyVoucher = async () => {
         if (!voucherCode) {
@@ -108,11 +133,16 @@ const Checkout = () => {
         const tongTienGiam = calculateDiscount();
         const tongThanhToan = tongTienHang - tongTienGiam;
 
+        if (!currentAddress) {
+            toast.warn("Vui lòng chọn địa chỉ giao hàng!");
+            return;
+        }
+
         try {
             const orderData = {
-                hoTen: currentAddress.name,
-                diaChi: currentAddress.address,
-                soDienThoai: currentAddress.phone,
+                hoTen: auth.user.lastName,
+                diaChi: `${currentAddress.diaChiChiTiet}, ${currentAddress.phuongXa}, ${currentAddress.quanHuyen}, ${currentAddress.tinhThanh}`,
+                soDienThoai: auth.user.phone,
                 tongTienHang,
                 tongTienGiam,
                 tongThanhToan,
@@ -160,6 +190,16 @@ const Checkout = () => {
     return (
         <>
             <Header />
+            <AddressModal
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+                setAddresses={setAddresses}
+                addresses={addresses}
+                selectedAddress={selectedAddress}
+                setSelectedAddress={setSelectedAddress}
+                setCurrentAddress={setCurrentAddress}
+                onNewAddressAdded={handleNewAddressAdded}
+            />
             <div className={cx("main")}> 
                 <div className={cx("wrapper")}> 
                     <div className={cx("container")}> 
@@ -169,110 +209,35 @@ const Checkout = () => {
                                 <FontAwesomeIcon icon={faLocationDot} className={cx("icon")} />
                                 <h2>Địa chỉ nhận hàng</h2>
                             </div>
-                            {currentAddress && (
-                                <div className={cx("address-detail")}> 
-                                    <div className={cx("name-user")}>{currentAddress.name}</div>
-                                    <div className={cx("phone")}>{currentAddress.phone}</div>
-                                    <div className={cx("address")}>{currentAddress.address}</div>
-                                    <div className={cx("change-address")}> 
-                                        <span style={{ color: 'blue', cursor: 'pointer' }} onClick={() => setIsModalOpen(true)}>Thay đổi</span>
-                                    </div>
-                                </div>
-                            )}
+                            <div className={cx("address-detail")}> 
+                                <div className={cx("name-user")}>{lastName}</div>
+                                <div className={cx("phone")}>{phone}</div>
 
-                            <Modal
-                                title="Địa Chỉ Của Tôi"
-                                open={isModalOpen}
-                                onCancel={() => {
-                                    setIsModalOpen(false);
-                                    setIsAddingNew(false);
-                                }}
-                                footer={[
-                                    <Button key="cancel" onClick={() => {
-                                        setIsModalOpen(false);
-                                        setIsAddingNew(false);
-                                    }}>
-                                        Hủy
-                                    </Button>,
-                                    <Button
-                                        key="ok"
-                                        type="primary"
-                                        onClick={() => {
-                                            const selected = addresses.find(addr => addr.id === selectedAddress);
-                                            setCurrentAddress(selected);
-                                            setIsModalOpen(false);
-                                        }}
-                                    >
-                                        Xác nhận
-                                    </Button>
-                                ]}
-                            >
-                            <Radio.Group
-                                onChange={(e) => setSelectedAddress(e.target.value)}
-                                value={selectedAddress}
-                                style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}
-                            >
-                                {addresses.map(addr => (
-                                    <Radio value={addr.id} key={addr.id}>
-                                        <div>
-                                            <strong>{addr.name}</strong> ({addr.phone})<br />
-                                            {addr.address} <br />
-                                            {addr.isDefault && <span style={{ color: 'red' }}>Mặc định</span>}
+                                {currentAddress ? (
+                                    <>
+                                        <div className={cx("address")}>
+                                            {currentAddress.diaChiChiTiet}, {currentAddress.phuongXa}, {currentAddress.quanHuyen}, {currentAddress.tinhThanh}
                                         </div>
-                                    </Radio>
-                                ))}
-                            </Radio.Group>
-
-                            {isAddingNew ? (
-                                <div style={{ marginTop: 16 }}>
-                                    <input
-                                        placeholder="Tên người nhận"
-                                        value={newAddress.name}
-                                        onChange={(e) => setNewAddress({ ...newAddress, name: e.target.value })}
-                                        style={{ width: '100%', marginBottom: 8 }}
-                                    />
-                                    <input
-                                        placeholder="Số điện thoại"
-                                        value={newAddress.phone}
-                                        onChange={(e) => setNewAddress({ ...newAddress, phone: e.target.value })}
-                                        style={{ width: '100%', marginBottom: 8 }}
-                                    />
-                                    <input
-                                        placeholder="Địa chỉ"
-                                        value={newAddress.address}
-                                        onChange={(e) => setNewAddress({ ...newAddress, address: e.target.value })}
-                                        style={{ width: '100%' }}
-                                    />
-                                    <Button
-                                        type="dashed"
-                                        style={{ marginTop: 8 }}
-                                        onClick={() => {
-                                            const newId = `address_id_${Date.now()}`;
-                                            const addr = {
-                                                id: newId,
-                                                ...newAddress,
-                                                isDefault: false
-                                            };
-                                            setAddresses(prev => [...prev, addr]);
-                                            setSelectedAddress(newId);
-                                            setNewAddress({ name: '', phone: '', address: '' });
-                                            setIsAddingNew(false);
-                                        }}
-                                    >
-                                        Lưu địa chỉ mới
-                                    </Button>
-                                </div>
-                            ) : (
-                                <Button
-                                    type="dashed"
-                                    style={{ marginTop: 16 }}
-                                    onClick={() => setIsAddingNew(true)}
-                                >
-                                    + Thêm Địa Chỉ Mới
-                                </Button>
-                            )}
-                        </Modal>
-
+                                        <div className={cx("change-address")}>
+                                        <span
+                                            style={{ color: 'blue', cursor: 'pointer' }}
+                                            onClick={() => setIsModalOpen(true)}
+                                        >
+                                            Thay đổi
+                                        </span>
+                                        </div>
+                                    </>
+                                    ) : (
+                                    <div className={cx("change-address")}>
+                                        <span
+                                        style={{ color: 'blue', cursor: 'pointer' }}
+                                        onClick={() => setIsModalOpen(true)}
+                                        >
+                                        Thêm địa chỉ
+                                        </span>
+                                    </div>
+                                    )}
+                            </div>
                         </div>
 
                         <div className={cx("container-content")}> 

@@ -94,6 +94,7 @@ const Header = () => {
             user: {
                 email: "",
                 name: "",
+                phone: "",
                 role: ""
             }
         })

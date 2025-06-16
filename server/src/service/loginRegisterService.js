@@ -174,6 +174,7 @@ const loginService = async (email, password) => {
                     user: {
                         email: user.email,
                         name: user.tenNguoiDung,
+                        phone: user.soDienThoai,
                         role: user.vaiTro
                     }
                 }

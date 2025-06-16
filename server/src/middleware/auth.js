@@ -10,9 +10,9 @@ const auth = (req, res, next) => {
                 id: decoded.id,
                 email: decoded.email,
                 name: decoded.name,
+                phone: decoded.phone,
                 createBy: "huynh"
             }
-            // console.log("check token:", decoded);
             next();
         } catch (error) {
             return res.status(401).json({

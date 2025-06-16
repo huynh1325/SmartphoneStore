@@ -64,7 +64,7 @@ const handleCreateOrder = async (req, res) => {
             tongTienHang,
             tongTienGiam,
             tongThanhToan,
-            trangThai: 'Cho_Thanh_Toan',
+            trangThai: 'Cho_Xac_Nhan',
             phuongThucThanhToan,
             diaChiGiaoHang: diaChi
         });
@@ -102,6 +102,44 @@ const handleCreateOrder = async (req, res) => {
         return res.status(500).json({
             EC: -1,
             EM: "Lỗi server khi tạo đơn hàng"
+        });
+    }
+};
+
+const handleUpdateOrderStatus = async (req, res) => {
+    try {
+        const { maDonHang, trangThaiMoi } = req.body;
+
+        if (!maDonHang || !trangThaiMoi) {
+            return res.status(400).json({
+                EC: 1,
+                EM: "Thiếu mã đơn hàng hoặc trạng thái mới",
+                DT: null,
+            });
+        }
+
+        const donHang = await db.DonHang.findByPk(maDonHang);
+        if (!donHang) {
+            return res.status(404).json({
+                EC: 2,
+                EM: "Không tìm thấy đơn hàng",
+                DT: null,
+            });
+        }
+
+        donHang.trangThai = trangThaiMoi;
+        await donHang.save();
+
+        return res.status(200).json({
+            EC: 0,
+            EM: "Cập nhật trạng thái đơn hàng thành công",
+            DT: donHang,
+        });
+    } catch (error) {
+        console.error("Lỗi khi cập nhật trạng thái đơn hàng:", error);
+        return res.status(500).json({
+            EC: -1,
+            EM: "Lỗi server khi cập nhật trạng thái đơn hàng",
         });
     }
 };
@@ -188,5 +226,5 @@ const getOrdersByUser = async (req, res) => {
 }
 
 module.exports = {
-    handleCreateOrder, getOrderById, getOrdersByUser
+    handleCreateOrder, getOrderById, getOrdersByUser, handleUpdateOrderStatus
 }
