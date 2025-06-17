@@ -9,6 +9,9 @@ const sendEmailWithTemplate = async (hoaDon, nguoiDung, chiTietItems) => {
     try {
         const templatePath = path.join(__dirname, '..', 'mail', 'templates', 'invoice.hbs');
         const source = fs.readFileSync(templatePath, 'utf8');
+        handlebars.registerHelper('formatCurrency', (value) => {
+            return Number(value).toLocaleString('vi-VN');
+        });
         handlebars.registerHelper('multiply', (a, b) => (a * b).toLocaleString('vi-VN'));
         const template = handlebars.compile(source);
 
@@ -17,18 +20,18 @@ const sendEmailWithTemplate = async (hoaDon, nguoiDung, chiTietItems) => {
             date: new Date().toLocaleDateString('vi-VN'),
             customer: {
                 name: nguoiDung.tenNguoiDung,
-                address: nguoiDung.diaChi,
+                address: hoaDon.diaChiGiaoHang,
                 phone: nguoiDung.soDienThoai
             },
             items: chiTietItems.map(item => ({
                 name: item.tenSanPham,
                 quantity: item.soLuong,
-                price: item.gia,
+                price: Number(item.gia),
                 mau: item.mau
             })),
-            tongTienHang: (hoaDon.tongTienHang || 0).toLocaleString('vi-VN'),
-            tongTienGiam: (hoaDon.tongTienGiam || 0).toLocaleString('vi-VN'),
-            tongThanhToan: (hoaDon.tongThanhToan || 0).toLocaleString('vi-VN')
+            tongTienHang: Number(hoaDon.tongTienHang || 0).toLocaleString('vi-VN'),
+            tongTienGiam: Number(hoaDon.tongTienGiam || 0).toLocaleString('vi-VN'),
+            tongThanhToan: Number(hoaDon.tongThanhToan || 0).toLocaleString('vi-VN')
         });
 
         const transporter = nodemailer.createTransport({
@@ -109,15 +112,14 @@ const createInvoice = async (donHang, chiTietDonHang) => {
             where: { maNguoiDung: donHang.maNguoiDung }
         });
 
-        console.log(nguoiDung)
-
         if (nguoiDung) {
             await sendEmailWithTemplate({
                 maHoaDon,
                 maDonHang: donHang.maDonHang,
                 tongTienHang,
                 tongTienGiam,
-                tongThanhToan
+                tongThanhToan,
+                diaChiGiaoHang: donHang.diaChiGiaoHang
             }, nguoiDung, chiTietItems);
         } else {
             console.warn(`Không tìm thấy người dùng với mã: ${donHang.maNguoiDung}`);

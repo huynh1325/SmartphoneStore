@@ -91,7 +91,7 @@ const handleCreateStockIn = async (req, res) => {
 const getAllStockIn = async (req, res) => {
   try {
     const receipts = await db.PhieuNhap.findAll({
-      order: [['maPhieuNhap', 'DESC']],
+      order: [['createdAt', 'DESC']],
       include: [
         {
           model: db.ChiTietPhieuNhap,
@@ -117,7 +117,7 @@ const getAllStockIn = async (req, res) => {
     const data = receipts.map((receipt) => ({
       maPhieuNhap: receipt.maPhieuNhap,
       tenNhaCungCap: receipt.NhaCungCap?.tenNhaCungCap || 'Không rõ',
-      donGia: receipt.donGia,
+      donGia: Number(receipt.donGia || 0).toLocaleString('vi-VN'),
       sanPhamNhap: receipt.chiTietPhieuNhap?.map(ct => ({
         sanPham: ct.SanPham?.tenSanPham,
         mau: ct.MauSanPham?.mau || 'Không rõ',

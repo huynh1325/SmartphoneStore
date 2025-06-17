@@ -157,7 +157,7 @@ const fetchAllProducts = async () => {
     const Sequelize = db.Sequelize;
 
     let products = await db.SanPham.findAll({
-        order: [['maSanPham', 'DESC']],
+        order: [['createdAt', 'DESC']],
         include: [
             {
                 model: db.MauSanPham,
