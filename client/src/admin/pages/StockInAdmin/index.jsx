@@ -11,6 +11,8 @@ import {
   Space
 } from 'antd';
 import { toast } from 'react-toastify';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 const StockInAdmin = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -157,10 +159,50 @@ const StockInAdmin = () => {
     }
   ];
 
+
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+    doc.text('DANH SÁCH PHIẾU NHẬP', 70, 20);
+    let startY = 30;
+
+    stockInData.forEach((record, index) => {
+      doc.setFontSize(12);
+      doc.text(`Phiếu ${index + 1}`, 14, startY);
+      doc.text(`Mã phiếu: ${record.maPhieuNhap || 'N/A'}`, 14, startY + 8);
+      doc.text(`Nhà cung cấp: ${record.tenNhaCungCap || 'Không xác định'}`, 14, startY + 16);
+      doc.text(`Đơn giá: ${record.donGia?.toLocaleString() || 0} ₫`, 14, startY + 24);
+
+      autoTable(doc, {
+        startY: startY + 30,
+        head: [['Sản phẩm', 'Màu', 'Số lượng']],
+        body: record.sanPhamNhap.map((item) => [
+          item.sanPham,
+          item.mau,
+          item.soLuong
+        ]),
+        margin: { left: 14 },
+        theme: 'grid',
+      });
+
+      startY = doc.lastAutoTable.finalY + 10;
+
+      // Nếu gần cuối trang, thêm trang mới
+      if (startY > 250) {
+        doc.addPage();
+        startY = 20;
+      }
+    });
+
+    doc.save('DanhSachPhieuNhap.pdf');
+  };
+
   return (
     <div>
       <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between' }}>
         <h2>Danh sách phiếu nhập</h2>
+        <Button onClick={handleExportPDF}>Xuất PDF</Button>
         <Button type="primary" onClick={showModal}>Nhập hàng</Button>
       </div>
 
