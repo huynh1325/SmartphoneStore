@@ -52,10 +52,10 @@ const createOrder = (orderData) => {
     return axios.post(`/api/v1/orders`, orderData)
 }
 
-const updateOrderStatus = (maDonHang, trangThai) => {
+const updateOrderStatus = (maDonHang, trangThaiXuLy) => {
     return axios.put(`/api/v1/orders/${maDonHang}`, {
         maDonHang,
-        trangThai,
+        trangThaiXuLy,
     });
 };
 

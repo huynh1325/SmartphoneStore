@@ -20,7 +20,10 @@ module.exports = {
       ghiChu: {
         type: Sequelize.STRING
       },
-      trangThai: {
+      trangThaiXuLy: {
+        type: Sequelize.STRING
+      },
+      trangThaiThanhToan: {
         type: Sequelize.STRING
       },
       phuongThucThanhToan: {

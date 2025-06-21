@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { Table, Button, Space, Modal, Select } from "antd";
 import { toast } from "react-toastify";
 import { fetchAllOrder, updateOrderStatus } from "../../../util/api";
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas-pro'
 
 const { Option } = Select;
 
@@ -39,7 +41,7 @@ const OrderAdmin = () => {
 
   const showStatusModal = (order) => {
     setSelectedOrder(order);
-    setNewStatus(order.trangThai);
+    setNewStatus(order.trangThaiXuLy);
     setIsStatusModalVisible(true);
   };
 
@@ -107,9 +109,19 @@ const OrderAdmin = () => {
       },
     },
     {
+      title: "Thanh toán",
+      dataIndex: "trangThaiThanhToan",
+      key: "trangThaiThanhToan",
+      render: (text) => {
+        if (text === "Da_Thanh_Toan") return "Đã thanh toán";
+        if (text === "Chua_Thanh_Toan") return "Chưa thanh toán";
+        return text;
+      }
+    },
+    {
       title: "Trạng thái",
-      dataIndex: "trangThai",
-      key: "trangThai",
+      dataIndex: "trangThaiXuLy",
+      key: "trangThaiXuLy",
       render: (text) => {
         switch (text) {
           case "Cho_Xac_Nhan":
@@ -140,14 +152,102 @@ const OrderAdmin = () => {
           <Button type="link" danger onClick={() => handleDeleteOrder(record)}>
             Xóa
           </Button>
+          {record.trangThaiThanhToan === "Da_Thanh_Toan" && (
+            <Button type="link" onClick={() => handleExportReceipt(record)}>
+              Xuất phiếu thu
+            </Button>
+          )}
         </Space>
       ),
     },
   ];
 
+  const handleExportReceipt = async (order) => {
+    try {
+      const res = await fetch(`http://localhost:8080/api/v1/invoice/${order.maDonHang}`);
+      const data = await res.json();
+
+      if (data.EC !== 0) {
+        toast.error("Không tìm thấy dữ liệu hóa đơn.");
+        return;
+      }
+
+      const { hoaDon, nguoiDung, chiTietItems } = data.DT;
+
+      const container = document.getElementById("receipt-pdf-container");
+      if (!container) return;
+
+      container.innerHTML = `
+        <div style="padding: 20px; font-family: Arial; width: 800px; color: #000; font-size: 20px">
+          <h2 style="text-align:center; font-weight: bold; font-size: 24px">PHIẾU THU</h2>
+          <p><strong>Mã phiếu thu:</strong> ${hoaDon.maHoaDon}</p>
+          <p><strong>Ngày:</strong> ${new Date(hoaDon.ngayTao).toLocaleDateString("vi-VN")}</p>
+          <p><strong>Khách hàng:</strong> ${nguoiDung.tenNguoiDung}</p>
+          <p><strong>Điện thoại:</strong> ${nguoiDung.soDienThoai}</p>
+          <p><strong>Địa chỉ giao:</strong> ${hoaDon.diaChiGiaoHang}</p>
+          <br />
+          <table style="width:100%; border-collapse:collapse; border: 1px solid #000;">
+            <thead>
+              <tr>
+                <th style="padding: 8px; border: 1px solid #000;">Tên sản phẩm</th>
+                <th style="padding: 8px; border: 1px solid #000;">Màu</th>
+                <th style="padding: 8px; border: 1px solid #000;">Số lượng</th>
+                <th style="padding: 8px; border: 1px solid #000;">Giá</th>
+                <th style="padding: 8px; border: 1px solid #000;">Thành tiền</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${chiTietItems.map(item => `
+                <tr>
+                  <td style="padding: 8px; border: 1px solid #000;">${item.tenSanPham}</td>
+                  <td style="padding: 8px; border: 1px solid #000;">${item.mau}</td>
+                  <td style="padding: 8px; border: 1px solid #000;">${item.soLuong}</td>
+                  <td style="padding: 8px; border: 1px solid #000;">${Number(item.gia).toLocaleString("vi-VN")}</td>
+                  <td style="padding: 8px; border: 1px solid #000;">${(item.soLuong * item.gia).toLocaleString("vi-VN")}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+          <br />
+          <p><strong>Tổng tiền hàng:</strong> ${Number(hoaDon.tongTienHang).toLocaleString("vi-VN")} ₫</p>
+          <p><strong>Giảm giá:</strong> ${Number(hoaDon.tongTienGiam).toLocaleString("vi-VN")} ₫</p>
+          <p><strong>Thành tiền:</strong> ${Number(hoaDon.tongThanhToan).toLocaleString("vi-VN")} ₫</p>
+        </div>
+      `;
+
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      const canvas = await html2canvas(container, { scale: 2 });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfHeight = (imgProps.height * pageWidth) / imgProps.width;
+
+      pdf.addImage(imgData, 'PNG', 10, 10, pageWidth - 20, pdfHeight * 0.95);
+      pdf.save(`phieu-thu-${hoaDon.maHoaDon}.pdf`);
+      toast.success("Xuất phiếu thu thành công");
+    } catch (err) {
+      console.error("Lỗi xuất phiếu thu:", err);
+      toast.error("Đã xảy ra lỗi khi xuất phiếu thu.");
+    }
+  };
+
   return (
     <div>
       <h2>Quản lý đơn hàng</h2>
+      <div
+        id="receipt-pdf-container"
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "1000px",
+          minHeight: "600px",
+          zIndex: -1,
+          background: "#fff",
+        }}
+      ></div>
       <Table
         dataSource={Array.isArray(orders) ? orders : []}
         columns={columns}

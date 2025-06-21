@@ -65,7 +65,8 @@ const handleCreateOrder = async (req, res) => {
             tongTienHang,
             tongTienGiam,
             tongThanhToan,
-            trangThai: 'Cho_Xac_Nhan',
+            trangThaiXuLy: 'Cho_Xac_Nhan',
+            trangThaiThanhToan: 'Chua_Thanh_Toan',
             phuongThucThanhToan,
             diaChiGiaoHang: diaChi
         });
@@ -109,9 +110,9 @@ const handleCreateOrder = async (req, res) => {
 
 const handleUpdateOrderStatus = async (req, res) => {
     try {
-        const { maDonHang, trangThai } = req.body;
+        const { maDonHang, trangThaiXuLy } = req.body;
 
-        if (!maDonHang || !trangThai) {
+        if (!maDonHang || !trangThaiXuLy) {
             return res.status(400).json({
                 EC: 1,
                 EM: "Thiếu mã đơn hàng hoặc trạng thái mới",
@@ -128,10 +129,10 @@ const handleUpdateOrderStatus = async (req, res) => {
             });
         }
 
-        donHang.trangThai = trangThai;
+        donHang.trangThaiXuLy = trangThaiXuLy;
         await donHang.save();
 
-        if (trangThai === 'Da_Giao') {
+        if (trangThaiXuLy === 'Da_Giao') {
             const chiTietDonHang = await db.ChiTietDonHang.findAll({
                 where: { maDonHang }
             });

@@ -12,6 +12,7 @@ import voucherController from '../controller/voucherController';
 import addressController from '../controller/addressController';
 import colorProductController from '../controller/colorProductController';
 import statisticalController from '../controller/statisticalController';
+import invoiceController from '../controller/invoiceController';
 import multer from "multer";
 import path from 'path';
 import auth from '../middleware/auth';
@@ -83,6 +84,9 @@ const initWebRoutes = (app) => {
     //checkout
     router.post('/create-payment-url', auth, paymentController.createPaymentUrl);
     router.get('/vnpay-return', paymentController.vnpayReturn);
+
+    //invoice
+    router.get('/invoice/:maDonHang', invoiceController.handleGetInvoiceDetail);
 
     //address
     router.post('/address', auth, addressController.handleCreateAddress);

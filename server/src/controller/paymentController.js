@@ -21,7 +21,7 @@ const createPaymentUrl = async (req, res) => {
         const tmnCode = process.env.VNP_TMNCODE;
         const secretKey = process.env.VNP_HASH_SECRET;
         let vnpUrl = process.env.VNP_URL;
-        const returnUrl = 'https://2754-14-191-112-152.ngrok-free.app/api/v1/vnpay-return'
+        const returnUrl = 'https://5757-123-19-244-80.ngrok-free.app/api/v1/vnpay-return'
 
         const vnp_TxnRef = maDonHang;
         const vnp_Locale = 'vn';
@@ -101,7 +101,7 @@ const vnpayReturn = async (req, res) => {
         }
 
         await db.DonHang.update(
-            { trangThai: 'Da_Thanh_Toan' },
+            { trangThaiThanhToan: 'Da_Thanh_Toan' },
             { where: { maDonHang: vnp_TxnRef } }
         );
 

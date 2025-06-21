@@ -131,7 +131,93 @@ const createInvoice = async (donHang, chiTietDonHang) => {
     }
 }
 
+const handleGetInvoiceDetail = async (req, res) => {
+    const { maDonHang } = req.params;
+
+    try {
+        const hoaDon = await db.HoaDon.findOne({
+            where: { maDonHang },
+        });
+
+        if (!hoaDon) {
+            return res.status(404).json({
+                EC: 1,
+                EM: `Không tìm thấy hóa đơn cho đơn hàng ${maDonHang}`,
+                DT: null
+            });
+        }
+
+        const donHang = await db.DonHang.findOne({
+            where: { maDonHang },
+        });
+
+        const chiTiet = await db.ChiTietHoaDon.findAll({
+            where: { maHoaDon: hoaDon.maHoaDon }
+        });
+
+        const nguoiDung = await db.NguoiDung.findOne({
+            where: { maNguoiDung: hoaDon.maNguoiDung }
+        });
+
+        if (!nguoiDung) {
+            return res.status(404).json({
+                EC: 2,
+                EM: `Không tìm thấy người dùng với mã ${hoaDon.maNguoiDung}`,
+                DT: null
+            });
+        }
+
+        const chiTietItems = await Promise.all(chiTiet.map(async item => {
+            let tenSanPham = item.tenSanPham;
+            if (!tenSanPham) {
+                const sanPham = await db.SanPham.findOne({
+                    where: { maSanPham: item.maSanPham }
+                });
+                tenSanPham = sanPham?.tenSanPham || "Không xác định";
+            }
+            return {
+                tenSanPham,
+                soLuong: item.soLuong,
+                gia: item.gia,
+                mau: item.mau
+            };
+        }));
+
+        const data = {
+            hoaDon: {
+                maHoaDon: hoaDon.maHoaDon,
+                maDonHang: hoaDon.maDonHang,
+                tongTienHang: hoaDon.tongTienHang,
+                tongTienGiam: hoaDon.tongTienGiam,
+                tongThanhToan: hoaDon.tongThanhToan,
+                ngayTao: hoaDon.createdAt,
+                diaChiGiaoHang: donHang?.diaChiGiaoHang || "Không xác định"
+            },
+            nguoiDung: {
+                tenNguoiDung: nguoiDung.tenNguoiDung,
+                email: nguoiDung.email,
+                soDienThoai: nguoiDung.soDienThoai
+            },
+            chiTietItems
+        };
+
+        return res.status(200).json({
+            EC: 0,
+            EM: 'Lấy thông tin hóa đơn thành công',
+            DT: data
+        });
+
+    } catch (error) {
+        console.error("Lỗi khi lấy chi tiết hóa đơn:", error);
+        return res.status(500).json({
+            EC: -1,
+            EM: 'Lỗi server',
+            DT: null
+        });
+    }
+};
+
 
 module.exports = {
-    createInvoice
+    createInvoice, handleGetInvoiceDetail
 }

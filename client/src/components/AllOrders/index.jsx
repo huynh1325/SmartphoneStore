@@ -31,7 +31,7 @@ const AllOrders = () => {
         fetchOrders();
     }, []);
 
-    const formatTrangThai = (status) => {
+    const formatTrangThaiXuLy = (status) => {
         switch (status) {
             case "Cho_Thanh_Toan":
                 return "Chờ Thanh Toán";
@@ -56,7 +56,7 @@ const AllOrders = () => {
                 <div key={order.maDonHang} className={cx('order-item')}>
                     <div className={cx('order-header')}>
                         <span className={cx('order-id')}>Đơn hàng: <strong>#{order.maDonHang}</strong></span>
-                        <span className={cx('order-status')}>{formatTrangThai(order.trangThai)}</span>
+                        <span className={cx('order-status')}>{formatTrangThaiXuLy(order.trangThaiXuLy)}</span>
                     </div>
 
                     <div className={cx('order-content')}>

@@ -16,7 +16,7 @@ const PendingOrders = () => {
                 const res = await getOrderByUser();
                 if (+res.EC === 0) {
                     const filtered = res.DT
-                        .filter(order => order.trangThai === "Cho_Xac_Nhan")
+                        .filter(order => order.trangThaiXuLy === "Cho_Xac_Nhan")
                         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                     setOrders(filtered);
                 } else {
@@ -30,7 +30,7 @@ const PendingOrders = () => {
         fetchOrders();
     }, []);
 
-    const formatTrangThai = (status) => {
+    const formatTrangThaiXuLy = (status) => {
         switch (status) {
             case "Cho_Thanh_Toan":
                 return "Chờ Thanh Toán";
@@ -58,7 +58,7 @@ const PendingOrders = () => {
                     <div key={order.maDonHang} className={cx('order-item')}>
                         <div className={cx('order-header')}>
                             <span className={cx('order-id')}>Đơn hàng: <strong>#{order.maDonHang}</strong></span>
-                            <span className={cx('order-status')}>{formatTrangThai(order.trangThai)}</span>
+                            <span className={cx('order-status')}>{formatTrangThaiXuLy(order.trangThaiXuLy)}</span>
                         </div>
 
                         <div className={cx('order-content')}>
