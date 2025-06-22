@@ -209,9 +209,18 @@ const OrderAdmin = () => {
             </tbody>
           </table>
           <br />
-          <p><strong>Tổng tiền hàng:</strong> ${Number(hoaDon.tongTienHang).toLocaleString("vi-VN")} ₫</p>
-          <p><strong>Giảm giá:</strong> ${Number(hoaDon.tongTienGiam).toLocaleString("vi-VN")} ₫</p>
-          <p><strong>Thành tiền:</strong> ${Number(hoaDon.tongThanhToan).toLocaleString("vi-VN")} ₫</p>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+              <strong>Thuế (10%):</strong>
+              <span>${Math.round(hoaDon.tongThanhToan - hoaDon.tongThanhToan / 1.1).toLocaleString("vi-VN")} ₫</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+              <strong>Giảm giá:</strong>
+              <span>${Number(hoaDon.tongTienGiam).toLocaleString("vi-VN")} ₫</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+              <strong>Thành tiền (đã gồm thuế):</strong>
+              <span>${Number(hoaDon.tongThanhToan).toLocaleString("vi-VN")} ₫</span>
+          </div>
         </div>
       `;
 
@@ -246,6 +255,8 @@ const OrderAdmin = () => {
           minHeight: "600px",
           zIndex: -1,
           background: "#fff",
+          opacity: 0,
+          pointerEvents: "none",
         }}
       ></div>
       <Table

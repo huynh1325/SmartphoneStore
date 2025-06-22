@@ -1,5 +1,6 @@
 import classNames from 'classnames/bind';
 import styles from './Completed.module.scss';
+import Footer from '../Footer';
 import { useEffect, useState } from 'react';
 import { getOrderByUser } from '../../util/api';
 import { toast } from "react-toastify";
@@ -98,9 +99,18 @@ const Completed = () => {
                 </tbody>
                 </table>
                 <br />
-                <p><strong>Tổng tiền hàng:</strong> ${Number(hoaDon.tongTienHang).toLocaleString("vi-VN")} ₫</p>
-                <p><strong>Giảm giá:</strong> ${Number(hoaDon.tongTienGiam).toLocaleString("vi-VN")} ₫</p>
-                <p><strong>Thành tiền:</strong> ${Number(hoaDon.tongThanhToan).toLocaleString("vi-VN")} ₫</p>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <strong>Thuế (10%):</strong>
+                    <span>${Math.round(hoaDon.tongThanhToan - hoaDon.tongThanhToan / 1.1).toLocaleString("vi-VN")} ₫</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <strong>Giảm giá:</strong>
+                    <span>${Number(hoaDon.tongTienGiam).toLocaleString("vi-VN")} ₫</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <strong>Thành tiền (đã gồm thuế):</strong>
+                    <span>${Number(hoaDon.tongThanhToan).toLocaleString("vi-VN")} ₫</span>
+                </div>
             </div>
             `;
 
@@ -124,64 +134,68 @@ const Completed = () => {
     };
 
     return (
-        <div className={cx('order-wrapper')}>
-            <div
-                id="receipt-pdf-container"
-                style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "1000px",
-                    minHeight: "600px",
-                    zIndex: -1,
-                    background: "#fff"
-                }}
-            ></div>
-            {orders.length === 0 ? (
-                <p className={cx('no-orders')}>Không có đơn hàng chờ xác nhận.</p>
-            ) : (
-                orders.map(order => (
-                    <div key={order.maDonHang} className={cx('order-item')}>
-                        <div className={cx('order-header')}>
-                            <span className={cx('order-id')}>Đơn hàng: <strong>#{order.maDonHang}</strong></span>
-                            <span className={cx('order-status')}>{formatTrangThaiXuLy(order.trangThaiXuLy)}</span>
-                        </div>
+        <>
+            <div className={cx('order-wrapper')}>
+                <div
+                    id="receipt-pdf-container"
+                    style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "1000px",
+                        minHeight: "600px",
+                        zIndex: -1,
+                        background: "#fff",
+                        opacity: 0,
+                        pointerEvents: "none",
+                    }}
+                ></div>
+                {orders.length === 0 ? (
+                    <p className={cx('no-orders')}>Không có đơn hàng chờ xác nhận.</p>
+                ) : (
+                    orders.map(order => (
+                        <div key={order.maDonHang} className={cx('order-item')}>
+                            <div className={cx('order-header')}>
+                                <span className={cx('order-id')}>Đơn hàng: <strong>#{order.maDonHang}</strong></span>
+                                <span className={cx('order-status')}>{formatTrangThaiXuLy(order.trangThaiXuLy)}</span>
+                            </div>
 
-                        <div className={cx('order-content')}>
-                            <div className={cx('product-list')}>
-                                {order.chiTietDonHang?.map(sp => (
-                                    <div key={sp.id} className={cx('order-body')}>
-                                        <div className={cx('product-info')}>
-                                            <img
-                                                src={sp.sanPham.anh ? `${IMAGE_BASE_URL}${sp.sanPham.anh}` : ""}
-                                                alt="ảnh sản phẩm"
-                                                className={cx('product-image')}
-                                            />
-                                            <div className={cx('product-name')}>
-                                                {sp.sanPham.tenSanPham}
-                                                <div className={cx('product-quantity')}>Số lượng: {sp.soLuong}</div>
+                            <div className={cx('order-content')}>
+                                <div className={cx('product-list')}>
+                                    {order.chiTietDonHang?.map(sp => (
+                                        <div key={sp.id} className={cx('order-body')}>
+                                            <div className={cx('product-info')}>
+                                                <img
+                                                    src={sp.sanPham.anh ? `${IMAGE_BASE_URL}${sp.sanPham.anh}` : ""}
+                                                    alt="ảnh sản phẩm"
+                                                    className={cx('product-image')}
+                                                />
+                                                <div className={cx('product-name')}>
+                                                    {sp.sanPham.tenSanPham}
+                                                    <div className={cx('product-quantity')}>Số lượng: {sp.soLuong}</div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
-
-                            <div className={cx('order-summary')}>
-                                <div className={cx('total-price')}>
-                                    Tổng tiền: <strong>{Number(order.tongTienHang).toLocaleString('vi-VN')}₫</strong>
+                                    ))}
                                 </div>
-                                <button
-                                    className={cx('detail-btn')}
-                                    onClick={() => handleExportReceipt(order)}
-                                >
-                                    Xuất hóa đơn
-                                </button>
+
+                                <div className={cx('order-summary')}>
+                                    <div className={cx('total-price')}>
+                                        Tổng tiền: <strong>{Number(order.tongTienHang).toLocaleString('vi-VN')}₫</strong>
+                                    </div>
+                                    <button
+                                        className={cx('detail-btn')}
+                                        onClick={() => handleExportReceipt(order)}
+                                    >
+                                        Xuất hóa đơn
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))
-            )}
-        </div>
+                    ))
+                )}
+            </div>
+        </>
     );
 };
 

@@ -66,6 +66,7 @@ const initWebRoutes = (app) => {
     //cart
     router.post("/carts/add", auth, cartController.handleAddToCart);
     router.get("/carts", auth, cartController.getAllCart);
+    router.delete("/carts/:maChiTietGioHang", auth ,cartController.deleteFromCart);
 
     //stockin
     router.get("/stockin", stockInController.getAllStockIn);

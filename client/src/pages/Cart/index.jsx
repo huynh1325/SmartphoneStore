@@ -4,9 +4,10 @@ import styles from './Cart.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useState, useEffect, useCallback } from "react";
-import { getAllCart, createOrder } from "../../util/api";
+import { getAllCart, deleteFromCart } from "../../util/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useCart } from "../../components/Context/CartContext";
 
 const cx = classNames.bind(styles);
 
@@ -16,6 +17,7 @@ const Cart = () => {
     const [quantities, setQuantities] = useState({});
     const navigate = useNavigate();
     const IMAGE_BASE_URL = "http://localhost:8080";
+    const { fetchCart } = useCart();
 
     const isAllSelected = cartItems.length > 0 && Object.keys(selectedItems).length === cartItems.length;
 
@@ -159,6 +161,21 @@ const Cart = () => {
         return new Intl.NumberFormat('de-DE').format(Math.round(Number(price))) + 'đ';
     };
 
+    const handleDelete = async (maChiTietGioHang) => {
+        try {
+            const res = await deleteFromCart(maChiTietGioHang);
+            if (res.EC === 0) {
+                toast.success("Đã xóa sản phẩm khỏi giỏ hàng");
+                await fetchCart();
+                await fetchCarts();
+            } else {
+                toast.error(res.EM);
+            }
+        } catch (error) {
+            toast.error("Lỗi khi xóa sản phẩm khỏi giỏ hàng");
+        }
+    };
+
     return (
         <>
             <Header />
@@ -224,7 +241,7 @@ const Cart = () => {
                                     <div className={cx("element", "color-red")}>
                                         {( (quantities[item.maChiTietGioHang] || item.soLuong || 1) * item.giaDaGiam ).toLocaleString('vi-VN')}đ
                                     </div>
-                                    <div className={cx("element")}>Xóa</div>
+                                    <div className={cx("element", "delete-btn")} onClick={() => handleDelete(item.maChiTietGioHang)}>Xóa</div>
                                 </div>
                             </div>
                         ))}
@@ -239,7 +256,7 @@ const Cart = () => {
                                         />
                                     </label>
                                 </div>
-                                <div className={cx("element")}>Xóa</div>
+                                <div className={cx("element", "delete-btn")}>Xóa</div>
                                 <div className={cx("quantity")}>Tổng cộng ({totalQuantity}) sản phẩm:</div>
                                 <div className={cx("price")}>{totalPrice.toLocaleString('vi-VN')}đ</div>
                                 <div

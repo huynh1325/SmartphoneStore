@@ -40,6 +40,7 @@ const verifyUserCode = (email, code) => {
     return axios.post(`/api/v1/verify-user`, {email, code})
 }
 
+// cart
 const addToCart = (product) => {
     return axios.post(`/api/v1/carts/add`, product)
 }
@@ -48,6 +49,11 @@ const getAllCart = () => {
     return axios.get(`/api/v1/carts`)
 }
 
+const deleteFromCart = (maChiTietGioHang) => {
+    return axios.delete(`/api/v1/carts/${maChiTietGioHang}`)
+}
+
+// order
 const createOrder = (orderData) => {
     return axios.post(`/api/v1/orders`, orderData)
 }
@@ -63,7 +69,7 @@ const getOrderById = (id) => {
     return axios.get(`/api/v1/orders/${id}`)
 }
 
-const getOrderByUser = (id) => {
+const getOrderByUser = () => {
     return axios.get(`/api/v1/orders`)
 }
 
@@ -107,5 +113,5 @@ const fetchProductByBrand = (nhanHieu) => {
 export {
     registerNewUser, createProduct, updateProduct, verifyUserCode, userLogin, addToCart, getAllCart, fetchAllProduct, deleteProduct, createOrder, getOrderById,
     createPaymentUrl, fetchAllOrder, createAddress, getAddressByUser, getOrderByUser, fetctColorProduct, getVoucherByCode, fetchProductByName, fetchProductByBrand,
-    updateOrderStatus
+    updateOrderStatus, deleteFromCart
 }

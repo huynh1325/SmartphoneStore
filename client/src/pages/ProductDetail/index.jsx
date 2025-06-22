@@ -1,12 +1,14 @@
 import Header from "../../components/Header"
+import Footer from "../../components/Footer"
 import classNames from 'classnames/bind';
 import styles from './ProductDetail.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useParams } from 'react-router-dom';
 import { faCartShopping, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { useState, useEffect } from "react";
-import { addToCart, fetctColorProduct } from "../../util/api";
+import { addToCart, fetctColorProduct, getAllCart } from "../../util/api";
 import { toast } from "react-toastify";
+import { useCart } from "../../components/Context/CartContext";
 
 const cx = classNames.bind(styles);
 
@@ -15,6 +17,7 @@ const ProductDetail = () => {
     const [product, setProduct] = useState(null);
     const [colors, setColors] = useState([]);
     const [selectedColor, setSelectedColor] = useState(null);
+    const { fetchCart } = useCart();
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -69,6 +72,7 @@ const ProductDetail = () => {
             }
             if (res.EC === 0) {
                 toast.success(res.EM);
+                await fetchCart();
             }
         } catch (error) {
             toast.error("Lỗi thêm sản phẩm")
@@ -164,6 +168,7 @@ const ProductDetail = () => {
                     <div>hello</div>
                 )}
             </div>
+            <Footer />
         </>
     )
 }

@@ -1,6 +1,7 @@
 import classNames from 'classnames/bind';
 import styles from './Purchase.module.scss';
 import Header from "../../components/Header";
+import Footer from "../../components/Footer"
 import { useState, useEffect } from 'react';
 import AllOrders from "../../components/AllOrders"
 import PendingOrder from "../../components/PendingOrder"
@@ -92,6 +93,7 @@ const Purchase = () => {
                     </div>
                 </div>
             </div>
+            <Footer />
         </>
     )
 }

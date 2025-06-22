@@ -135,6 +135,56 @@ const getAllCart = async (req, res) => {
     }
 }
 
+const deleteFromCart = async (req, res) => {
+    try {
+        const maNguoiDung = req.user.id;
+        const { maChiTietGioHang } = req.params;
+
+        const gioHang = await db.GioHang.findOne({
+            where: { maNguoiDung }
+        });
+
+        if (!gioHang) {
+            return res.status(404).json({
+                EM: 'Giỏ hàng không tồn tại',
+                EC: 1,
+                DT: []
+            });
+        }
+
+        const item = await db.ChiTietGioHang.findOne({
+            where: {
+                maChiTietGioHang,
+                maGioHang: gioHang.maGioHang
+            }
+        });
+
+        if (!item) {
+            return res.status(404).json({
+                EM: 'Không tìm thấy sản phẩm trong giỏ hàng',
+                EC: 1,
+                DT: []
+            });
+        }
+
+        await item.destroy();
+
+        return res.status(200).json({
+            EM: 'Xóa sản phẩm khỏi giỏ hàng thành công',
+            EC: 0,
+            DT: []
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            EM: 'Lỗi server khi xóa sản phẩm khỏi giỏ hàng',
+            EC: -1,
+            DT: []
+        });
+    }
+};
+
 module.exports = {
-    handleAddToCart, getAllCart
+    handleAddToCart, getAllCart, deleteFromCart
 }
