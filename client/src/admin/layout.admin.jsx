@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Layout, Menu, Avatar, Dropdown, Button, Space } from 'antd';
 import {
   UserOutlined,
@@ -12,13 +12,19 @@ import {
   ShoppingOutlined
 } from '@ant-design/icons';
 import { Link, Outlet, useLocation } from 'react-router-dom';
+import { AuthContext } from '../components/Context/AuthContext';
+import NotFoundPage from '../pages/NotFoundPage'
 
 const { Header, Sider, Content } = Layout;
 
 const LayoutAdmin = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const location = useLocation();
   const [activeMenu, setActiveMenu] = useState('/admin/dashboard');
+  const [unauthorized, setUnauthorized] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  const location = useLocation();
+  const { auth } = useContext(AuthContext);
 
   const menuItems = [
     {
@@ -70,6 +76,21 @@ const LayoutAdmin = () => {
   useEffect(() => {
     setActiveMenu(location.pathname);
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (!auth || !auth.user || !auth.user.role) return;
+
+    if (!auth.isAuthenticated || auth.user.role !== 'Quản trị viên') {
+      setUnauthorized(true); 
+    } 
+    setIsCheckingAuth(false)
+  }, [auth]);
+
+  useEffect(() => {
+      setActiveMenu(location.pathname);
+    }, [location.pathname]);
+  if (isCheckingAuth) return null;
+  if (unauthorized) return <NotFoundPage />;
 
   return (
     <Layout style={{ minHeight: '100vh' }}>

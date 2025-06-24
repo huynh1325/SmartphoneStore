@@ -1,5 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Table, Button, Space, Modal, Form, Input, Select } from 'antd';
+import { updateUserInfo } from '../../../util/api';
+import { toast } from 'react-toastify';
 
 const UserAdmin = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -85,14 +87,30 @@ const UserAdmin = () => {
   const handleOk = () => {
     form
       .validateFields()
-      .then((values) => {
+      .then(async (values) => {
         if (isEdit) {
-          console.log('Sửa người dùng: ', values);
-        } else {
-          console.log('Thêm người dùng: ', values);
+          try {
+            const res = await updateUserInfo({
+              maNguoiDung: editingUser.maNguoiDung,
+              tenNguoiDung: values.tenNguoiDung,
+              gioiTinh: values.gioiTinh,
+              vaiTro: values.vaiTro,
+            });
+
+            if (res.EC === 0) {
+              fetchUsers();
+              toast.success(res.EM)
+            } else {
+              console.error(res.EM);
+            }
+          } catch (error) {
+            console.error('Lỗi khi gọi API:', error);
+          }
         }
+
         form.resetFields();
         setIsModalVisible(false);
+        setIsEdit(false);
       })
       .catch((info) => {
         console.log('Validate failed:', info);
@@ -119,7 +137,7 @@ const UserAdmin = () => {
         <Form form={form} layout="vertical">
           <Form.Item
             label="Tên"
-            name="name"
+            name="tenNguoiDung"
             rules={[{ required: true, message: 'Vui lòng nhập tên!' }]}
           >
             <Input />
@@ -133,20 +151,20 @@ const UserAdmin = () => {
               { type: 'email', message: 'Email không hợp lệ!' },
             ]}
           >
-            <Input />
+            <Input disabled />
           </Form.Item>
 
           <Form.Item
             label="Số điện thoại"
-            name="phone"
+            name="soDienThoai"
             rules={[{ required: true, message: 'Vui lòng nhập số điện thoại!' }]}
           >
-            <Input />
+            <Input disabled />
           </Form.Item>
 
           <Form.Item
             label="Giới tính"
-            name="gender"
+            name="gioiTinh"
             rules={[{ required: true, message: 'Vui lòng chọn giới tính!' }]}
           >
             <Select>
@@ -157,12 +175,12 @@ const UserAdmin = () => {
 
           <Form.Item
             label="Vai trò"
-            name="role"
+            name="vaiTro"
             rules={[{ required: true, message: 'Vui lòng chọn vai trò!' }]}
           >
             <Select>
-              <Select.Option value="Admin">Khách Hàng</Select.Option>
-              <Select.Option value="User">Admin</Select.Option>
+              <Select.Option value="Quản trị viên">Quản trị viên</Select.Option>
+              <Select.Option value="Khách hàng">Khách hàng</Select.Option>
             </Select>
           </Form.Item>
         </Form>

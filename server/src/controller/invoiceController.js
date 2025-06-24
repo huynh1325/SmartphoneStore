@@ -29,6 +29,7 @@ const sendEmailWithTemplate = async (hoaDon, nguoiDung, chiTietItems) => {
                 price: Number(item.gia),
                 mau: item.mau
             })),
+            thue: Number(hoaDon.thue || 0).toLocaleString('vi-VN'),
             tongTienHang: Number(hoaDon.tongTienHang || 0).toLocaleString('vi-VN'),
             tongTienGiam: Number(hoaDon.tongTienGiam || 0).toLocaleString('vi-VN'),
             tongThanhToan: Number(hoaDon.tongThanhToan || 0).toLocaleString('vi-VN')
@@ -59,7 +60,6 @@ const sendEmailWithTemplate = async (hoaDon, nguoiDung, chiTietItems) => {
     }
 };
 
-
 const createInvoice = async (donHang, chiTietDonHang) => {
     try {
         const maHoaDon = await generateCustomId('HD', db.HoaDon, 'maHoaDon');
@@ -68,13 +68,15 @@ const createInvoice = async (donHang, chiTietDonHang) => {
         const tongTienGiam = donHang.tongTienGiam || 0;
         const tongThanhToan = donHang.tongThanhToan || 0;
 
+        const thue = Math.round(tongThanhToan - tongThanhToan / 1.1);
+
         const hoaDon = await db.HoaDon.create({
             maHoaDon,
             maDonHang: donHang.maDonHang,
             maNguoiDung: donHang.maNguoiDung,
             tongTienHang,
             tongTienGiam,
-            tongThanhToan
+            tongThanhToan,
         });
 
         const chiTietItems = [];
@@ -116,9 +118,9 @@ const createInvoice = async (donHang, chiTietDonHang) => {
             await sendEmailWithTemplate({
                 maHoaDon,
                 maDonHang: donHang.maDonHang,
-                tongTienHang,
                 tongTienGiam,
                 tongThanhToan,
+                thue,
                 diaChiGiaoHang: donHang.diaChiGiaoHang
             }, nguoiDung, chiTietItems);
         } else {
@@ -129,7 +131,7 @@ const createInvoice = async (donHang, chiTietDonHang) => {
         console.error("Lỗi tạo hóa đơn:", error);
         throw error;
     }
-}
+};
 
 const handleGetInvoiceDetail = async (req, res) => {
     const { maDonHang } = req.params;

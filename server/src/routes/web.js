@@ -53,6 +53,7 @@ const initWebRoutes = (app) => {
 
     //user
     router.get("/users", userController.getAllUser);
+    router.put("/update-user", userController.updateUserInfo);
     
     //product
     router.get("/products/search", productController.handleSearchProductByName);

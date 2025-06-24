@@ -12,6 +12,12 @@ const userLogin = (email, password) => {
     })
 }
 
+//user
+const updateUserInfo = (data) => {
+    return axios.put(`/api/v1/update-user`, data);
+};
+
+
 const fetchAllProduct = () => {
     return axios.get('/api/v1/products')
 }
@@ -113,5 +119,5 @@ const fetchProductByBrand = (nhanHieu) => {
 export {
     registerNewUser, createProduct, updateProduct, verifyUserCode, userLogin, addToCart, getAllCart, fetchAllProduct, deleteProduct, createOrder, getOrderById,
     createPaymentUrl, fetchAllOrder, createAddress, getAddressByUser, getOrderByUser, fetctColorProduct, getVoucherByCode, fetchProductByName, fetchProductByBrand,
-    updateOrderStatus, deleteFromCart
+    updateOrderStatus, deleteFromCart, updateUserInfo
 }
