@@ -64,10 +64,11 @@ const createOrder = (orderData) => {
     return axios.post(`/api/v1/orders`, orderData)
 }
 
-const updateOrderStatus = (maDonHang, trangThaiXuLy) => {
+const updateOrderStatus = (maDonHang, trangThaiXuLy, trangThaiThanhToan) => {
     return axios.put(`/api/v1/orders/${maDonHang}`, {
         maDonHang,
         trangThaiXuLy,
+        trangThaiThanhToan
     });
 };
 

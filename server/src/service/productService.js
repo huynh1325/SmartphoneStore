@@ -207,39 +207,51 @@ const fetchAllProducts = async () => {
     return productWithSuppliers;
 }
 
+const removeVietnameseTones = (str) => {
+  return str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D')
+    .toLowerCase();
+};
+
 const searchProductByName = async (tenSanPham) => {
-    const Sequelize = db.Sequelize;
+  const Sequelize = db.Sequelize;
 
-    const products = await db.SanPham.findAll({
-        where: {
-            tenSanPham: {
-                [Sequelize.Op.like]: `%${tenSanPham}%`
-            }
-        },
-        include: [
-            {
-                model: db.MauSanPham,
-                as: 'MauSanPham',
-                attributes: []
-            }
-        ],
-        attributes: {
-            include: [
-                [
-                    Sequelize.fn(
-                        'COALESCE',
-                        Sequelize.fn('SUM', Sequelize.col('MauSanPham.soLuong')),
-                        0
-                    ),
-                    'soLuong'
-                ]
-            ]
-        },
-        order: [['maSanPham', 'DESC']],
-        group: ['SanPham.maSanPham']
-    });
+  const allProducts = await db.SanPham.findAll({
+    include: [
+      {
+        model: db.MauSanPham,
+        as: 'MauSanPham',
+        attributes: []
+      }
+    ],
+    attributes: {
+      include: [
+        [
+          Sequelize.fn(
+            'COALESCE',
+            Sequelize.fn('SUM', Sequelize.col('MauSanPham.soLuong')),
+            0
+          ),
+          'soLuong'
+        ]
+      ]
+    },
+    order: [['maSanPham', 'DESC']],
+    group: ['SanPham.maSanPham']
+  });
 
-    return products.map(product => product.toJSON());
+  const keyword = removeVietnameseTones(tenSanPham);
+
+  const matchedProducts = allProducts
+    .map(product => product.toJSON())
+    .filter(product =>
+      removeVietnameseTones(product.tenSanPham).includes(keyword)
+    );
+
+  return matchedProducts;
 };
 
 const filterProductByBrand = async (nhanHieu) => {

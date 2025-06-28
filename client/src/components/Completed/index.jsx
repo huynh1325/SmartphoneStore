@@ -19,7 +19,7 @@ const Completed = () => {
                 const res = await getOrderByUser();
                 if (+res.EC === 0) {
                     const filtered = res.DT
-                        .filter(order => order.trangThaiXuLy === "Da_Giao")
+                        .filter(order => order.trangThaiXuLy === "Hoan_Thanh")
                         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                     setOrders(filtered);
                 } else {
@@ -35,18 +35,8 @@ const Completed = () => {
 
     const formatTrangThaiXuLy = (status) => {
         switch (status) {
-            case "Cho_Thanh_Toan":
-                return "Chờ Thanh Toán";
-            case "Da_Thanh_Toan":
-                return "Đã Thanh Toán";
-            case "Dang_Giao":
-                return "Đang Giao";
-            case "Da_Nhan":
-                return "Đã Nhận Hàng";
-            case "Da_Huy":
-                return "Đã Hủy";
-            case "Cho_Xac_Nhan":
-                return "Chờ Xác Nhận";
+            case "Hoan_Thanh":
+                return "Hoàn Thành";
             default:
                 return status;
         }
@@ -151,7 +141,7 @@ const Completed = () => {
                     }}
                 ></div>
                 {orders.length === 0 ? (
-                    <p className={cx('no-orders')}>Không có đơn hàng chờ xác nhận.</p>
+                    <p className={cx('no-orders')}>Không có đơn hàng hoàn thành.</p>
                 ) : (
                     orders.map(order => (
                         <div key={order.maDonHang} className={cx('order-item')}>

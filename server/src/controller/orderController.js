@@ -110,9 +110,9 @@ const handleCreateOrder = async (req, res) => {
 
 const handleUpdateOrderStatus = async (req, res) => {
     try {
-        const { maDonHang, trangThaiXuLy } = req.body;
+        const { maDonHang, trangThaiXuLy, trangThaiThanhToan } = req.body;
 
-        if (!maDonHang || !trangThaiXuLy) {
+        if (!maDonHang || !trangThaiXuLy || !trangThaiThanhToan) {
             return res.status(400).json({
                 EC: 1,
                 EM: "Thiếu mã đơn hàng hoặc trạng thái mới",
@@ -130,9 +130,14 @@ const handleUpdateOrderStatus = async (req, res) => {
         }
 
         donHang.trangThaiXuLy = trangThaiXuLy;
+        if (trangThaiThanhToan) {
+            donHang.trangThaiThanhToan = trangThaiThanhToan;
+        } else if (trangThaiXuLy === 'Hoan_Thanh') {
+            donHang.trangThaiThanhToan = 'Da_Thanh_Toan';
+        }
         await donHang.save();
 
-        if (trangThaiXuLy === 'Da_Giao') {
+        if (trangThaiXuLy === 'Hoan_Thanh') {
             const chiTietDonHang = await db.ChiTietDonHang.findAll({
                 where: { maDonHang }
             });

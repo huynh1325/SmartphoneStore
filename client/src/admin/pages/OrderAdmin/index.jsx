@@ -15,6 +15,39 @@ const OrderAdmin = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [newStatus, setNewStatus] = useState("");
 
+  const [expandedGroups, setExpandedGroups] = useState({
+    Cho_Xac_Nhan: true,
+    Dang_Van_Chuyen: false,
+    Hoan_Thanh: false,
+    Da_Huy: false,
+  });
+
+  const toggleGroup = (status) => {
+    setExpandedGroups((prev) => ({
+      ...prev,
+      [status]: !prev[status],
+    }));
+  };
+
+  const statusOrder = [
+    "Cho_Xac_Nhan",
+    "Dang_Van_Chuyen",
+    "Hoan_Thanh",
+    "Da_Huy",
+  ];
+
+  const statusLabels = {
+    Cho_Xac_Nhan: "Chờ xác nhận",
+    Dang_Van_Chuyen: "Đang vận chuyển",
+    Hoan_Thanh: "Hoàn thành",
+    Da_Huy: "Đã hủy",
+  };
+
+  const groupedOrders = statusOrder.reduce((acc, status) => {
+    acc[status] = orders.filter((order) => order.trangThaiXuLy === status);
+    return acc;
+  }, {});
+
   const fetchOrders = useCallback(async () => {
     setLoading(true);
     try {
@@ -37,7 +70,7 @@ const OrderAdmin = () => {
   }, [fetchOrders]);
 
   useEffect(() => {
-}, [orders]);
+  }, [orders]);
 
   const showStatusModal = (order) => {
     setSelectedOrder(order);
@@ -47,8 +80,18 @@ const OrderAdmin = () => {
 
   const handleUpdateStatus = async () => {
     try {
-      const res = await updateOrderStatus(selectedOrder.maDonHang, newStatus);
-      console.log(selectedOrder.maDonHang, newStatus)
+      let trangThaiThanhToan = selectedOrder.trangThaiThanhToan;
+
+      if (newStatus === "Hoan_Thanh") {
+        trangThaiThanhToan = "Da_Thanh_Toan";
+      }
+
+      const res = await updateOrderStatus(
+        selectedOrder.maDonHang,
+        newStatus,
+        trangThaiThanhToan
+      );
+
       if (+res.EC === 0) {
         toast.success("Cập nhật trạng thái thành công");
         fetchOrders();
@@ -58,10 +101,12 @@ const OrderAdmin = () => {
     } catch (error) {
       toast.error("Lỗi cập nhật trạng thái");
       console.error(error);
+    } finally {
+      setIsStatusModalVisible(false);
+      setSelectedOrder(null);
     }
-    setIsStatusModalVisible(false);
-    setSelectedOrder(null);
   };
+
 
   const handleDeleteOrder = async (order) => {
     Modal.confirm({
@@ -126,14 +171,10 @@ const OrderAdmin = () => {
         switch (text) {
           case "Cho_Xac_Nhan":
             return "Chờ xác nhận";;
-          case "Cho_Thanh_Toan":
-            return "Chờ thanh toán";
-          case "Da_Thanh_Toan":
-            return "Đã thanh toán";
-          case "Dang_Giao_Hang":
-            return "Đang giao hàng";
-          case "Da_Giao":
-            return "Giao hàng thành công";
+          case "Dang_Van_Chuyen":
+            return "Đang vận chuyển";
+          case "Hoan_Thanh":
+            return "Hoàn thành";
           case "Da_Huy":
             return "Đã hủy";
           default:
@@ -242,54 +283,78 @@ const OrderAdmin = () => {
     }
   };
 
-  return (
-    <div>
-      <h2>Quản lý đơn hàng</h2>
-      <div
-        id="receipt-pdf-container"
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "1000px",
-          minHeight: "600px",
-          zIndex: -1,
-          background: "#fff",
-          opacity: 0,
-          pointerEvents: "none",
-        }}
-      ></div>
-      <Table
-        dataSource={Array.isArray(orders) ? orders : []}
-        columns={columns}
-        rowKey="maDonHang"
-        loading={loading}
-        pagination={{ pageSize: 10 }}
-      />
+return (
+  <div>
+    <h2>Quản lý đơn hàng</h2>
 
-      <Modal
-        title={`Cập nhật trạng thái đơn hàng ${selectedOrder?.maDonHang}`}
-        visible={isStatusModalVisible}
-        onOk={handleUpdateStatus}
-        onCancel={() => setIsStatusModalVisible(false)}
-        okText="Cập nhật"
-        cancelText="Hủy"
-      >
-        <Select
-          value={newStatus}
-          onChange={setNewStatus}
-          style={{ width: "100%" }}
+    <div
+      id="receipt-pdf-container"
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "1000px",
+        minHeight: "600px",
+        zIndex: -1,
+        background: "#fff",
+        opacity: 0,
+        pointerEvents: "none",
+      }}
+    ></div>
+
+    {statusOrder.map((status) => (
+      <div key={status} style={{ marginBottom: "24px", border: "1px solid #ddd", borderRadius: "8px" }}>
+        <div
+          onClick={() => toggleGroup(status)}
+          style={{
+            background: "#f5f5f5",
+            padding: "10px 16px",
+            cursor: "pointer",
+            fontWeight: "bold",
+            fontSize: "16px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
         >
-          <Option value="Cho_Xac_Nhan">Chờ xác nhận</Option>
-          <Option value="Cho_Thanh_Toan">Chờ thanh toán</Option>
-          <Option value="Da_Thanh_Toan">Đã thanh toán</Option>
-          <Option value="Dang_Giao_Hang">Đang giao hàng</Option>
-          <Option value="Da_Giao">Giao hàng thành công</Option>
-          <Option value="Da_Huy">Đã hủy</Option>
-        </Select>
-      </Modal>
-    </div>
-  );
+          {statusLabels[status]} ({groupedOrders[status]?.length || 0})
+          <span>{expandedGroups[status] ? "▲" : "▼"}</span>
+        </div>
+
+        {expandedGroups[status] && (
+          <Table
+            dataSource={groupedOrders[status]}
+            columns={columns}
+            rowKey="maDonHang"
+            pagination={false}
+          />
+        )}
+      </div>
+    ))}
+
+    <Modal
+      title={`Cập nhật trạng thái đơn hàng ${selectedOrder?.maDonHang}`}
+      visible={isStatusModalVisible}
+      onOk={handleUpdateStatus}
+      onCancel={() => setIsStatusModalVisible(false)}
+      okText="Cập nhật"
+      cancelText="Hủy"
+    >
+      <Select
+        value={newStatus}
+        onChange={setNewStatus}
+        style={{ width: "100%" }}
+      >
+        {Object.keys(statusLabels).map((key) => (
+          <Option key={key} value={key}>
+            {statusLabels[key]}
+          </Option>
+        ))}
+      </Select>
+    </Modal>
+  </div>
+);
+
 };
 
 export default OrderAdmin;

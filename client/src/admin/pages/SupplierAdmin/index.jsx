@@ -6,7 +6,7 @@ const SupplierAdmin = () => {
   const [suppliers, setSuppliers] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
-  const [editingSupplier, setEditingSupplier] = useState(null); // supplier đang được sửa
+  const [editingSupplier, setEditingSupplier] = useState(null);
 
   const fetchSuppliers = async () => {
     try {
@@ -50,7 +50,6 @@ const SupplierAdmin = () => {
       let url = 'http://localhost:8080/api/v1/suppliers';
       let method = 'POST';
 
-      // Nếu đang chỉnh sửa
       if (editingSupplier) {
         url = `http://localhost:8080/api/v1/suppliers/${editingSupplier.maNhaCungCap}`;
         method = 'PUT';
