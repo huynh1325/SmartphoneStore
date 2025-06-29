@@ -31,6 +31,7 @@ const OrderAdmin = () => {
 
   const statusOrder = [
     "Cho_Xac_Nhan",
+    "Tra_Hang",
     "Dang_Van_Chuyen",
     "Hoan_Thanh",
     "Da_Huy",
@@ -38,6 +39,7 @@ const OrderAdmin = () => {
 
   const statusLabels = {
     Cho_Xac_Nhan: "Chờ xác nhận",
+    Tra_Hang: "Trả hàng",
     Dang_Van_Chuyen: "Đang vận chuyển",
     Hoan_Thanh: "Hoàn thành",
     Da_Huy: "Đã hủy",
@@ -107,26 +109,46 @@ const OrderAdmin = () => {
     }
   };
 
-
-  const handleDeleteOrder = async (order) => {
+  const handleReturnConfirmation = async (order) => {
     Modal.confirm({
-      title: "Xác nhận xóa",
-      content: `Bạn có chắc chắn muốn xóa đơn hàng ${order.maDonHang}?`,
-      okText: "Xóa",
-      okType: "danger",
-      cancelText: "Hủy",
+      title: "Xác nhận trả hàng",
+      content: `Bạn có chắc chắn muốn đồng ý yêu cầu trả hàng cho đơn ${order.maDonHang}?`,
+      okText: "Đồng ý",
+      cancelText: "Không đồng ý",
       onOk: async () => {
         try {
-          const res = await deleteOrder(order.maDonHang);
+          const res = await updateOrderStatus(
+            order.maDonHang,
+            "Da_Huy",
+            order.trangThaiThanhToan
+          );
           if (+res.EC === 0) {
-            toast.success("Xóa đơn hàng thành công");
+            toast.success("Đã xác nhận yêu cầu trả hàng (Đơn đã hủy)");
             fetchOrders();
           } else {
-            toast.error(res.EM || "Xóa thất bại");
+            toast.error(res.EM || "Xác nhận thất bại");
           }
         } catch (error) {
-          toast.error("Lỗi xóa đơn hàng");
-          console.error(error);
+          console.error("Lỗi khi xác nhận trả hàng:", error);
+          toast.error("Đã xảy ra lỗi");
+        }
+      },
+      onCancel: async () => {
+        try {
+          const res = await updateOrderStatus(
+            order.maDonHang,
+            "Tu_Choi",
+            order.trangThaiThanhToan
+          );
+          if (+res.EC === 0) {
+            toast.success("Đã từ chối yêu cầu trả hàng");
+            fetchOrders();
+          } else {
+            toast.error(res.EM || "Thao tác thất bại");
+          }
+        } catch (error) {
+          console.error("Lỗi khi từ chối trả hàng:", error);
+          toast.error("Đã xảy ra lỗi");
         }
       },
     });
@@ -171,6 +193,8 @@ const OrderAdmin = () => {
         switch (text) {
           case "Cho_Xac_Nhan":
             return "Chờ xác nhận";;
+          case "Tra_Hang":
+            return "Trả hàng";
           case "Dang_Van_Chuyen":
             return "Đang vận chuyển";
           case "Hoan_Thanh":
@@ -181,26 +205,42 @@ const OrderAdmin = () => {
             return text;
         }
       },
-    },
-    {
-      title: "Thao tác",
-      key: "action",
-      render: (_, record) => (
-        <Space>
-          <Button type="link" onClick={() => showStatusModal(record)}>
-            Cập nhật trạng thái
-          </Button>
-          <Button type="link" danger onClick={() => handleDeleteOrder(record)}>
-            Xóa
-          </Button>
-          {record.trangThaiThanhToan === "Da_Thanh_Toan" && (
-            <Button type="link" onClick={() => handleExportReceipt(record)}>
-              Xuất phiếu thu
-            </Button>
-          )}
-        </Space>
-      ),
-    },
+    },{
+        title: "Thao tác",
+        key: "action",
+        render: (_, record) => {
+          if (record.trangThaiXuLy === "Da_Huy") {
+            return record.trangThaiThanhToan === "Da_Thanh_Toan" ? (
+              <Button type="primary" onClick={() => handleRefund(record)}>
+                Hoàn tiền
+              </Button>
+            ) : null;
+          }
+
+          if (record.trangThaiXuLy === "Tra_Hang") {
+            return (
+              <Button type="primary" onClick={() => handleReturnConfirmation(record)}>
+                Xác nhận yêu cầu trả hàng
+              </Button>
+            );
+          }
+
+          return (
+            <Space>
+              <Button type="primary" onClick={() => showStatusModal(record)}>
+                Cập nhật trạng thái
+              </Button>
+
+              {record.trangThaiThanhToan === "Da_Thanh_Toan" && (
+                <Button type="primary" onClick={() => handleExportReceipt(record)}>
+                  Xuất phiếu thu
+                </Button>
+              )}
+            </Space>
+          );
+        },
+      },
+
   ];
 
   const handleExportReceipt = async (order) => {
@@ -290,8 +330,8 @@ return (
     <div
       id="receipt-pdf-container"
       style={{
-        position: "absolute",
-        top: 0,
+       position: "fixed",
+    top: "-9999px",
         left: 0,
         width: "1000px",
         minHeight: "600px",

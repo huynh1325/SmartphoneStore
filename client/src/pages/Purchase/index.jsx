@@ -8,6 +8,7 @@ import PendingOrder from "../../components/PendingOrder"
 import Shipping from "../../components/Shipping"
 import Completed from "../../components/Completed"
 import Cancelled from "../../components/Cancelled"
+import ReturnRefund from "../../components/ReturnRefund"
 import { useLocation } from 'react-router-dom';
 import { toast } from "react-toastify";
 
@@ -19,8 +20,8 @@ const tabList = [
     { label: 'Vận chuyển', component: <Shipping /> },
     { label: 'Hoàn thành', component: <Completed /> },
     { label: 'Đã hủy', component: <Cancelled /> },
+    { label: 'Trả hàng', component: <ReturnRefund /> },
 ];
-
 
 const Purchase = () => {
 

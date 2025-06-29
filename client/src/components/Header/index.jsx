@@ -15,7 +15,6 @@ import { fetchProductByName } from '../../util/api';
 const cx = classNames.bind(styles);
 
 const Header = () => {
-
     const navigate = useNavigate();
     const [modalLogin, setModalLogin] = useState(false);    
     const [modalRegister, setModalRegister] = useState(false);

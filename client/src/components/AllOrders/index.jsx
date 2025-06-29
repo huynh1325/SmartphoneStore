@@ -33,18 +33,18 @@ const AllOrders = () => {
 
     const formatTrangThaiXuLy = (status) => {
         switch (status) {
-            case "Cho_Thanh_Toan":
-                return "Chờ Thanh Toán";
             case "Cho_Xac_Nhan":
                 return "Chờ Xác Nhận";
-            case "Da_Thanh_Toan":
-                return "Đã Thanh Toán";
-            case "Dang_Giao":
-                return "Đang Giao";
-            case "Da_Nhan":
-                return "Đã Nhận Hàng";
+            case "Dang_Van_Chuyen":
+                return "Đang Vận Chuyển";
+            case "Tu_Choi_Tra_Hang":
+                return "Yêu cầu trả hàng bị từ chối";
+            case "Hoan_Thanh":
+                return "Hoàn Thành";
             case "Da_Huy":
                 return "Đã Hủy";
+            case "Tra_Hang":
+                return "Trả Hàng";
             default:
                 return status;
         }

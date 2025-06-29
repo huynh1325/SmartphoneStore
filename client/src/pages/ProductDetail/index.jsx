@@ -5,19 +5,32 @@ import styles from './ProductDetail.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useParams } from 'react-router-dom';
 import { faCartShopping, faLocationDot } from '@fortawesome/free-solid-svg-icons';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { AuthContext } from '../../components/Context/AuthContext';
 import { addToCart, fetctColorProduct, getAllCart } from "../../util/api";
 import { toast } from "react-toastify";
 import { useCart } from "../../components/Context/CartContext";
+import { useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
 const ProductDetail = () => {
+    const navigate = useNavigate();
     const { id } = useParams();
     const [product, setProduct] = useState(null);
     const [colors, setColors] = useState([]);
     const [selectedColor, setSelectedColor] = useState(null);
     const { fetchCart } = useCart();
+    
+    const { auth, setAuth } = useContext(AuthContext);
+
+    const cartRedirect = () => {
+        if (!auth.isAuthenticated) {
+            toast.warn("Vui lòng đăng nhập để xem giỏ hàng!");
+            return;
+        }
+        navigate("/cart");
+    }
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -96,10 +109,10 @@ const ProductDetail = () => {
                         <div className={cx("container-content")}>
                             <img className={cx("banner-discount")} src="https://cdnv2.tgdd.vn/mwg-static/tgdd/Banner/d5/ae/d5ae30d89b08a2e22b67099889159698.jpg" />
                             <img className={cx("banner-discount")} src="https://cdnv2.tgdd.vn/mwg-static/tgdd/Banner/b4/40/b44002892156fc70b5ce6cdc68efd2c5.png" />
-                            <div className={cx("address")}>
+                            {/* <div className={cx("address")}>
                                 <FontAwesomeIcon icon={faLocationDot} className={cx("location-icon")} />
                                 <span>36 Cao Thắng, Thanh Bình, Hải Châu, Đà Nẵng</span>
-                            </div>
+                            </div> */}
                             <div className={cx("color-list")}>
                                 {colors.length > 0 ? (
                                     colors.map((color) => (
@@ -129,7 +142,7 @@ const ProductDetail = () => {
                                     <FontAwesomeIcon icon={faCartShopping} className={cx('cart-icon')}/>
                                     <span>Thêm vào giỏ hàng</span>
                                 </button>
-                                <button className={cx("btn-buy")}>Mua ngay</button>
+                                <button className={cx("btn-buy")} onClick={cartRedirect}>Mua ngay</button>
                             </div>
                         </div>
                         <div className={cx("container-content")}>
@@ -151,8 +164,16 @@ const ProductDetail = () => {
                                 <span>{product.inch}</span>
                             </div>
                             <div className={cx("info-row")}>
+                                <span className={cx("label")}>Chip đồ họa:</span>
+                                <span>{product.chipDoHoa}</span>
+                            </div>
+                            <div className={cx("info-row")}>
                                 <span className={cx("label")}>Ram:</span>
                                 <span>{product.ram}</span>
+                            </div>
+                            <div className={cx("info-row")}>
+                                <span className={cx("label")}>Thẻ nhớ:</span>
+                                <span>{product.theNho}</span>
                             </div>
                             <div className={cx("info-row")}>
                                 <span className={cx("label")}>Dung lượng lưu trữ:</span>

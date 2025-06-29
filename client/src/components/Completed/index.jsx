@@ -1,11 +1,11 @@
 import classNames from 'classnames/bind';
 import styles from './Completed.module.scss';
-import Footer from '../Footer';
 import { useEffect, useState } from 'react';
-import { getOrderByUser } from '../../util/api';
+import { getOrderByUser, updateOrderStatus } from '../../util/api';
 import { toast } from "react-toastify";
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas-pro'
+import html2canvas from 'html2canvas-pro';
+import { Modal } from 'antd';
 
 const cx = classNames.bind(styles);
 
@@ -19,7 +19,7 @@ const Completed = () => {
                 const res = await getOrderByUser();
                 if (+res.EC === 0) {
                     const filtered = res.DT
-                        .filter(order => order.trangThaiXuLy === "Hoan_Thanh")
+                        .filter(order => order.trangThaiXuLy === "Hoan_Thanh" || order.trangThaiXuLy === "Tu_Choi_Tra_Hang")
                         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                     setOrders(filtered);
                 } else {
@@ -37,6 +37,8 @@ const Completed = () => {
         switch (status) {
             case "Hoan_Thanh":
                 return "Hoàn Thành";
+            case "Tu_Choi_Tra_Hang":
+                return "Yêu cầu trả hàng bị từ chối";
             default:
                 return status;
         }
@@ -123,6 +125,36 @@ const Completed = () => {
         }
     };
 
+    const handleReturnRequest = (order) => {
+        Modal.confirm({
+            title: 'Xác nhận trả hàng',
+            content: `Bạn có chắc chắn muốn gửi yêu cầu trả hàng không?`,
+            okText: 'Đồng ý',
+            cancelText: 'Hủy',
+            onOk: async () => {
+            try {
+                const res = await updateOrderStatus(order.maDonHang, "Tra_Hang", order.trangThaiThanhToan);
+
+                if (+res.EC === 0) {
+                toast.success("Yêu cầu trả hàng đã được gửi.");
+                const response = await getOrderByUser();
+                if (+response.EC === 0) {
+                    const filtered = response.DT
+                    .filter(order => order.trangThaiXuLy === "Hoan_Thanh")
+                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    setOrders(filtered);
+                }
+                } else {
+                toast.error(res.EM || "Không thể gửi yêu cầu trả hàng.");
+                }
+            } catch (error) {
+                toast.error("Lỗi khi gửi yêu cầu trả hàng.");
+                console.error(error);
+            }
+            }
+        });
+    };
+
     return (
         <>
             <div className={cx('order-wrapper')}>
@@ -168,17 +200,26 @@ const Completed = () => {
                                         </div>
                                     ))}
                                 </div>
-
                                 <div className={cx('order-summary')}>
                                     <div className={cx('total-price')}>
                                         Tổng tiền: <strong>{Number(order.tongTienHang).toLocaleString('vi-VN')}₫</strong>
                                     </div>
-                                    <button
-                                        className={cx('detail-btn')}
-                                        onClick={() => handleExportReceipt(order)}
-                                    >
-                                        Xuất hóa đơn
-                                    </button>
+                                    <div className={cx('button-group')}>
+                                        <button
+                                            className={cx('detail-btn')}
+                                            onClick={() => handleExportReceipt(order)}
+                                        >
+                                            Xuất hóa đơn
+                                        </button>
+                                        {order.trangThaiXuLy !== "Tu_Choi_Tra_Hang" && (
+                                            <button
+                                                className={cx('detail-btn')}
+                                                onClick={() => handleReturnRequest(order)}
+                                            >
+                                                Yêu cầu trả hàng
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>
