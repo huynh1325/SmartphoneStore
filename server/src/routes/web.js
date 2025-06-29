@@ -83,6 +83,7 @@ const initWebRoutes = (app) => {
     router.put('/orders/:maDonHang', auth, orderController.handleUpdateOrderStatus);
     router.get('/orders/:maDonHang', auth, orderController.getOrderById);
     router.get('/orders', auth, orderController.getOrdersByUser);
+    router.get('/admin/orders', orderController.getAllOrders);
 
     //checkout
     router.post('/create-payment-url', auth, paymentController.createPaymentUrl);

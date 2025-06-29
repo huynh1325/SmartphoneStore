@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Table, Button, Space, Modal, Select } from "antd";
 import { toast } from "react-toastify";
-import { fetchAllOrder, updateOrderStatus } from "../../../util/api";
+import { fetchAllOrder, updateOrderStatus, fetchAllOrderAdmin } from "../../../util/api";
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas-pro'
 
@@ -10,10 +10,11 @@ const { Option } = Select;
 const OrderAdmin = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const [receiptContent, setReceiptContent] = useState(null);
   const [isStatusModalVisible, setIsStatusModalVisible] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [newStatus, setNewStatus] = useState("");
+  const [showReceipt, setShowReceipt] = useState(false);
 
   const [expandedGroups, setExpandedGroups] = useState({
     Cho_Xac_Nhan: true,
@@ -54,7 +55,7 @@ const OrderAdmin = () => {
   const fetchOrders = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetchAllOrder();
+      const res = await fetchAllOrderAdmin();
       if (res) {
         setOrders(res.DT);
       } else {
@@ -244,104 +245,111 @@ const OrderAdmin = () => {
 
   ];
 
-  const handleExportReceipt = async (order) => {
-    try {
-      const res = await fetch(`http://localhost:8080/api/v1/invoice/${order.maDonHang}`);
-      const data = await res.json();
+const handleExportReceipt = async (order) => {
+  try {
+    const res = await fetch(`http://localhost:8080/api/v1/invoice/${order.maDonHang}`);
+    const data = await res.json();
 
-      if (data.EC !== 0) {
-        toast.error("Không tìm thấy dữ liệu hóa đơn.");
-        return;
-      }
-
-      const { hoaDon, nguoiDung, chiTietItems } = data.DT;
-
-      const container = document.getElementById("receipt-pdf-container");
-      if (!container) return;
-
-      container.innerHTML = `
-        <div style="padding: 20px; font-family: Arial; width: 800px; color: #000; font-size: 20px">
-          <h2 style="text-align:center; font-weight: bold; font-size: 24px">PHIẾU THU</h2>
-          <p><strong>Mã phiếu thu:</strong> ${hoaDon.maHoaDon}</p>
-          <p><strong>Ngày:</strong> ${new Date(hoaDon.ngayTao).toLocaleDateString("vi-VN")}</p>
-          <p><strong>Khách hàng:</strong> ${nguoiDung.tenNguoiDung}</p>
-          <p><strong>Điện thoại:</strong> ${nguoiDung.soDienThoai}</p>
-          <p><strong>Địa chỉ giao:</strong> ${hoaDon.diaChiGiaoHang}</p>
-          <br />
-          <table style="width:100%; border-collapse:collapse; border: 1px solid #000;">
-            <thead>
-              <tr>
-                <th style="padding: 8px; border: 1px solid #000;">Tên sản phẩm</th>
-                <th style="padding: 8px; border: 1px solid #000;">Màu</th>
-                <th style="padding: 8px; border: 1px solid #000;">Số lượng</th>
-                <th style="padding: 8px; border: 1px solid #000;">Giá</th>
-                <th style="padding: 8px; border: 1px solid #000;">Thành tiền</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${chiTietItems.map(item => `
-                <tr>
-                  <td style="padding: 8px; border: 1px solid #000;">${item.tenSanPham}</td>
-                  <td style="padding: 8px; border: 1px solid #000;">${item.mau}</td>
-                  <td style="padding: 8px; border: 1px solid #000;">${item.soLuong}</td>
-                  <td style="padding: 8px; border: 1px solid #000;">${Number(item.gia).toLocaleString("vi-VN")}</td>
-                  <td style="padding: 8px; border: 1px solid #000;">${(item.soLuong * item.gia).toLocaleString("vi-VN")}</td>
-                </tr>
-              `).join("")}
-            </tbody>
-          </table>
-          <br />
-          <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-              <strong>Thuế (10%):</strong>
-              <span>${Math.round(hoaDon.tongThanhToan - hoaDon.tongThanhToan / 1.1).toLocaleString("vi-VN")} ₫</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-              <strong>Giảm giá:</strong>
-              <span>${Number(hoaDon.tongTienGiam).toLocaleString("vi-VN")} ₫</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-              <strong>Thành tiền (đã gồm thuế):</strong>
-              <span>${Number(hoaDon.tongThanhToan).toLocaleString("vi-VN")} ₫</span>
-          </div>
-        </div>
-      `;
-
-      await new Promise(resolve => setTimeout(resolve, 100));
-
-      const canvas = await html2canvas(container, { scale: 2 });
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfHeight = (imgProps.height * pageWidth) / imgProps.width;
-
-      pdf.addImage(imgData, 'PNG', 10, 10, pageWidth - 20, pdfHeight * 0.95);
-      pdf.save(`phieu-thu-${hoaDon.maHoaDon}.pdf`);
-      toast.success("Xuất phiếu thu thành công");
-    } catch (err) {
-      console.error("Lỗi xuất phiếu thu:", err);
-      toast.error("Đã xảy ra lỗi khi xuất phiếu thu.");
+    if (data.EC !== 0) {
+      toast.error("Không tìm thấy dữ liệu hóa đơn.");
+      return;
     }
+
+    const { hoaDon, nguoiDung, chiTietItems } = data.DT;
+
+    const cellStyle = { padding: 8, border: "1px solid #000" };
+    const rowStyle = { display: "flex", justifyContent: "space-between", marginBottom: 5 };
+
+    setReceiptContent(
+      <div style={{ padding: 20, fontFamily: "Arial", width: 800, color: "#000", fontSize: 20 }}>
+        <h2 style={{ textAlign: "center", fontWeight: "bold", fontSize: 24 }}>PHIẾU THU</h2>
+        <p><strong>Mã phiếu thu:</strong> {hoaDon.maHoaDon}</p>
+        <p><strong>Ngày:</strong> {new Date(hoaDon.ngayTao).toLocaleDateString("vi-VN")}</p>
+        <p><strong>Khách hàng:</strong> {nguoiDung.tenNguoiDung}</p>
+        <p><strong>Điện thoại:</strong> {nguoiDung.soDienThoai}</p>
+        <p><strong>Địa chỉ giao:</strong> {hoaDon.diaChiGiaoHang}</p>
+        <br />
+        <table style={{ width: "100%", borderCollapse: "collapse", border: "1px solid #000" }}>
+          <thead>
+            <tr>
+              <th style={cellStyle}>Tên sản phẩm</th>
+              <th style={cellStyle}>Màu</th>
+              <th style={cellStyle}>Số lượng</th>
+              <th style={cellStyle}>Giá</th>
+              <th style={cellStyle}>Thành tiền</th>
+            </tr>
+          </thead>
+          <tbody>
+            {chiTietItems.map(item => (
+              <tr key={item.maChiTietDonHang}>
+                <td style={cellStyle}>{item.tenSanPham}</td>
+                <td style={cellStyle}>{item.mau}</td>
+                <td style={cellStyle}>{item.soLuong}</td>
+                <td style={cellStyle}>{Number(item.gia).toLocaleString("vi-VN")}</td>
+                <td style={cellStyle}>{(item.soLuong * item.gia).toLocaleString("vi-VN")}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <br />
+        <div style={rowStyle}><strong>Thuế (10%):</strong><span>{Math.round(hoaDon.tongThanhToan - hoaDon.tongThanhToan / 1.1).toLocaleString("vi-VN")} ₫</span></div>
+        <div style={rowStyle}><strong>Giảm giá:</strong><span>{Number(hoaDon.tongTienGiam).toLocaleString("vi-VN")} ₫</span></div>
+        <div style={rowStyle}><strong>Thành tiền (đã gồm thuế):</strong><span>{Number(hoaDon.tongThanhToan).toLocaleString("vi-VN")} ₫</span></div>
+      </div>
+    );
+    setShowReceipt(true);
+
+  } catch (err) {
+    console.error("Lỗi xuất phiếu thu:", err);
+    toast.error("Đã xảy ra lỗi khi xuất phiếu thu.");
+  }
+};
+
+
+useEffect(() => {
+  const exportPDF = async () => {
+    if (!receiptContent) return;
+    await new Promise(resolve => setTimeout(resolve, 1000)); 
+    const container = document.getElementById("receipt-pdf-container");
+    if (!container) return;
+
+    const canvas = await html2canvas(container, { scale: 2 });
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfHeight = (imgProps.height * pageWidth) / imgProps.width;
+
+    pdf.addImage(imgData, 'PNG', 10, 10, pageWidth - 20, pdfHeight * 0.95);
+    pdf.save(`phieu-thu.pdf`);
+    toast.success("Xuất phiếu thu thành công");
+
+    setReceiptContent(null);
+     setShowReceipt(false); 
   };
+
+  exportPDF();
+}, [receiptContent]);
+
 
 return (
   <div>
     <h2>Quản lý đơn hàng</h2>
 
-    <div
-      id="receipt-pdf-container"
-      style={{
-        position: "fixed",
-        top: "-9999px",
-        left: 0,
-        width: "1000px",
-        minHeight: "600px",
-        zIndex: -1,
-        background: "#fff",
-        opacity: 0,
-        pointerEvents: "none",
-      }}
-    ></div>
+  <div
+    id="receipt-pdf-container"
+    style={{
+      position: "absolute",
+      top: 5000,
+      left: 5000,
+      width: "1000px",
+      background: "#fff",
+      zIndex: 9999,
+      display: showReceipt ? "block" : "none",
+    }}
+  >
+    {receiptContent}
+  </div>
 
     {statusOrder.map((status) => (
       <div key={status} style={{ marginBottom: "24px", border: "1px solid #ddd", borderRadius: "8px" }}>

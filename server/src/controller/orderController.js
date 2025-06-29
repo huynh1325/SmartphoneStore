@@ -130,20 +130,44 @@ const handleUpdateOrderStatus = async (req, res) => {
         }
 
         donHang.trangThaiXuLy = trangThaiXuLy;
+
         if (trangThaiThanhToan) {
             donHang.trangThaiThanhToan = trangThaiThanhToan;
-        } else if (trangThaiXuLy === 'Hoan_Thanh') {
-            donHang.trangThaiThanhToan = 'Da_Thanh_Toan';
         }
-        await donHang.save();
 
-        if (trangThaiXuLy === 'Hoan_Thanh') {
+        if (trangThaiXuLy === 'Hoan_Thanh' && donHang.trangThaiThanhToan === 'Chua_Thanh_Toan') {
             const chiTietDonHang = await db.ChiTietDonHang.findAll({
                 where: { maDonHang }
             });
 
-            const result = await createInvoice(donHang, chiTietDonHang);
+            for (const item of chiTietDonHang) {
+                if (item.mau) {
+                    const mauSanPham = await db.MauSanPham.findOne({
+                        where: {
+                            maSanPham: item.maSanPham,
+                            mau: item.mau
+                        }
+                    });
+
+                    if (mauSanPham) {
+                        const soLuongMoi = mauSanPham.soLuong - item.soLuong;
+                        await mauSanPham.update({
+                            soLuong: Math.max(soLuongMoi, 0)
+                        });
+                    } else {
+                        console.warn(`Không tìm thấy màu ${item.mau} cho sản phẩm ${item.maSanPham}`);
+                    }
+                } else {
+                    console.warn(`Chi tiết đơn hàng thiếu màu: ${item.maChiTietDonHang}`);
+                }
+            }
+
+            await createInvoice(donHang, chiTietDonHang);
+
+            donHang.trangThaiThanhToan = 'Da_Thanh_Toan';
         }
+
+        await donHang.save();
 
         return res.status(200).json({
             EC: 0,
@@ -158,6 +182,7 @@ const handleUpdateOrderStatus = async (req, res) => {
         });
     }
 };
+
 
 const getOrderById = async (req, res) => {
     const { maDonHang } = req.params;
@@ -240,6 +265,45 @@ const getOrdersByUser = async (req, res) => {
     }
 }
 
+const getAllOrders = async (req, res) => {
+    try {
+        const orders = await db.DonHang.findAll({
+            include: [
+                {
+                    model: db.NguoiDung,
+                    as: 'nguoiDung',
+                    attributes: ['maNguoiDung', 'tenNguoiDung', 'email']
+                },
+                {
+                    model: db.ChiTietDonHang,
+                    as: 'chiTietDonHang',
+                    include: [
+                        {
+                            model: db.SanPham,
+                            as: 'sanPham',
+                            attributes: ['maSanPham', 'tenSanPham']
+                        }
+                    ]
+                }
+            ],
+            order: [['createdAt', 'DESC']]
+        });
+
+        return res.status(200).json({
+            EC: 0,
+            EM: 'Lấy tất cả đơn hàng thành công',
+            DT: orders
+        });
+    } catch (error) {
+        console.error('Lỗi khi lấy danh sách đơn hàng:', error);
+        return res.status(500).json({
+            EC: -1,
+            EM: 'Lỗi server khi lấy danh sách đơn hàng',
+            DT: null
+        });
+    }
+};
+
 module.exports = {
-    handleCreateOrder, getOrderById, getOrdersByUser, handleUpdateOrderStatus
+    handleCreateOrder, getOrderById, getOrdersByUser, handleUpdateOrderStatus, getAllOrders
 }

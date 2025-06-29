@@ -89,6 +89,10 @@ const fetchAllOrder = () => {
     return axios.get(`/api/v1/orders`)
 }
 
+const fetchAllOrderAdmin = () => {
+    return axios.get(`/api/v1/admin/orders`)
+}
+
 const createAddress = () => {
     return axios.post(`/api/v1/address`)
 }
@@ -124,5 +128,5 @@ const createReview = (reviewData) => {
 export {
     registerNewUser, createProduct, updateProduct, verifyUserCode, userLogin, addToCart, getAllCart, fetchAllProduct, deleteProduct, createOrder, getOrderById,
     createPaymentUrl, fetchAllOrder, createAddress, getAddressByUser, getOrderByUser, fetctColorProduct, getVoucherByCode, fetchProductByName, fetchProductByBrand,
-    updateOrderStatus, deleteFromCart, updateUserInfo, createReview
+    updateOrderStatus, deleteFromCart, updateUserInfo, createReview, fetchAllOrderAdmin
 }
