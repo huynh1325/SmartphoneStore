@@ -13,6 +13,7 @@ import addressController from '../controller/addressController';
 import colorProductController from '../controller/colorProductController';
 import statisticalController from '../controller/statisticalController';
 import invoiceController from '../controller/invoiceController';
+import reviewController from '../controller/reviewController';
 import multer from "multer";
 import path from 'path';
 import auth from '../middleware/auth';
@@ -108,6 +109,10 @@ const initWebRoutes = (app) => {
     router.get('/dashboard', statisticalController.getDashboardStats);
     router.get('/top-selling', statisticalController.getTopSellingProducts);
     router.get('/revenue-last-10-days', statisticalController.getRevenueLast10Days);
+
+    //review
+    router.get('/review/:maSanPham', reviewController.handleGetReviewsByProduct);
+    router.post('/review', reviewController.handleCreateReview);
 
     return app.use("/api/v1/", router);
 }

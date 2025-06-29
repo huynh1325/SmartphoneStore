@@ -1,17 +1,22 @@
 import classNames from 'classnames/bind';
 import styles from './Completed.module.scss';
 import { useEffect, useState } from 'react';
-import { getOrderByUser, updateOrderStatus } from '../../util/api';
+import { getOrderByUser, updateOrderStatus, createReview } from '../../util/api';
 import { toast } from "react-toastify";
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas-pro';
-import { Modal } from 'antd';
+import { Modal, Radio } from 'antd';
 
 const cx = classNames.bind(styles);
 
 const Completed = () => {
     const [orders, setOrders] = useState([]);
     const IMAGE_BASE_URL = "http://localhost:8080";
+    const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [rating, setRating] = useState(5);
+    const [reviewContent, setReviewContent] = useState("");
 
     useEffect(() => {
         const fetchOrders = async () => {
@@ -19,7 +24,7 @@ const Completed = () => {
                 const res = await getOrderByUser();
                 if (+res.EC === 0) {
                     const filtered = res.DT
-                        .filter(order => order.trangThaiXuLy === "Hoan_Thanh" || order.trangThaiXuLy === "Tu_Choi_Tra_Hang")
+                        .filter(order => order.trangThaiXuLy === "Hoan_Thanh" || order.trangThaiXuLy === "Da_Nhan_Hang" || order.trangThaiXuLy === "Tu_Choi_Tra_Hang")
                         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                     setOrders(filtered);
                 } else {
@@ -36,6 +41,8 @@ const Completed = () => {
     const formatTrangThaiXuLy = (status) => {
         switch (status) {
             case "Hoan_Thanh":
+                return "Hoàn Thành";
+            case "Da_Nhan_Hang":
                 return "Hoàn Thành";
             case "Tu_Choi_Tra_Hang":
                 return "Yêu cầu trả hàng bị từ chối";
@@ -155,6 +162,47 @@ const Completed = () => {
         });
     };
 
+    const handleXacNhanDaNhanHang = (order) => {
+        Modal.confirm({
+            title: "Xác nhận đã nhận hàng",
+            content: "Bạn có chắc chắn đã nhận được hàng và muốn hoàn tất đơn hàng?",
+            okText: "Xác nhận",
+            cancelText: "Hủy",
+            onOk: async () => {
+            try {
+                const res = await updateOrderStatus(order.maDonHang, "Hoan_Thanh", order.trangThaiThanhToan);
+                if (+res.EC === 0) {
+                toast.success("Đã xác nhận hoàn tất đơn hàng.");
+                const response = await getOrderByUser();
+                if (+response.EC === 0) {
+                    const filtered = response.DT
+                    .filter(order => ["Hoan_Thanh", "Da_Nhan_Hang", "Tu_Choi_Tra_Hang"].includes(order.trangThaiXuLy))
+                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    setOrders(filtered);
+                }
+                } else {
+                toast.error(res.EM || "Cập nhật thất bại.");
+                }
+            } catch (error) {
+                toast.error("Lỗi xác nhận đơn hàng.");
+                console.error(error);
+            }
+            }
+        });
+    };
+
+    const handleReview = (order) => {
+        setSelectedOrder(order);
+
+        if (order.chiTietDonHang?.length === 1) {
+            setSelectedProduct(order.chiTietDonHang[0]);
+        } else {
+            setSelectedProduct(null);
+        }
+
+        setIsReviewModalVisible(true);
+    };
+
     return (
         <>
             <div className={cx('order-wrapper')}>
@@ -205,27 +253,137 @@ const Completed = () => {
                                         Tổng tiền: <strong>{Number(order.tongTienHang).toLocaleString('vi-VN')}₫</strong>
                                     </div>
                                     <div className={cx('button-group')}>
-                                        <button
-                                            className={cx('detail-btn')}
-                                            onClick={() => handleExportReceipt(order)}
-                                        >
-                                            Xuất hóa đơn
-                                        </button>
-                                        {order.trangThaiXuLy !== "Tu_Choi_Tra_Hang" && (
+                                        {order.trangThaiXuLy === "Da_Nhan_Hang" && (
+                                            <>
+                                            <button
+                                                className={cx('detail-btn')}
+                                                onClick={() => handleXacNhanDaNhanHang(order)}
+                                            >
+                                                Xác nhận đã nhận hàng
+                                            </button>
                                             <button
                                                 className={cx('detail-btn')}
                                                 onClick={() => handleReturnRequest(order)}
                                             >
                                                 Yêu cầu trả hàng
                                             </button>
+                                            </>
                                         )}
-                                    </div>
+
+                                        {(order.trangThaiXuLy === "Hoan_Thanh" || order.trangThaiXuLy === "Tu_Choi_Tra_Hang") && (
+                                            <>
+                                                <button
+                                                    className={cx('detail-btn')}
+                                                    onClick={() => handleReview(order)}
+                                                >
+                                                    Đánh giá sản phẩm
+                                                </button>
+                                                <button
+                                                    className={cx('detail-btn')}
+                                                    onClick={() => handleExportReceipt(order)}
+                                                >
+                                                    Xuất hóa đơn
+                                                </button>
+                                            </>
+                                        )}
+                                        </div>
+
                                 </div>
                             </div>
                         </div>
                     ))
                 )}
             </div>
+            <Modal
+                title="Đánh giá sản phẩm"
+                open={isReviewModalVisible}
+                onCancel={() => {
+                    setIsReviewModalVisible(false);
+                    setSelectedProduct(null);
+                    console.log("selectedProduct:", selectedProduct);
+                    console.log("selectedProduct?.id:", selectedProduct?.id);
+                }}
+                onOk={async () => {
+                    if (!reviewContent.trim()) {
+                        toast.warning("Vui lòng nhập nội dung đánh giá");
+                    return;
+                    }
+
+                    if (!selectedProduct) {
+                        toast.warning("Vui lòng chọn sản phẩm để đánh giá");
+                    return;
+                    }
+
+                    try {
+                    const res = await createReview({
+                        maNguoiDung: selectedOrder?.maNguoiDung,
+                        maSanPham: selectedProduct?.maSanPham,
+                        maDonHang: selectedOrder?.maDonHang,
+                        xepHang: rating,
+                        noiDung: reviewContent
+                    });
+
+                    if (+res.EC === 0) {
+                        toast.success("Đánh giá thành công!");
+                        setIsReviewModalVisible(false);
+                        setRating(5);
+                        setReviewContent("");
+                        setSelectedProduct(null);
+                    } else {
+                        toast.error(res.EM || "Đánh giá thất bại.");
+                    }
+                    } catch (err) {
+                    toast.error("Lỗi khi gửi đánh giá.");
+                    console.error(err);
+                    }
+                }}
+                okText="Gửi đánh giá"
+                cancelText="Hủy"
+                >
+                <div>
+                    <label><strong>Chọn sản phẩm để đánh giá:</strong></label>
+                    <Radio.Group
+                        onChange={(e) => {
+                            const selected = selectedOrder?.chiTietDonHang?.find(
+                            (item) => item.maSanPham === e.target.value
+                            );
+                            setSelectedProduct(selected);
+                        }}
+                        value={selectedProduct?.maSanPham}
+                        style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "16px" }}
+                        >
+                        {selectedOrder?.chiTietDonHang?.map((item) => (
+                            <Radio key={item.maChiTietDonHang} value={item.maSanPham}>
+                            {item.tenSanPham ?? item.sanPham?.tenSanPham ?? item.maSanPham}
+                            </Radio>
+                        ))}
+                    </Radio.Group>
+
+                    <label>Chọn số sao:</label>
+                    <div style={{ fontSize: "24px", marginBottom: "12px" }}>
+                    {[1, 2, 3, 4, 5].map((star) => (
+                        <span
+                        key={star}
+                        style={{
+                            cursor: "pointer",
+                            color: star <= rating ? "#faad14" : "#d9d9d9",
+                        }}
+                        onClick={() => setRating(star)}
+                        >
+                        ★
+                        </span>
+                    ))}
+                    </div>
+
+                    <label>Nội dung đánh giá:</label>
+                    <textarea
+                    rows={4}
+                    value={reviewContent}
+                    onChange={(e) => setReviewContent(e.target.value)}
+                    style={{ width: "100%", resize: "none" }}
+                    />
+                </div>
+                </Modal>
         </>
     );
 };

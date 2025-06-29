@@ -203,3 +203,31 @@
         cursor: not-allowed;
     }
 }
+
+.review-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.review-item {
+  background: #f9f9f9;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.review-header {
+  font-size: 16px;
+  margin-bottom: 6px;
+}
+
+.review-content {
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+
+.review-time {
+  font-size: 13px;
+  color: gray;
+}

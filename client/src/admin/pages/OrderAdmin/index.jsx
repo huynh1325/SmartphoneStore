@@ -42,6 +42,7 @@ const OrderAdmin = () => {
     Tra_Hang: "Trả hàng",
     Dang_Van_Chuyen: "Đang vận chuyển",
     Hoan_Thanh: "Hoàn thành",
+    Da_Nhan_Hang: "Đã nhận hàng",
     Da_Huy: "Đã hủy",
   };
 
@@ -330,8 +331,8 @@ return (
     <div
       id="receipt-pdf-container"
       style={{
-       position: "fixed",
-    top: "-9999px",
+        position: "fixed",
+        top: "-9999px",
         left: 0,
         width: "1000px",
         minHeight: "600px",

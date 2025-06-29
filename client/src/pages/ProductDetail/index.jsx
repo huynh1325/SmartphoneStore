@@ -24,6 +24,26 @@ const ProductDetail = () => {
     
     const { auth, setAuth } = useContext(AuthContext);
 
+    const [reviews, setReviews] = useState([]);
+
+    useEffect(() => {
+        const fetchReviews = async () => {
+            try {
+                const res = await fetch(`http://localhost:8080/api/v1/review/${id}`);
+                const data = await res.json();
+                if (data.EC === 0) {
+                    setReviews(data.DT);
+                } else {
+                    console.error("Lỗi lấy đánh giá:", data.EM);
+                }
+            } catch (err) {
+                console.error("Lỗi fetch đánh giá:", err);
+            }
+        };
+
+        fetchReviews();
+    }, [id]);
+
     const cartRedirect = () => {
         if (!auth.isAuthenticated) {
             toast.warn("Vui lòng đăng nhập để xem giỏ hàng!");
@@ -180,9 +200,29 @@ const ProductDetail = () => {
                                 <span>{product.dungLuongLuuTru}</span>
                             </div>
                         </div>
-                        {/* <div className={cx("container-content")}>
-                            <div>Đánh giá khách hàng</div>
-                        </div> */}
+                        <div className={cx("container-content")}>
+                            <div className={cx("container-content")}>
+                                <div className={cx("review-title")}>Đánh giá khách hàng</div>
+                                {reviews.length === 0 ? (
+                                    <p>Chưa có đánh giá nào cho sản phẩm này.</p>
+                                ) : (
+                                    reviews.map((review) => (
+                                        <div key={review.maDanhGia} className={cx("review-item")}>
+                                            <div className={cx("review-header")}>
+                                                <strong>{review.nguoiDung.tenNguoiDung}</strong>
+                                                <span style={{ marginLeft: '12px', color: '#faad14' }}>
+                                                    {'★'.repeat(parseInt(review.xepHang)) + '☆'.repeat(5 - parseInt(review.xepHang))}
+                                                </span>
+                                            </div>
+                                            <p className={cx("review-content")}>{review.noiDung}</p>
+                                            <div className={cx("review-time")}>
+                                                {new Date(review.createdAt).toLocaleDateString('vi-VN')}
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </div>
                 ) : (

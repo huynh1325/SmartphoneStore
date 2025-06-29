@@ -117,8 +117,12 @@ const fetchProductByBrand = (nhanHieu) => {
     });
 }
 
+const createReview = (reviewData) => {
+    return axios.post(`/api/v1/review`, reviewData)
+}
+
 export {
     registerNewUser, createProduct, updateProduct, verifyUserCode, userLogin, addToCart, getAllCart, fetchAllProduct, deleteProduct, createOrder, getOrderById,
     createPaymentUrl, fetchAllOrder, createAddress, getAddressByUser, getOrderByUser, fetctColorProduct, getVoucherByCode, fetchProductByName, fetchProductByBrand,
-    updateOrderStatus, deleteFromCart, updateUserInfo
+    updateOrderStatus, deleteFromCart, updateUserInfo, createReview
 }
